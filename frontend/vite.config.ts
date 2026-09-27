@@ -11,15 +11,6 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  server: {
-    // En desarrollo, /api/requests va al emulador de Functions (`pnpm --dir backend/functions serve`)
-    proxy: {
-      '/api/requests': {
-        target: 'http://127.0.0.1:5001',
-        rewrite: () => '/esoterica-app/us-central1/sendRequest',
-      },
-    },
-  },
   build: {
     target: 'es2022',
     // Firebase, Leaflet y cada página se cargan bajo demanda (import dinámico).

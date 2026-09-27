@@ -42,5 +42,5 @@ export async function sanityFetch<T>(query: string, params: Record<string, unkno
 const builder = createImageUrlBuilder(config)
 
 /** URL optimizada (WebP/AVIF automático, recorte al punto central elegido en el Studio). */
-export const sanityImage = (source: SanityImageSource, width = 800) =>
-  builder.image(source).width(width).height(width).fit('crop').auto('format').quality(78).url()
+export const sanityImage = (source: SanityImageSource, width = 800, height = width) =>
+  builder.image(source).width(width).height(height).fit('crop').auto('format').quality(78).url()

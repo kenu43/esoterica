@@ -9,6 +9,7 @@ import { EnergyQuizSection } from '@/widgets/energy-quiz-section'
 import { GlossaryTeaser } from '@/widgets/glossary-teaser'
 import { Hero } from '@/widgets/hero'
 import { IntentionsMarquee } from '@/widgets/marquee-strip'
+import { NumerologySection } from '@/widgets/numerology-section'
 import { ProductShowcase } from '@/widgets/product-showcase'
 import { Testimonials } from '@/widgets/testimonials'
 
@@ -30,6 +31,7 @@ export function HomePage() {
       <EnergyQuizSection />
       <DailyAdvice />
       <DailyTarot />
+      <NumerologySection />
       <Testimonials />
       <BranchesSection />
       <Suspense fallback={<div className="h-[640px]" />}>

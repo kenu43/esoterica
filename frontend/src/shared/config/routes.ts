@@ -6,6 +6,8 @@ export const ROUTES = {
   tarot: '/tarot',
   tarotCard: (id: string) => `/tarot/${id}`,
   glossary: '/glosario',
+  learn: '/aprende',
+  article: (slug: string) => `/aprende/${slug}`,
   stores: '/tiendas',
   customOrder: '/encargos',
   about: '/nosotros',

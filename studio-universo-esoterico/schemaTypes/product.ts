@@ -1,6 +1,6 @@
 import { TagIcon } from '@sanity/icons/Tag'
 import { defineArrayMember, defineField, defineType } from 'sanity'
-import { BADGES, CATEGORIES, STORES } from './constants'
+import { BADGES, MOON_PHASES, STORES } from './constants'
 
 const formatCOP = (value?: number) =>
   typeof value === 'number'
@@ -15,7 +15,7 @@ export const product = defineType({
   icon: TagIcon,
   groups: [
     { name: 'basico', title: 'Lo básico', default: true },
-    { name: 'detalle', title: 'Descripción' },
+    { name: 'detalle', title: 'Descripción y uso' },
     { name: 'extra', title: 'Etiquetas y extras' },
   ],
   fields: [
@@ -48,6 +48,21 @@ export const product = defineType({
       ],
     }),
     defineField({
+      name: 'gallery',
+      title: 'Más fotos (opcional)',
+      description: 'Otros ángulos o detalles. Aparecen como miniaturas debajo de la foto principal.',
+      type: 'array',
+      group: 'basico',
+      of: [
+        defineArrayMember({
+          type: 'image',
+          options: { hotspot: true },
+          fields: [defineField({ name: 'alt', title: 'Texto alternativo', type: 'string' })],
+        }),
+      ],
+      validation: (r) => r.max(8),
+    }),
+    defineField({
       name: 'price',
       title: 'Precio (COP)',
       description: 'Solo números, sin puntos. Ej.: 45000',
@@ -68,6 +83,15 @@ export const product = defineType({
         }),
     }),
     defineField({
+      name: 'discountPercent',
+      title: 'Descuento (%) (opcional)',
+      description:
+        'Ej.: 20. La web calcula el precio final sola: el "Precio (COP)" es el normal, se muestra tachado y el cliente ve el precio con el descuento. Tiene prioridad sobre "Precio antes".',
+      type: 'number',
+      group: 'basico',
+      validation: (r) => r.min(1).max(90).integer(),
+    }),
+    defineField({
       name: 'unit',
       title: 'Presentación',
       description: 'Ej.: "figura en resina, 30 cm", "botella 500 ml", "paquete x 7".',
@@ -86,9 +110,10 @@ export const product = defineType({
     defineField({
       name: 'category',
       title: 'Categoría',
-      type: 'string',
+      description: '¿No está la categoría? Créala en el menú "Categorías" y vuelve aquí.',
+      type: 'reference',
       group: 'basico',
-      options: { list: CATEGORIES, layout: 'dropdown' },
+      to: [{ type: 'category' }],
       validation: (r) => r.required(),
     }),
     defineField({
@@ -122,6 +147,62 @@ export const product = defineType({
       group: 'detalle',
       of: [defineArrayMember({ type: 'string' })],
       validation: (r) => r.max(6),
+    }),
+    defineField({
+      name: 'usageGuide',
+      title: 'Cómo se usa (ritual)',
+      description: 'Instrucciones paso a paso. Aparece en el producto como "Cómo se usa".',
+      type: 'text',
+      rows: 5,
+      group: 'detalle',
+    }),
+    defineField({
+      name: 'colors',
+      title: 'Colores disponibles',
+      description: 'Para velones, velas, pulseras… Escribe el nombre (Rojo, Verde…). El color exacto es opcional.',
+      type: 'array',
+      group: 'detalle',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'productColor',
+          fields: [
+            defineField({ name: 'name', title: 'Nombre del color', type: 'string', validation: (r) => r.required().max(24) }),
+            defineField({
+              name: 'hex',
+              title: 'Color exacto (opcional)',
+              description: 'Código como #C0392B. Si lo dejas vacío, la web deduce el color por el nombre.',
+              type: 'string',
+              validation: (r) => r.regex(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/, { name: 'hex', invert: false }).warning('Usa el formato #RRGGBB'),
+            }),
+          ],
+          preview: { select: { title: 'name', subtitle: 'hex' } },
+        }),
+      ],
+      validation: (r) => r.max(12),
+    }),
+    defineField({
+      name: 'intention',
+      title: 'Intención',
+      description: '¿Para qué se usa? Agrega todas las que apliquen. ¿Falta una? Créala en el menú "Intenciones".',
+      type: 'array',
+      group: 'extra',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'intention' }] })],
+    }),
+    defineField({
+      name: 'moonPhase',
+      title: 'Fase lunar recomendada (opcional)',
+      type: 'string',
+      group: 'extra',
+      options: { list: MOON_PHASES, layout: 'radio' },
+    }),
+    defineField({
+      name: 'season',
+      title: 'Temporada (opcional)',
+      description: 'Para productos de una fecha especial, ej.: Navidad. Sale como etiqueta en la tarjeta. Créalas en el menú "Temporadas".',
+      type: 'reference',
+      group: 'extra',
+      to: [{ type: 'season' }],
     }),
     defineField({
       name: 'badges',

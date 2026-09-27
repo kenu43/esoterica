@@ -2,11 +2,30 @@ import type { BranchId } from '@/entities/branch'
 import type { CategoryId } from '@/entities/category'
 
 /**
- * Fase lunar calculada en el navegador (algoritmo del mes sinódico, precisión ±1 día).
- * Se prefiere a una API externa: no depende de terceros, no consume red y nunca falla.
+ * Fase lunar calculada en el navegador con la elongación Luna–Sol (Meeus, "Astronomical
+ * Algorithms", cap. 48, con sus términos periódicos principales). La iluminación acierta
+ * a ~1 % y la edad a pocas horas. No depende de terceros, no consume red y nunca falla.
  */
 const SYNODIC_MONTH = 29.530588853
-const KNOWN_NEW_MOON = Date.UTC(2000, 0, 6, 18, 14) // Luna nueva de referencia
+const rad = (deg: number) => (deg * Math.PI) / 180
+
+/** Elongación geocéntrica de la Luna respecto al Sol, en grados [0, 360): 0 = nueva, 180 = llena. */
+function elongation(date: Date) {
+  const jd = date.getTime() / 86_400_000 + 2440587.5
+  const t = (jd - 2451545) / 36525
+  const d = 297.8501921 + 445267.1114034 * t - 0.0018819 * t * t
+  const m = 357.5291092 + 35999.0502909 * t
+  const mp = 134.9633964 + 477198.8675055 * t + 0.0087414 * t * t
+  const e =
+    d +
+    6.289 * Math.sin(rad(mp)) -
+    2.1 * Math.sin(rad(m)) +
+    1.274 * Math.sin(rad(2 * d - mp)) +
+    0.658 * Math.sin(rad(2 * d)) +
+    0.214 * Math.sin(rad(2 * mp)) +
+    0.11 * Math.sin(rad(d))
+  return ((e % 360) + 360) % 360
+}
 
 export interface MoonPhase {
   /** 0 = luna nueva, 0.5 = luna llena, 1 = nueva otra vez. */
@@ -93,10 +112,11 @@ const PHASES: PhaseInfo[] = [
 ]
 
 export function getMoonPhase(date = new Date()): MoonPhase {
-  const days = (date.getTime() - KNOWN_NEW_MOON) / 86_400_000
-  const age = ((days % SYNODIC_MONTH) + SYNODIC_MONTH) % SYNODIC_MONTH
-  const fraction = age / SYNODIC_MONTH
-  const illumination = Math.round(((1 - Math.cos(fraction * 2 * Math.PI)) / 2) * 100)
+  const e = elongation(date)
+  const fraction = e / 360
+  const age = fraction * SYNODIC_MONTH
+  const illumination = Math.round(((1 - Math.cos(rad(e))) / 2) * 100)
   const { until: _until, ...phase } = PHASES.find((p) => age < p.until)!
   return { fraction, illumination, age, ...phase }
 }
+export { MoonVisual } from './ui/MoonVisual'

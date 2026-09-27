@@ -10,12 +10,21 @@ const tarot = [
   ...['wands', 'cups', 'swords', 'pents'].flatMap((s) => Array.from({ length: 14 }, (_, i) => `${s}-${pad(i + 1)}`)),
 ]
 
+// Artículos de respaldo; los escritos en Sanity se agregan aquí al publicarlos
+const articles = [
+  'como-limpiar-las-energias-de-una-casa-con-sahumerios',
+  'diferencia-entre-riego-bano-de-despojo-y-velacion',
+  'beneficios-naturistas-del-palo-santo-y-la-salvia',
+]
+
 const routes = [
   ['/', '1.0', 'daily'],
   ['/productos', '0.9', 'daily'],
   ['/tiendas', '0.8', 'monthly'],
   ['/encargos', '0.7', 'monthly'],
   ['/glosario', '0.8', 'monthly'],
+  ['/aprende', '0.8', 'weekly'],
+  ...articles.map((slug) => [`/aprende/${slug}`, '0.7', 'monthly']),
   ['/tarot', '0.8', 'daily'],
   ['/nosotros', '0.6', 'yearly'],
   ['/contacto', '0.6', 'yearly'],

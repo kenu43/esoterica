@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { BranchId } from '@/entities/branch'
+import { DEFAULT_BRANCH_ID, type BranchChoiceId } from '@/entities/branch'
 
 export interface InquiryItem {
   productId: string
@@ -9,12 +9,12 @@ export interface InquiryItem {
 
 interface InquiryState {
   items: InquiryItem[]
-  branchId: BranchId
+  branchId: BranchChoiceId
   isOpen: boolean
   add: (productId: string) => void
   remove: (productId: string) => void
   setQuantity: (productId: string, quantity: number) => void
-  setBranch: (branchId: BranchId) => void
+  setBranch: (branchId: BranchChoiceId) => void
   clear: () => void
   setOpen: (open: boolean) => void
 }
@@ -27,7 +27,7 @@ export const useInquiryStore = create<InquiryState>()(
   persist(
     (set) => ({
       items: [],
-      branchId: 'el-sortilegio',
+      branchId: DEFAULT_BRANCH_ID,
       isOpen: false,
       add: (productId) =>
         set((s) => {

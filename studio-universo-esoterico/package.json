@@ -9,7 +9,8 @@
     "build": "sanity build",
     "deploy": "sanity deploy",
     "seed:build": "tsx scripts/build-seed.ts",
-    "seed": "pnpm seed:build && sanity dataset import seed/data.ndjson production --replace",
+    "seed": "pnpm seed:build && sanity dataset import seed/data.ndjson production --missing",
+    "migrate:categories": "sanity exec scripts/migrate-categories.ts --with-user-token",
     "cors": "sanity cors add http://localhost:5173 --no-credentials && sanity cors add https://esoterica-app.web.app --no-credentials && sanity cors add https://esoterica-app.firebaseapp.com --no-credentials"
   },
   "keywords": [

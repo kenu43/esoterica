@@ -12,16 +12,12 @@ import { Logo } from '@/shared/ui'
 export function Header() {
   const { scrollY } = useScroll()
   const [scrolled, setScrolled] = useState(false)
-  const [hidden, setHidden] = useState(false)
   const [open, setOpen] = useState(false)
   const [hovered, setHovered] = useState<string | null>(null)
 
-  // Se compacta al bajar y se oculta al hacer scroll rápido hacia abajo
+  // Se compacta al bajar. Histéresis (40 / 8 px) para que no parpadee cerca del umbral.
   useMotionValueEvent(scrollY, 'change', (y) => {
-    const prev = scrollY.getPrevious() ?? 0
-    setScrolled(y > 24)
-    setHidden(y > 400 && y > prev + 4 && !open)
-    if (y < prev - 4) setHidden(false)
+    setScrolled((was) => (was ? y > 8 : y > 40))
   })
 
   useEffect(() => {
@@ -30,19 +26,15 @@ export function Header() {
 
   return (
     <>
-      <motion.header
-        animate={{ y: hidden ? '-110%' : '0%' }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6"
-      >
+      <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6">
         <nav
           aria-label="Principal"
           className={cn(
-            'mx-auto flex max-w-7xl items-center justify-between gap-2 rounded-2xl px-2 transition-all duration-500 sm:gap-4 sm:px-4',
+            'mx-auto flex max-w-7xl items-center justify-between gap-2 rounded-2xl px-3 transition-[height,background-color,box-shadow] duration-300 sm:gap-4 sm:px-4',
             scrolled ? 'glass h-16 shadow-lg shadow-black/5' : 'h-20 bg-transparent',
           )}
         >
-          <Link to={ROUTES.home} aria-label="Inicio" className="shrink-0">
+          <Link to={ROUTES.home} aria-label="Inicio" className="min-w-0 shrink">
             <Logo />
           </Link>
 
@@ -97,7 +89,7 @@ export function Header() {
             </Button>
           </div>
         </nav>
-      </motion.header>
+      </header>
 
       {/* Menú móvil a pantalla completa */}
       <AnimatePresence>

@@ -1,17 +1,29 @@
 import { ArrowUpRight } from 'lucide-react'
 import { motion } from 'motion/react'
 import { Link } from 'react-router'
-import { CATEGORIES } from '@/entities/category'
+import { useCategories } from '@/entities/category'
 import { useProducts } from '@/entities/product'
 import { ROUTES } from '@/shared/config'
 import { cn } from '@/shared/lib'
 import { Container, SectionHeading } from '@/shared/ui'
 
-/** Grilla bento de 8 categorías: la primera y la última ocupan doble ancho en escritorio. */
-const LAYOUT = ['lg:row-span-2', '', '', '', '', '', '', 'col-span-2']
+const LG_SPAN = { 1: '', 2: 'lg:col-span-2', 3: 'lg:col-span-3', 4: 'lg:col-span-4' } as const
+
+/**
+ * Bento para cualquier cantidad de categorías (se administran en Sanity): la primera ocupa 2x2
+ * y la última se estira lo necesario para que la grilla quede completa, sin huecos.
+ */
+function tileClass(i: number, total: number) {
+  if (i === 0) return 'col-span-2 lg:row-span-2'
+  if (i !== total - 1) return ''
+  const lgSpan = (1 + ((4 - ((4 + total - 1) % 4)) % 4)) as 1 | 2 | 3 | 4
+  const mobileFull = (2 + total - 1) % 2 === 1
+  return cn(mobileFull && 'col-span-2', LG_SPAN[lgSpan])
+}
 
 export function CategoriesBento() {
   const { data: products = [] } = useProducts()
+  const categories = useCategories()
 
   return (
     <section id="descubre" className="relative scroll-mt-24 py-24">
@@ -24,7 +36,7 @@ export function CategoriesBento() {
         />
 
         <div className="grid auto-rows-[190px] grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {CATEGORIES.map((cat, i) => {
+          {categories.map((cat, i) => {
             const count = products.filter((p) => p.category === cat.id).length
             return (
               <motion.div
@@ -33,7 +45,7 @@ export function CategoriesBento() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.55, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
-                className={cn(LAYOUT[i], i === 0 && 'col-span-2')}
+                className={tileClass(i, categories.length)}
               >
                 <Link
                   to={`${ROUTES.products}?cat=${cat.id}`}

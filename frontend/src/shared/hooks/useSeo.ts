@@ -61,5 +61,3 @@ export function useSeo({ title, description, image, jsonLd }: SeoOptions = {}) {
   }, [title, description, image, jsonLdString, pathname])
 }
 
-/** Atajo retrocompatible. */
-export const useDocumentTitle = (title?: string, description?: string) => useSeo({ title, description })

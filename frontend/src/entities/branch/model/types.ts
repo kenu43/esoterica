@@ -26,3 +26,6 @@ export interface Branch {
   /** Color de acento (token CSS) para diferenciar la tienda en UI y mapa. */
   accent: 'gold' | 'mystic' | 'sage'
 }
+
+/** Opción de tienda para selectores: una sede concreta o "la que tenga disponibilidad". */
+export type BranchChoiceId = BranchId | 'cualquiera'

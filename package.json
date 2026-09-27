@@ -2,15 +2,13 @@
   "name": "esoterica",
   "private": true,
   "version": "0.1.0",
-  "description": "Universo Esotérico — frontend React + Sanity Studio + Cloud Functions",
+  "description": "Universo Esotérico — frontend React + Sanity Studio",
   "scripts": {
     "dev": "pnpm --dir frontend dev",
     "build": "pnpm --dir frontend build",
     "lint": "pnpm --dir frontend lint",
     "studio": "pnpm --dir studio-universo-esoterico dev",
     "deploy": "firebase deploy --only hosting",
-    "deploy:functions": "firebase deploy --only functions",
-    "deploy:all": "firebase deploy",
     "deploy:studio": "pnpm --dir studio-universo-esoterico deploy"
   },
   "engines": {

@@ -9,8 +9,6 @@ dist
 .idea
 .vscode/*
 !.vscode/extensions.json
-backend/functions/lib
-backend/functions/.secret.local
-backend/functions/.env
+!.vscode/tasks.json
 studio-universo-esoterico/node_modules
 studio-universo-esoterico/dist

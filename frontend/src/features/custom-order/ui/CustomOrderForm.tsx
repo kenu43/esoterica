@@ -1,6 +1,6 @@
-import { Button, Checkbox, Label, toast } from '@heroui/react'
+import { Button, Checkbox, Label } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, ArrowRight, Check, Loader2, Send } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, MessageCircle } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Controller, useForm, useWatch, type Control } from 'react-hook-form'
@@ -33,7 +33,7 @@ export function CustomOrderForm() {
   const [direction, setDirection] = useState(1)
   const [sent, setSent] = useState(false)
 
-  const { control, handleSubmit, trigger, formState, reset, setValue, getValues } = useForm<CustomOrderValues>({
+  const { control, handleSubmit, trigger, reset, setValue, getValues } = useForm<CustomOrderValues>({
     resolver: zodResolver(customOrderSchema),
     defaultValues,
     mode: 'onTouched',
@@ -54,16 +54,9 @@ export function CustomOrderForm() {
     if (!selected && !text.includes(label)) setValue('request', text ? `${text}\n${label}: ` : `${label}: `)
   }
 
-  const onSubmit = handleSubmit(async (values) => {
-    try {
-      await submitCustomOrder(values)
-      setSent(true)
-    } catch (err) {
-      console.error(err)
-      toast.danger('No pudimos enviar tu encargo', {
-        description: 'Inténtalo de nuevo o escríbenos directo por WhatsApp.',
-      })
-    }
+  const onSubmit = handleSubmit((values) => {
+    submitCustomOrder(values)
+    setSent(true)
   })
 
   if (sent) {
@@ -81,11 +74,14 @@ export function CustomOrderForm() {
         >
           <Check className="size-8" strokeWidth={3} />
         </motion.div>
-        <h3 className="text-2xl">Recibimos tu encargo</h3>
+        <h3 className="text-2xl">Tu encargo va por WhatsApp</h3>
         <p className="max-w-md text-muted">
-          Lo revisamos y te escribimos por WhatsApp con la cotización, normalmente el mismo día hábil.
-          Si es urgente, escríbenos directamente.
+          Se abrió WhatsApp con tu pedido ya escrito: solo dale enviar y te respondemos con la cotización.
+          Si no se abrió, toca el botón de abajo.
         </p>
+        <Button variant="primary" onPress={() => submitCustomOrder(getValues())} className="gap-2">
+          <MessageCircle className="size-4" /> Abrir WhatsApp de nuevo
+        </Button>
         <Button
           variant="secondary"
           onPress={() => {
@@ -106,15 +102,6 @@ export function CustomOrderForm() {
       noValidate
       className="rounded-2xl border border-border bg-surface p-6 shadow-xl shadow-mystic/5 sm:p-8"
     >
-      {/* Campo trampa anti-spam (oculto para personas) */}
-      <Controller
-        control={control}
-        name="website"
-        render={({ field }) => (
-          <input {...field} value={field.value ?? ''} tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
-        )}
-      />
-
       <ol className="mb-8 flex items-center gap-2" aria-label="Progreso del encargo">
         {STEPS.map((label, i) => (
           <li key={label} className="flex flex-1 items-center gap-2">
@@ -231,12 +218,11 @@ export function CustomOrderForm() {
                   autoComplete="tel"
                   placeholder="300 000 0000"
                 />
-                <FormTextField control={control} name="email" label="Correo" type="email" isRequired autoComplete="email" />
                 <FormComboBox control={control} name="city" label="Ciudad" options={COLOMBIA_CITIES} isRequired />
               </div>
               <FormSelect control={control} name="delivery" label="¿Cómo lo recibes?" options={DELIVERY} isRequired />
               <AnimatePresence initial={false}>
-                {delivery === 'envio' && (
+                {delivery && delivery !== 'recoger' && (
                   <motion.div
                     key="address"
                     initial={{ opacity: 0, height: 0 }}
@@ -281,7 +267,7 @@ export function CustomOrderForm() {
                           <Checkbox.Indicator />
                         </Checkbox.Control>
                         <Label className="cursor-pointer text-sm">
-                          Acepto que me contacten por WhatsApp o correo para cotizar este encargo.
+                          Acepto que me contacten por WhatsApp para cotizar este encargo.
                         </Label>
                       </Checkbox.Content>
                     </Checkbox>
@@ -303,9 +289,9 @@ export function CustomOrderForm() {
             Continuar <ArrowRight className="size-4" />
           </Button>
         ) : (
-          <Button type="submit" variant="primary" isPending={formState.isSubmitting} className="gap-2">
-            {formState.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
-            Enviar encargo
+          <Button type="submit" variant="primary" className="gap-2">
+            <MessageCircle className="size-4" />
+            Enviar por WhatsApp
           </Button>
         )}
       </div>
@@ -321,7 +307,7 @@ function Summary({ control }: { control: Control<CustomOrderValues> }) {
     ['Presupuesto', BUDGETS.find((o) => o.value === v.budget)?.label],
     ['Contacto', `${v.name} · ${v.phone}`],
     ['Ciudad', v.city],
-    ['Entrega', v.delivery === 'envio' ? `Envío · ${v.address}` : DELIVERY.find((o) => o.value === v.delivery)?.label],
+    ['Entrega', v.delivery && v.delivery !== 'recoger' ? `${DELIVERY.find((o) => o.value === v.delivery)?.label} · ${v.address}` : DELIVERY.find((o) => o.value === v.delivery)?.label],
   ]
   return (
     <dl className="divide-y divide-separator rounded-xl border border-border bg-surface-secondary text-sm">

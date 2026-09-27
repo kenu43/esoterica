@@ -1,4 +1,9 @@
-export type { Product, ProductBadge, ProductFilter, ProductSort } from './model/types'
+export type { Product, ProductBadge, ProductColor, ProductFilter, ProductSort } from './model/types'
+export {
+  moonPhaseLabel,
+  resolveColor,
+} from './model/taxonomy'
+export { useTaxonomyLabels } from './model/taxonomy-queries'
 export {
   productKeys,
   productQueries,

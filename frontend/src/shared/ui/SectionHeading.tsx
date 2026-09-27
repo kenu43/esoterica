@@ -34,7 +34,7 @@ export function SectionHeading({
       {eyebrow && (
         <Reveal y={10} blur={false}>
           <span className="inline-flex items-center gap-2 text-sm font-medium text-gold">
-            <LotusIcon className="size-4" />
+            <LotusIcon className="size-5" />
             {eyebrow}
           </span>
         </Reveal>

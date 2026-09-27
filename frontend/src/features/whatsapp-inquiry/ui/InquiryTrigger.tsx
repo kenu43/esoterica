@@ -14,7 +14,7 @@ export function InquiryTrigger() {
       variant="ghost"
       aria-label={`Mi lista de consulta (${count} productos)`}
       onPress={() => setOpen(true)}
-      className="relative overflow-visible"
+      className="relative shrink-0 overflow-visible"
     >
       <ScrollText className="size-5" />
       <AnimatePresence>
@@ -25,7 +25,7 @@ export function InquiryTrigger() {
             animate={{ scale: [1.5, 1] }}
             exit={{ scale: 0 }}
             transition={{ type: 'spring', stiffness: 500, damping: 18 }}
-            className="absolute -right-1 -top-1 grid min-w-5 place-items-center rounded-full bg-gold px-1 text-[11px] font-bold text-[oklch(0.18_0.04_290)]"
+            className="absolute right-0 top-0.5 grid min-w-[18px] place-items-center rounded-full bg-gold px-1 text-[10px] leading-[18px] font-bold text-[oklch(0.18_0.04_290)]"
           >
             {count}
           </motion.span>

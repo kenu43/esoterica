@@ -20,14 +20,14 @@ export function ProductsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Catálogo"
-        title="Catálogo de las tres tiendas"
-        highlight={['tres']}
+        eyebrow="Nuestros productos"
+        title="Catálogo completo"
+        highlight={['completo']}
         description="Precios de referencia en pesos colombianos. Arma tu lista y te confirmamos disponibilidad, precio final y envío por WhatsApp."
       />
 
       <Container className="space-y-8">
-        <div className="glass sticky top-20 z-30 -mx-2 rounded-2xl p-4 sm:mx-0 sm:p-5">
+        <div className="sticky top-20 z-30 -mx-2 rounded-2xl border border-border bg-surface p-4 shadow-lg shadow-black/5 sm:mx-0 sm:p-5">
           <ProductFilters />
         </div>
 

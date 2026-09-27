@@ -3,8 +3,8 @@ import { ArrowRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useLocation } from 'react-router'
-import { getCategory } from '@/entities/category'
-import { GLOSSARY, GLOSSARY_GROUPS, type GlossaryGroup } from '@/entities/glossary'
+import { useCategories } from '@/entities/category'
+import { GLOSSARY_GROUPS, useGlossary, type GlossaryGroup } from '@/entities/glossary'
 import { ROUTES, SITE } from '@/shared/config'
 import { useDebouncedValue, useSeo } from '@/shared/hooks'
 import { cn } from '@/shared/lib'
@@ -16,6 +16,8 @@ export function GlossaryPage() {
   const [search, setSearch] = useState('')
   const query = useDebouncedValue(search, 200)
   const { hash } = useLocation()
+  const categories = useCategories()
+  const glossary = useGlossary()
 
   useSeo({
     title: 'Glosario esotérico: significado de santos, amuletos y rituales',
@@ -26,7 +28,7 @@ export function GlossaryPage() {
       '@type': 'DefinedTermSet',
       name: 'Glosario esotérico de Universo Esotérico',
       url: `${SITE.url}${ROUTES.glossary}`,
-      hasDefinedTerm: GLOSSARY.map((t) => ({
+      hasDefinedTerm: glossary.map((t) => ({
         '@type': 'DefinedTerm',
         name: t.term,
         description: `${t.summary} ${t.detail}`,
@@ -44,11 +46,11 @@ export function GlossaryPage() {
 
   const terms = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return GLOSSARY.filter((t) => {
+    return glossary.filter((t) => {
       if (q) return `${t.term} ${t.summary} ${t.detail}`.toLowerCase().includes(q)
       return group === 'Todos' || t.group === group
     })
-  }, [group, query])
+  }, [glossary, group, query])
 
   return (
     <>
@@ -92,7 +94,7 @@ export function GlossaryPage() {
         <motion.dl layout className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {terms.map((t) => {
-              const category = t.category ? getCategory(t.category) : undefined
+              const category = t.category ? categories.find((c) => c.id === t.category) : undefined
               const highlighted = hash === `#${t.id}`
               return (
                 <motion.div

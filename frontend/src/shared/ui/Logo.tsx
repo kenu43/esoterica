@@ -22,9 +22,9 @@ export function LogoMark({ className }: { className?: string }) {
 export function Logo({ className }: { className?: string }) {
   return (
     <span className={cn('inline-flex items-center gap-2.5', className)}>
-      <LogoMark />
-      <span className="flex flex-col leading-none">
-        <span className="font-display text-lg font-medium tracking-tight">Universo Esotérico</span>
+      <LogoMark className="size-8 shrink-0 sm:size-9" />
+      <span className="flex min-w-0 flex-col leading-none">
+        <span className="truncate font-display text-[15px] font-medium tracking-tight sm:text-lg">Universo Esotérico</span>
         <span className="mt-1 hidden text-xs text-muted sm:block">Ibagué · desde 1981</span>
       </span>
     </span>

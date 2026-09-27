@@ -39,7 +39,7 @@ export function Hero() {
             transition={{ delay: 0.1 }}
             className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-surface/60 px-4 py-1.5 text-sm backdrop-blur"
           >
-            <LotusIcon className="size-4 text-gold" />
+            <LotusIcon className="size-5 text-gold" />
             {years} años de tradición familiar en Ibagué
           </motion.p>
 
@@ -58,9 +58,8 @@ export function Hero() {
             transition={{ delay: 0.7, duration: 0.6 }}
             className="max-w-xl text-lg leading-relaxed text-muted"
           >
-            Santa Muerte, San Judas Tadeo, velones preparados, baños de despojo, riegos, amuletos y
-            tarot. Tres tiendas en el centro de Ibagué atendidas por la familia de Doña Cielo, con
-            envíos a toda Colombia.
+            Productos esotéricos de alta calidad, seleccionados e importados con el cuidado de siempre:
+            figuras, velones, baños, riegos, amuletos y tarot, con envíos a toda Colombia.
           </motion.p>
 
           <motion.div
@@ -78,26 +77,27 @@ export function Hero() {
             </Link>
           </motion.div>
 
-          <motion.dl
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.2 }}
-            className="mt-2 grid w-full max-w-lg grid-cols-3 gap-6 border-t border-separator pt-6"
+            className="mt-2 flex w-full max-w-lg flex-col gap-4 border-t border-separator pt-6"
           >
-            {[
-              [String(SITE.foundedYear), 'Desde'],
-              ['3', 'Tiendas en el centro'],
-              ['24 h', 'Respuesta por WhatsApp'],
-            ].map(([n, l]) => (
-              <div key={l} className="flex flex-col-reverse gap-1">
-                <dt className="text-sm text-muted">{l}</dt>
-                <dd className="font-display text-2xl text-gold sm:text-3xl">{n}</dd>
-              </div>
-            ))}
-          </motion.dl>
-          <p className="-mt-3 flex items-center gap-2 text-sm text-muted">
-            <Truck className="size-4 text-gold" aria-hidden /> Envíos a toda Colombia
-          </p>
+            <dl className="grid grid-cols-2 items-start gap-6">
+              {[
+                [String(SITE.foundedYear), 'Desde'],
+                ['24 h', 'Respuesta por WhatsApp'],
+              ].map(([n, l]) => (
+                <div key={l} className="flex flex-col gap-1">
+                  <dd className="order-first font-display text-2xl leading-none text-gold sm:text-3xl">{n}</dd>
+                  <dt className="text-sm text-muted">{l}</dt>
+                </div>
+              ))}
+            </dl>
+            <p className="flex items-center gap-2 text-sm text-muted">
+              <Truck className="size-4 text-gold" aria-hidden /> Envíos a toda Colombia
+            </p>
+          </motion.div>
         </motion.div>
 
         {/* Baraja: al pasar el cursor, cada carta sube suavemente como si la sacaras del mazo */}
@@ -128,14 +128,15 @@ export function Hero() {
                     initial={{ opacity: 0, y: 60 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 + i * 0.12, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0"
+                    className="pointer-events-none absolute inset-0"
                     style={{ zIndex: i }}
                   >
+                    {/* El contenedor exterior (con la rotación) nunca se mueve: así el cursor no "salta" entre cartas */}
                     <div
-                      className="group size-full origin-bottom transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-8"
+                      className="group pointer-events-auto size-full origin-bottom"
                       style={{ transform: `translateX(${offset * 42}%) rotate(${offset * 9}deg)` }}
                     >
-                      <div className="size-full overflow-hidden rounded-xl bg-[#f3ead3] shadow-2xl shadow-black/40 ring-1 ring-black/10 transition-shadow duration-500 group-hover:shadow-gold/30">
+                      <div className="size-full overflow-hidden rounded-xl bg-[#f3ead3] shadow-2xl shadow-black/40 ring-1 ring-black/10 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform [backface-visibility:hidden] group-hover:-translate-y-8">
                         <img src={card.image} alt={card.name} width={360} height={620} className="size-full object-cover" draggable={false} />
                       </div>
                     </div>

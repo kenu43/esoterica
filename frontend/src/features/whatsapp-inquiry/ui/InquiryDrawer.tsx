@@ -3,18 +3,19 @@ import { Minus, Plus, ScrollText, Send, Trash2 } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { BRANCHES, getBranch } from '@/entities/branch'
+import { ANY_BRANCH_ID, BRANCH_CHOICES, resolveBranch } from '@/entities/branch'
 import { useProducts } from '@/entities/product'
 import { ROUTES } from '@/shared/config'
-import { buildWhatsAppUrl, cn, formatPrice } from '@/shared/lib'
+import { cn, formatPrice, openWhatsApp } from '@/shared/lib'
 import { LotusIcon } from '@/shared/ui'
-import { buildInquiryMessage } from '../lib/build-message'
+import { buildInquiryMessage, SHIPPING_OPTIONS, type ShippingId } from '../lib/build-message'
 import { useInquiryStore } from '../model/inquiry.store'
 
 export function InquiryDrawer() {
   const { items, branchId, isOpen, setOpen, setQuantity, remove, setBranch, clear } = useInquiryStore()
   const { data: products = [] } = useProducts()
   const [note, setNote] = useState('')
+  const [shipping, setShipping] = useState<ShippingId>('domicilio')
 
   const lines = useMemo(
     () =>
@@ -25,12 +26,13 @@ export function InquiryDrawer() {
     [items, products],
   )
   const total = lines.reduce((acc, l) => acc + l.product.price * l.quantity, 0)
-  const branch = getBranch(branchId) ?? BRANCHES[0]
+  const branch = resolveBranch(branchId)
 
-  const send = () => {
-    const url = buildWhatsAppUrl(branch.whatsapp, buildInquiryMessage(lines, branch, note.trim()))
-    window.open(url, '_blank', 'noopener,noreferrer')
-  }
+  const send = () =>
+    openWhatsApp(
+      branch.whatsapp,
+      buildInquiryMessage(lines, { branch, anyBranch: branchId === ANY_BRANCH_ID, shipping, note: note.trim() }),
+    )
 
   return (
     <Drawer isOpen={isOpen} onOpenChange={setOpen}>
@@ -131,7 +133,7 @@ export function InquiryDrawer() {
                   <fieldset className="space-y-2">
                     <legend className="mb-2 text-sm font-semibold">¿A qué tienda le escribimos?</legend>
                     <div className="grid gap-2">
-                      {BRANCHES.map((b) => (
+                      {BRANCH_CHOICES.map((b) => (
                         <button
                           key={b.id}
                           type="button"
@@ -155,6 +157,26 @@ export function InquiryDrawer() {
                             )}
                             aria-hidden
                           />
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+
+                  <fieldset className="space-y-2">
+                    <legend className="mb-2 text-sm font-semibold">¿Cómo lo recibes?</legend>
+                    <div className="flex flex-wrap gap-2">
+                      {SHIPPING_OPTIONS.map((s) => (
+                        <button
+                          key={s.value}
+                          type="button"
+                          onClick={() => setShipping(s.value)}
+                          aria-pressed={s.value === shipping}
+                          className={cn(
+                            'rounded-full border px-3.5 py-1.5 text-sm transition-colors',
+                            s.value === shipping ? 'border-gold bg-gold-soft' : 'border-border hover:border-gold/40',
+                          )}
+                        >
+                          {s.label}
                         </button>
                       ))}
                     </div>

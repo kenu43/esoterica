@@ -2,7 +2,7 @@ import type { SanityImageSource } from '@sanity/image-url'
 import { sanityFetch, sanityImage } from '@/shared/api'
 import type { BranchId } from '@/entities/branch'
 import type { CategoryId } from '@/entities/category'
-import type { Product, ProductBadge } from '../model/types'
+import type { Product, ProductBadge, ProductColor } from '../model/types'
 import { applyFilter, type ProductRepository } from './product.repository'
 
 /** Forma del documento `product` tal como lo devuelve la consulta GROQ. */
@@ -13,6 +13,7 @@ interface SanityProduct {
   category: CategoryId
   price: number
   compareAtPrice?: number
+  discountPercent?: number
   unit?: string
   shortDescription?: string
   description?: string
@@ -23,26 +24,41 @@ interface SanityProduct {
   inStock?: boolean
   createdAt: string
   image?: SanityImageSource
+  intention?: string[]
+  moonPhase?: string
+  usageGuide?: string
+  gallery?: ({ asset?: unknown } & SanityImageSource)[]
+  season?: string
+  colors?: ProductColor[]
 }
 
 const PRODUCT_PROJECTION = `{
   "id": _id,
   "slug": slug.current,
-  name, category, price, compareAtPrice, unit,
+  name, price, compareAtPrice, discountPercent, unit,
   shortDescription, description, benefits, badges, tags, stores,
+  "category": coalesce(category->slug.current, category),
   "inStock": coalesce(inStock, true),
   "createdAt": coalesce(releaseDate, _createdAt),
-  image
+  image, moonPhase, usageGuide, colors, gallery,
+  "intention": intention[]->slug.current,
+  "season": season->slug.current
 }`
 
 /** Mapper: documento de Sanity → entidad de dominio (la UI nunca ve Sanity). */
+/** Con descuento en %, el precio del Studio es el normal (queda tachado) y el final se calcula aquí, redondeado a $100. */
+function resolvePrices({ price, compareAtPrice, discountPercent }: SanityProduct) {
+  if (discountPercent && discountPercent > 0 && discountPercent < 100)
+    return { price: Math.round((price * (1 - discountPercent / 100)) / 100) * 100, compareAtPrice: price }
+  return { price, compareAtPrice }
+}
+
 const toProduct = (doc: SanityProduct): Product => ({
   id: doc.id,
   slug: doc.slug,
   name: doc.name,
-  category: doc.category,
-  price: doc.price,
-  compareAtPrice: doc.compareAtPrice,
+  category: typeof doc.category === 'string' ? doc.category : 'otros',
+  ...resolvePrices(doc),
   unit: doc.unit ?? 'unidad',
   shortDescription: doc.shortDescription ?? '',
   description: doc.description ?? doc.shortDescription ?? '',
@@ -53,6 +69,12 @@ const toProduct = (doc: SanityProduct): Product => ({
   inStock: doc.inStock ?? true,
   createdAt: doc.createdAt.slice(0, 10),
   image: doc.image ? sanityImage(doc.image, 800) : '/images/products/amuletos.webp',
+  intentions: doc.intention ?? [],
+  moonPhase: doc.moonPhase || undefined,
+  usageGuide: doc.usageGuide?.trim() || undefined,
+  gallery: (doc.gallery ?? []).filter((g) => !!g?.asset).map((g) => sanityImage(g, 800)),
+  season: doc.season || undefined,
+  colors: (doc.colors ?? []).filter((c) => c?.name?.trim()),
 })
 
 /**

@@ -47,7 +47,8 @@ export function AddToInquiryButton({ product, variant = 'icon', className }: Add
       <Button
         isIconOnly
         variant={added ? 'primary' : 'secondary'}
-        aria-label={`Agregar ${product.name} a la consulta`}
+        aria-label={product.inStock ? `Agregar ${product.name} a la consulta` : `${product.name} está agotado`}
+        isDisabled={!product.inStock}
         onPress={onPress}
         className={cn('shrink-0 transition-transform active:scale-90', className)}
       >
@@ -57,9 +58,9 @@ export function AddToInquiryButton({ product, variant = 'icon', className }: Add
   }
 
   return (
-    <Button size="lg" variant="primary" onPress={onPress} className={cn('gap-2', className)}>
+    <Button size="lg" variant="primary" isDisabled={!product.inStock} onPress={onPress} className={cn('gap-2', className)}>
       {icon}
-      {added ? '¡Agregado!' : 'Agregar a mi consulta'}
+      {!product.inStock ? 'Agotado por ahora' : added ? '¡Agregado!' : 'Agregar a mi consulta'}
     </Button>
   )
 }

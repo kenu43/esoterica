@@ -13,25 +13,7 @@
       }
     ]
   },
-  "functions": [
-    {
-      "source": "backend/functions",
-      "codebase": "default",
-      "runtime": "nodejs22",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "*.local"
-      ],
-      "predeploy": [
-        "pnpm --dir backend/functions build"
-      ]
-    }
-  ],
   "emulators": {
-    "functions": {
-      "port": 5001
-    },
     "hosting": {
       "port": 5000
     },

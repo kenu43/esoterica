@@ -22,7 +22,9 @@ export function applyFilter(products: Product[], filter: ProductFilter = {}): Pr
     if (branch !== 'all' && !p.branches.includes(branch)) return false
     if (onlyNew && !p.badges.includes('nuevo')) return false
     if (term) {
-      const haystack = [p.name, p.shortDescription, p.category, ...p.tags].join(' ').toLowerCase()
+      const haystack = [p.name, p.shortDescription, p.category, ...p.tags, ...p.intentions, p.season, ...p.colors.map((c) => c.name)]
+        .join(' ')
+        .toLowerCase()
       return haystack.includes(term)
     }
     return true

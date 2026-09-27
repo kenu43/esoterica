@@ -4,46 +4,10 @@ import { motion } from 'motion/react'
 import { Link } from 'react-router'
 import { getDailyAdvice } from '@/entities/advice'
 import { getBranch } from '@/entities/branch'
-import { getMoonPhase } from '@/entities/moon'
+import { getMoonPhase, MoonVisual } from '@/entities/moon'
 import { ROUTES } from '@/shared/config'
 import { cn } from '@/shared/lib'
 import { Container, NumberTicker, Reveal, SectionHeading } from '@/shared/ui'
-
-/**
- * Luna dibujada en SVG con la sombra de la fase real.
- * El lado oscuro conserva un contorno tenue ("luz cenicienta") para que
- * el disco completo se vea centrado aunque solo una parte esté iluminada.
- */
-function MoonVisual({ fraction }: { fraction: number }) {
-  const waxing = fraction < 0.5
-  const k = Math.cos(fraction * 2 * Math.PI) // 1 nueva → -1 llena
-  const rx = Math.abs(k) * 60
-  const lit = 'oklch(0.95 0.03 85)'
-  const dark = 'oklch(0.3 0.03 280)'
-  return (
-    <svg viewBox="0 0 140 140" className="size-full" aria-hidden>
-      <defs>
-        <radialGradient id="moon-tex" cx="40%" cy="35%" r="70%">
-          <stop offset="0%" stopColor="white" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="black" stopOpacity="0.18" />
-        </radialGradient>
-        <clipPath id="moon-clip">
-          <circle cx="70" cy="70" r="60" />
-        </clipPath>
-      </defs>
-      <g clipPath="url(#moon-clip)">
-        <rect width="140" height="140" fill={dark} />
-        <path d={waxing ? 'M70 10 A60 60 0 0 1 70 130 Z' : 'M70 10 A60 60 0 0 0 70 130 Z'} fill={lit} />
-        <ellipse cx="70" cy="70" rx={rx} ry="60" fill={k > 0 ? dark : lit} />
-        <circle cx="52" cy="50" r="8" fill="black" opacity="0.07" />
-        <circle cx="86" cy="84" r="12" fill="black" opacity="0.06" />
-        <circle cx="80" cy="42" r="5" fill="black" opacity="0.07" />
-        <circle cx="70" cy="70" r="60" fill="url(#moon-tex)" />
-      </g>
-      <circle cx="70" cy="70" r="60" fill="none" stroke={lit} strokeOpacity="0.25" strokeWidth="1" />
-    </svg>
-  )
-}
 
 /** "Energía de hoy": fase lunar en tiempo real + consejo del día. */
 export function DailyAdvice() {
@@ -69,16 +33,16 @@ export function DailyAdvice() {
                 <Moon className="size-4 text-[oklch(0.82_0.13_82)]" aria-hidden /> Fase lunar en Ibagué
               </p>
               <div className="relative my-8 grid place-items-center">
-                <span aria-hidden className="absolute size-56 rounded-full bg-[oklch(0.9_0.08_85/0.18)] blur-3xl animate-pulse-glow" />
-                <span aria-hidden className="absolute size-44 rounded-full bg-[oklch(0.95_0.05_85/0.12)] blur-xl" />
+                <span aria-hidden className="absolute size-72 rounded-full bg-[oklch(0.9_0.08_85/0.18)] blur-3xl animate-pulse-glow" />
+                <span aria-hidden className="absolute size-56 rounded-full bg-[oklch(0.95_0.05_85/0.12)] blur-xl" />
                 <motion.div
                   initial={{ opacity: 0, scale: 0.85 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-                  className="relative size-40"
+                  className="relative size-48"
                 >
-                  <MoonVisual fraction={moon.fraction} />
+                  <MoonVisual fraction={moon.fraction} className="size-full drop-shadow-[0_0_24px_oklch(0.95_0.05_85/0.35)]" />
                 </motion.div>
               </div>
               <h3 className="text-2xl">{moon.name}</h3>
@@ -102,29 +66,33 @@ export function DailyAdvice() {
 
           {/* Consejo del día */}
           <Reveal delay={0.1}>
-            <article className="flex h-full flex-col rounded-2xl border border-border bg-surface p-8">
-              <p className="flex items-center gap-2 text-sm text-gold">
-                <Quote className="size-4" aria-hidden /> Consejo del día
-              </p>
-              <p className="mt-4 text-xl leading-snug sm:text-2xl">{advice.message}</p>
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                <div className="rounded-xl bg-surface-secondary p-4">
-                  <Flame className="mb-2 size-5 text-gold" aria-hidden />
+            <article className="flex h-full flex-col justify-between gap-8 rounded-2xl border border-border bg-surface p-8">
+              <div>
+                <p className="flex items-center gap-2 text-sm text-gold">
+                  <Quote className="size-4" aria-hidden /> Consejo del día
+                </p>
+                <p className="mt-5 text-2xl leading-snug sm:text-3xl">{advice.message}</p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-xl bg-surface-secondary p-5">
+                  <Flame className="mb-3 size-6 text-gold" aria-hidden />
                   <p className="text-xs text-muted">Ritual</p>
-                  <p className="mt-1 text-sm">{advice.ritual}</p>
+                  <p className="mt-1 text-sm leading-relaxed">{advice.ritual}</p>
                 </div>
-                <div className="rounded-xl bg-surface-secondary p-4">
-                  <Gem className="mb-2 size-5 text-gold" aria-hidden />
+                <div className="rounded-xl bg-surface-secondary p-5">
+                  <Gem className="mb-3 size-6 text-gold" aria-hidden />
                   <p className="text-xs text-muted">Aliado</p>
                   <p className="mt-1 font-medium">{advice.crystal}</p>
                 </div>
-                <div className="rounded-xl bg-surface-secondary p-4">
-                  <span className="mb-2 block size-5 rounded-full ring-2 ring-border" style={{ background: advice.color.value }} aria-hidden />
+                <div className="rounded-xl bg-surface-secondary p-5">
+                  <span className="mb-3 block size-6 rounded-full ring-2 ring-border" style={{ background: advice.color.value }} aria-hidden />
                   <p className="text-xs text-muted">Color del día</p>
                   <p className="mt-1 font-medium">{advice.color.name}</p>
                 </div>
               </div>
-              <p className="mt-auto border-t border-separator pt-6 text-center italic text-muted">“{advice.affirmation}”</p>
+
+              <p className="border-t border-separator pt-6 text-center text-lg italic text-muted">“{advice.affirmation}”</p>
             </article>
           </Reveal>
         </div>

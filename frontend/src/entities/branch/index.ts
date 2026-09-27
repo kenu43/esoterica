@@ -1,5 +1,5 @@
-export type { Branch, BranchId, OpeningHours } from './model/types'
+export type { Branch, BranchChoiceId, BranchId, OpeningHours } from './model/types'
 export { BRANCHES } from './model/branches.data'
-export { getBranch, useBranches } from './model/queries'
-export { googleDirectionsUrl, googleMapsUrl } from './lib/maps'
+export { ANY_BRANCH_ID, BRANCH_CHOICES, DEFAULT_BRANCH_ID, getBranch, resolveBranch, useBranches } from './model/queries'
+export { googleDirectionsUrl } from './lib/maps'
 export { BranchCard } from './ui/BranchCard'

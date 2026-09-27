@@ -1,34 +1,50 @@
 import type { Branch } from '@/entities/branch'
 import type { Product } from '@/entities/product'
-import { formatPrice } from '@/shared/lib'
+import { buildFormMessage, formatPrice } from '@/shared/lib'
 
 interface Line {
   product: Product
   quantity: number
 }
 
-/** Genera el mensaje de WhatsApp con formato legible (negritas y viñetas). */
-export function buildInquiryMessage(lines: Line[], branch: Branch, note?: string) {
-  const total = lines.reduce((acc, l) => acc + l.product.price * l.quantity, 0)
-  const body = lines
-    .map((l) => `• ${l.quantity} x *${l.product.name}* (${l.product.unit}) — ${formatPrice(l.product.price * l.quantity)}`)
-    .join('\n')
+export const SHIPPING_OPTIONS = [
+  { value: 'recoger', label: 'Recoger en tienda' },
+  { value: 'domicilio', label: 'Domicilio en Ibagué' },
+  { value: 'nacional', label: 'Envío nacional' },
+] as const
 
-  return [
-    `Hola, ${branch.name}. Vi estos productos en la página de Universo Esotérico:`,
-    '',
-    body,
-    '',
-    `*Total estimado:* ${formatPrice(total)}`,
-    note ? `\nNota: ${note}` : '',
-    '',
-    '¿Me confirman disponibilidad y el costo del envío? Gracias.',
-  ]
-    .filter((line, i, arr) => !(line === '' && arr[i - 1] === ''))
+export type ShippingId = (typeof SHIPPING_OPTIONS)[number]['value']
+
+interface InquiryOptions {
+  branch: Branch
+  /** El cliente eligió "La que tenga disponibilidad". */
+  anyBranch?: boolean
+  shipping: ShippingId
+  note?: string
+}
+
+/** Mensaje de pedido para la lista de consulta. */
+export function buildInquiryMessage(lines: Line[], { branch, anyBranch, shipping, note }: InquiryOptions) {
+  const total = lines.reduce((acc, l) => acc + l.product.price * l.quantity, 0)
+  const items = lines
+    .map((l) => `   • ${l.quantity} x ${l.product.name} (${l.product.unit}) — ${formatPrice(l.product.price * l.quantity)}`)
     .join('\n')
+  const shippingLabel = SHIPPING_OPTIONS.find((s) => s.value === shipping)?.label
+
+  return buildFormMessage([
+    { icon: '🛍️', label: 'Pedido', value: `\n${items}` },
+    { icon: '💰', label: 'Total estimado', value: formatPrice(total) },
+    { icon: '📍', label: 'Sede elegida', value: anyBranch ? 'La que tenga disponibilidad' : `${branch.name} (${branch.city})` },
+    { icon: '🚚', label: 'Envío', value: shippingLabel },
+    { icon: '📝', label: 'Nota', value: note },
+  ])
 }
 
 /** Mensaje rápido para consultar un solo producto. */
-export function buildSingleProductMessage(product: Product) {
-  return `Hola, vi en la página *${product.name}* (${product.unit}) a ${formatPrice(product.price)}. ¿Lo tienen disponible?`
+export function buildSingleProductMessage(product: Product, branch?: Branch) {
+  return buildFormMessage([
+    { icon: '🛍️', label: 'Pedido', value: `${product.name} (${product.unit})` },
+    { icon: '💰', label: 'Precio', value: formatPrice(product.price) },
+    { icon: '📍', label: 'Sede', value: branch ? `${branch.name} (${branch.city})` : undefined },
+  ])
 }

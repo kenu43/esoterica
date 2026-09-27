@@ -1,0 +1,12 @@
+name = "universo-esoterico-chat"
+main = "src/index.ts"
+compatibility_date = "2025-09-01"
+
+[vars]
+# Dominios que pueden usar el asistente (separados por coma)
+ALLOWED_ORIGINS = "https://esoterica-app.web.app,https://esoterica-app.firebaseapp.com,http://localhost:5173"
+GEMINI_MODEL = "gemini-2.5-flash"
+
+# Solo la URL principal; sin URLs de vista previa
+workers_dev = true
+preview_urls = false

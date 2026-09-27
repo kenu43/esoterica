@@ -1,14 +1,23 @@
 import { Breadcrumbs, Button, Chip, Skeleton } from '@heroui/react'
-import { Check, Clock, MapPin, MessageCircle, Truck } from 'lucide-react'
+import { Check, Clock, MapPin, MessageCircle, Moon, ScrollText, Truck } from 'lucide-react'
 import { motion } from 'motion/react'
+import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { getBranch } from '@/entities/branch'
-import { getCategory } from '@/entities/category'
-import { ProductBadges, ProductCard, useProduct, useProducts } from '@/entities/product'
+import { useCategory } from '@/entities/category'
+import {
+  moonPhaseLabel,
+  ProductBadges,
+  ProductCard,
+  resolveColor,
+  useTaxonomyLabels,
+  useProduct,
+  useProducts,
+} from '@/entities/product'
 import { AddToInquiryButton, buildSingleProductMessage } from '@/features/whatsapp-inquiry'
 import { ROUTES, SITE } from '@/shared/config'
 import { useSeo } from '@/shared/hooks'
-import { buildWhatsAppUrl, formatPrice } from '@/shared/lib'
+import { buildWhatsAppUrl, cn, formatPrice } from '@/shared/lib'
 import { Container, Reveal, SectionHeading } from '@/shared/ui'
 import { NotFoundPage } from '@/pages/not-found'
 
@@ -16,6 +25,9 @@ export function ProductDetailPage() {
   const { slug = '' } = useParams()
   const { data: product, isPending } = useProduct(slug)
   const { data: related = [] } = useProducts({ category: product?.category })
+  const category = useCategory(product?.category)
+  const labels = useTaxonomyLabels()
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   useSeo({
     title: product ? `${product.name} en Ibagué` : undefined,
@@ -28,7 +40,7 @@ export function ProductDetailPage() {
           name: product.name,
           description: product.description,
           image: product.image.startsWith('http') ? product.image : `${SITE.url}${product.image}`,
-          category: getCategory(product.category).name,
+          category: category.name,
           brand: { '@type': 'Brand', name: SITE.name },
           offers: {
             '@type': 'Offer',
@@ -56,11 +68,14 @@ export function ProductDetailPage() {
 
   if (!product) return <NotFoundPage />
 
-  const category = getCategory(product.category)
   const branches = product.branches.map(getBranch).filter((b) => !!b)
   const main = branches[0]
-  const whatsappUrl = buildWhatsAppUrl(main?.whatsapp ?? SITE.whatsapp, buildSingleProductMessage(product))
-  const discount = product.compareAtPrice ? Math.round((1 - product.price / product.compareAtPrice) * 100) : 0
+  const whatsappUrl = buildWhatsAppUrl(main?.whatsapp ?? SITE.whatsapp, buildSingleProductMessage(product, main))
+  // Solo es descuento si el precio anterior es realmente mayor
+  const hasDiscount = !!product.compareAtPrice && product.compareAtPrice > product.price
+  const discount = hasDiscount ? Math.round((1 - product.price / product.compareAtPrice!) * 100) : 0
+  const photos = [product.image, ...product.gallery]
+  const activePhoto = selectedImage && photos.includes(selectedImage) ? selectedImage : product.image
 
   return (
     <>
@@ -77,10 +92,37 @@ export function ProductDetailPage() {
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="relative overflow-hidden rounded-2xl border border-border bg-surface-secondary lg:sticky lg:top-28 lg:self-start"
+            className="space-y-3 lg:sticky lg:top-28 lg:self-start"
           >
-            <img src={product.image} alt={product.name} width={800} height={800} className="aspect-square w-full object-cover" />
-            <ProductBadges badges={product.badges} discount={discount} className="absolute left-4 top-4 right-4" />
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-surface-secondary">
+              <img src={activePhoto} alt={product.name} width={800} height={800} className="aspect-square w-full object-cover" />
+              <ProductBadges badges={product.badges} discount={discount} className="absolute left-4 top-4 right-4" />
+              {!product.inStock && (
+                <span className="absolute inset-x-4 bottom-4 rounded-lg bg-black/75 py-2 text-center text-sm font-semibold text-white">
+                  Agotado por ahora
+                </span>
+              )}
+            </div>
+            {photos.length > 1 && (
+              <ul className="grid grid-cols-5 gap-2" aria-label="Más fotos">
+                {photos.map((src, i) => (
+                  <li key={src}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedImage(src)}
+                      aria-label={`Ver foto ${i + 1}`}
+                      aria-pressed={src === activePhoto}
+                      className={cn(
+                        'block w-full overflow-hidden rounded-xl border-2 transition-colors',
+                        src === activePhoto ? 'border-gold' : 'border-transparent hover:border-gold/40',
+                      )}
+                    >
+                      <img src={src} alt="" loading="lazy" className="aspect-square w-full object-cover" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </motion.div>
 
           <motion.div
@@ -99,11 +141,31 @@ export function ProductDetailPage() {
 
             <div className="flex flex-wrap items-end gap-3">
               <span className="text-3xl font-bold">{formatPrice(product.price)}</span>
-              {product.compareAtPrice && (
-                <span className="pb-1 text-lg text-muted line-through">{formatPrice(product.compareAtPrice)}</span>
+              {hasDiscount && (
+                <span className="pb-1 text-lg text-muted line-through">{formatPrice(product.compareAtPrice!)}</span>
               )}
               <span className="pb-1.5 text-sm text-muted">{product.unit}</span>
             </div>
+
+            {product.colors.length > 0 && (
+              <div>
+                <p className="mb-2 text-sm font-medium">Colores disponibles</p>
+                <ul className="flex flex-wrap gap-2">
+                  {product.colors.map((c) => {
+                    const swatch = resolveColor(c.name, c.hex)
+                    return (
+                      <li
+                        key={c.name}
+                        className="flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-sm"
+                      >
+                        {swatch && <span className="size-4 rounded-full ring-1 ring-border" style={{ background: swatch }} aria-hidden />}
+                        {c.name}
+                      </li>
+                    )
+                  })}
+                </ul>
+              </div>
+            )}
 
             <div className="flex flex-wrap gap-3">
               <AddToInquiryButton product={product} variant="full" />
@@ -113,7 +175,7 @@ export function ProductDetailPage() {
                 className="gap-2"
                 onPress={() => window.open(whatsappUrl, '_blank', 'noopener,noreferrer')}
               >
-                <MessageCircle className="size-4" /> Preguntar ahora
+                <MessageCircle className="size-4" /> {product.inStock ? 'Preguntar ahora' : 'Preguntar cuándo llega'}
               </Button>
             </div>
 
@@ -127,6 +189,35 @@ export function ProductDetailPage() {
             </ul>
 
             <p className="leading-relaxed">{product.description}</p>
+
+            {(product.intentions.length > 0 || product.season || product.moonPhase) && (
+              <div className="flex flex-wrap items-center gap-2">
+                {product.intentions.map((v) => (
+                  <Chip key={v} size="sm" variant="soft" color="accent">
+                    {labels.intention(v)}
+                  </Chip>
+                ))}
+                {product.season && (
+                  <Chip size="sm" variant="secondary">
+                    Temporada: {labels.season(product.season)}
+                  </Chip>
+                )}
+                {product.moonPhase && (
+                  <Chip size="sm" variant="secondary">
+                    <Moon className="size-3" aria-hidden /> {moonPhaseLabel(product.moonPhase)}
+                  </Chip>
+                )}
+              </div>
+            )}
+
+            {product.usageGuide && (
+              <div className="rounded-xl border border-border bg-surface p-4">
+                <p className="mb-2 flex items-center gap-2 text-sm font-medium">
+                  <ScrollText className="size-4 text-gold" aria-hidden /> Cómo se usa
+                </p>
+                <p className="whitespace-pre-line text-sm leading-relaxed text-muted">{product.usageGuide}</p>
+              </div>
+            )}
 
             {product.benefits.length > 0 && (
               <ul className="grid gap-2 sm:grid-cols-2">

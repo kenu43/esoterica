@@ -3,9 +3,10 @@ import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { getBranch } from '@/entities/branch'
-import { getCategory } from '@/entities/category'
+import { useCategory } from '@/entities/category'
 import { ROUTES } from '@/shared/config'
 import { formatPrice } from '@/shared/lib'
+import { useTaxonomyLabels } from '../model/taxonomy-queries'
 import type { Product } from '../model/types'
 import { ProductBadges } from './ProductBadges'
 
@@ -17,7 +18,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, action, index = 0 }: ProductCardProps) {
-  const category = getCategory(product.category)
+  const category = useCategory(product.category)
+  const labels = useTaxonomyLabels()
   const store = product.branches[0] ? getBranch(product.branches[0]) : undefined
   const discount = product.compareAtPrice
     ? Math.round((1 - product.price / product.compareAtPrice) * 100)
@@ -47,8 +49,13 @@ export function ProductCard({ product, action, index = 0 }: ProductCardProps) {
           className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
         <ProductBadges badges={product.badges} discount={discount} className="absolute left-3 top-3 right-3" />
+        {product.season && (
+          <span className="absolute bottom-3 left-3 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-[oklch(0.3_0.1_300)] shadow">
+            {labels.season(product.season)}
+          </span>
+        )}
         {!product.inStock && (
-          <span className="absolute inset-x-3 bottom-3 rounded-md bg-black/70 py-1 text-center text-xs font-semibold text-white">
+          <span className="absolute inset-x-3 bottom-3 rounded-md bg-black/75 py-1 text-center text-xs font-semibold text-white">
             Agotado por ahora
           </span>
         )}

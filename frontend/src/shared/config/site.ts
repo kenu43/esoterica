@@ -12,6 +12,8 @@ export const SITE = {
   url: env.VITE_SITE_URL,
   /** WhatsApp principal (formato internacional, solo dígitos). */
   whatsapp: '573144778105',
+  /** WhatsApp que recibe encargos y mensajes de contacto (La Colonia). */
+  ordersWhatsapp: '573003236179',
   instagram: 'https://www.instagram.com/conexiondemagia/',
   instagramHandle: '@conexiondemagia',
   facebook: 'https://www.facebook.com/profile.php?id=61565505067255',
@@ -30,6 +32,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Productos', to: ROUTES.products },
   { label: 'Tarot', to: ROUTES.tarot },
   { label: 'Glosario', to: ROUTES.glossary },
+  { label: 'Aprende', to: ROUTES.learn },
   { label: 'Tiendas', to: ROUTES.stores },
   { label: 'Encargos', to: ROUTES.customOrder },
   { label: 'Nosotros', to: ROUTES.about },

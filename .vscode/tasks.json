@@ -1,0 +1,77 @@
+{
+  // Ejecutar: Ctrl+Shift+P → "Tasks: Run Task" (o Ctrl+Shift+B para levantar todo)
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Frontend (web :5173)",
+      "type": "shell",
+      "command": "pnpm dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "group": "dev", "panel": "dedicated" }
+    },
+    {
+      "label": "Studio (panel :3333)",
+      "type": "shell",
+      "command": "pnpm studio",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "group": "dev", "panel": "dedicated" }
+    },
+    {
+      "label": "Levantar todo (web + panel)",
+      "dependsOn": ["Frontend (web :5173)", "Studio (panel :3333)"],
+      "dependsOrder": "parallel",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "Instalar dependencias",
+      "type": "shell",
+      "command": "pnpm --dir frontend install; pnpm --dir studio-universo-esoterico install",
+      "problemMatcher": []
+    },
+    {
+      "label": "Verificar (tipos + lint + build)",
+      "type": "shell",
+      "command": "pnpm --dir frontend exec tsc -b; pnpm --dir frontend lint; pnpm --dir frontend build; pnpm --dir studio-universo-esoterico build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Sanity: iniciar sesión",
+      "type": "shell",
+      "command": "pnpm --dir studio-universo-esoterico exec sanity login",
+      "problemMatcher": []
+    },
+    {
+      "label": "Sanity: autorizar dominios (CORS)",
+      "type": "shell",
+      "command": "pnpm --dir studio-universo-esoterico cors",
+      "problemMatcher": []
+    },
+    {
+      "label": "Sanity: cargar datos de ejemplo (solo lo que falta)",
+      "type": "shell",
+      "command": "pnpm --dir studio-universo-esoterico seed",
+      "problemMatcher": []
+    },
+    {
+      "label": "Sanity: migrar categorías de productos viejos",
+      "type": "shell",
+      "command": "pnpm --dir studio-universo-esoterico migrate:categories",
+      "problemMatcher": []
+    },
+    {
+      "label": "Publicar panel (Sanity Studio)",
+      "type": "shell",
+      "command": "pnpm deploy:studio",
+      "problemMatcher": []
+    },
+    {
+      "label": "Publicar web (Firebase Hosting)",
+      "type": "shell",
+      "command": "pnpm build; pnpm deploy",
+      "problemMatcher": []
+    }
+  ]
+}

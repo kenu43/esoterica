@@ -7,15 +7,11 @@
       "Bash(pnpm --dir frontend *)",
       "Bash(pnpm --dir studio-universo-esoterico build)",
       "Bash(pnpm --dir studio-universo-esoterico seed:build)",
-      "Bash(pnpm --dir backend/functions build)",
       "Bash(npx tsc -b:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)"
     ],
-    "deny": [
-      "Read(backend/functions/.secret.local)",
-      "Read(**/.env.local)"
-    ]
+    "deny": ["Read(**/.env.local)"]
   }
 }

@@ -2,6 +2,7 @@ import { RouterProvider as AriaRouterProvider } from '@heroui/react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Suspense } from 'react'
 import { ScrollRestoration, useHref, useLocation, useNavigate, useOutlet } from 'react-router'
+import { AssistantChat } from '@/features/ai-assistant'
 import { InquiryDrawer, WhatsAppFab } from '@/features/whatsapp-inquiry'
 import { ScrollProgress } from '@/shared/ui'
 import { Footer } from '@/widgets/footer'
@@ -46,6 +47,7 @@ export function RootLayout() {
       <Footer />
       <InquiryDrawer />
       <WhatsAppFab />
+      <AssistantChat />
       <ScrollRestoration />
     </AriaRouterProvider>
   )

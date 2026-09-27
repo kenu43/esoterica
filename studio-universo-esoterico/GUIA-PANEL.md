@@ -53,6 +53,28 @@ Abre el producto → menú de los tres puntos (arriba a la derecha) → **Delete
 Menú **Opiniones de clientes** → **+**. Copia el comentario tal cual lo escribió el cliente
 (de WhatsApp, Google o Facebook), pon el nombre como "Luz Marina R." y publica.
 
+## 7. Crear o editar categorías
+
+Menú **Categorías (crear y editar)** → **+**. Escribe el nombre, toca *Generar* en el enlace, una frase corta, elige un ícono y una foto de portada.
+El campo **Orden** decide en qué posición sale en la web (número bajo = primero). Al crear un producto, la nueva categoría ya aparece en la lista.
+
+## 8. Campos extra del producto
+
+- **Más fotos**: miniaturas debajo de la foto principal.
+- **Colores disponibles**: para velones y velas (nombre del color; el código exacto es opcional).
+- **Cómo se usa (ritual)**, **Intención**, **Fase lunar recomendada** y **Temporada**.
+- Las **Temporadas** (Navidad, Día del Padre…) y las **Intenciones** (amor, protección…) se crean y editan en sus menús; luego se eligen en el producto.
+- **Descuento (%)**: pon por ejemplo 20 y la web calcula sola el precio final; el "Precio (COP)" es el normal y sale tachado.
+- **Precio antes**: alternativa al %, solo cuenta si es mayor que el precio actual.
+
+## 9. Artículos (Aprende y Sanar)
+
+Menú **Aprende y Sanar (artículos)** → **+**. Título tal como lo buscaría la gente, resumen corto, tema, foto y contenido con títulos de sección, listas y negrita. Salen en la página **Aprende** y ayudan a aparecer en Google.
+
+## 10. Glosario místico
+
+Menú **Glosario místico** → **+**: término, tema, respuesta corta y explicación. Aparece en la página Glosario.
+
 ---
 
 ## Consejos para las fotos

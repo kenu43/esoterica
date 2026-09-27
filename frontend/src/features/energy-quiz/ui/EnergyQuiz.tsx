@@ -129,7 +129,7 @@ export function EnergyQuiz() {
               </div>
 
               <p className="mt-6 flex items-center gap-2 text-sm font-medium">
-                <LotusIcon className="size-4 text-gold" /> Lo que te recomendamos
+                <LotusIcon className="size-5 text-gold" /> Lo que te recomendamos
               </p>
               <ul className="mt-3 grid gap-3 sm:grid-cols-3">
                 {picks.map((p) => (

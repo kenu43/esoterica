@@ -1,9 +1,9 @@
 import { Button, Label, ListBox, SearchField, Select, Switch } from '@heroui/react'
-import { RotateCcw } from 'lucide-react'
+import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { BRANCHES } from '@/entities/branch'
-import { CATEGORIES } from '@/entities/category'
+import { useCategories } from '@/entities/category'
 import type { ProductSort } from '@/entities/product'
 import { cn } from '@/shared/lib'
 import { useProductFilters } from '../model/useProductFilters'
@@ -15,7 +15,34 @@ const SORTS: { value: ProductSort; label: string }[] = [
   { value: 'price-desc', label: 'Precio: mayor a menor' },
 ]
 
+/** Detecta si la fila de categorías tiene más contenido a cada lado para mostrar las flechas. */
+function useScrollHints() {
+  const ref = useRef<HTMLDivElement>(null)
+  const [hints, setHints] = useState({ left: false, right: false })
+
+  const measure = useCallback(() => {
+    const el = ref.current
+    if (!el) return
+    setHints({ left: el.scrollLeft > 4, right: el.scrollLeft + el.clientWidth < el.scrollWidth - 4 })
+  }, [])
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [measure])
+
+  const scrollBy = (dir: 1 | -1) =>
+    ref.current?.scrollBy({ left: dir * ref.current.clientWidth * 0.7, behavior: 'smooth' })
+
+  return { ref, hints, measure, scrollBy }
+}
+
 export function ProductFilters() {
+  const { ref: tabsRef, hints, measure, scrollBy } = useScrollHints()
   const { filter, update, reset, activeCount } = useProductFilters()
   const [search, setSearch] = useState(filter.search ?? '')
 
@@ -27,12 +54,33 @@ export function ProductFilters() {
     return () => clearTimeout(t)
   }, [search, filter.search, update])
 
-  const categories = [{ id: 'all' as const, name: 'Todo', icon: null }, ...CATEGORIES]
+  const categories = [{ id: 'all', name: 'Todo', icon: null }, ...useCategories()]
 
   return (
     <div className="space-y-4">
       {/* Categorías con indicador animado compartido (layoutId) */}
-      <div className="-mx-4 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
+      <div className="relative">
+        {hints.left && (
+          <button
+            type="button"
+            aria-label="Ver categorías anteriores"
+            onClick={() => scrollBy(-1)}
+            className="absolute left-0 top-0 z-10 grid h-full w-12 place-items-center bg-gradient-to-r from-surface via-surface/90 to-transparent text-foreground"
+          >
+            <ChevronLeft className="size-5" />
+          </button>
+        )}
+        {hints.right && (
+          <button
+            type="button"
+            aria-label="Ver más categorías"
+            onClick={() => scrollBy(1)}
+            className="absolute right-0 top-0 z-10 grid h-full w-12 place-items-center bg-gradient-to-l from-surface via-surface/90 to-transparent text-foreground"
+          >
+            <ChevronRight className="size-5 animate-pulse" />
+          </button>
+        )}
+      <div ref={tabsRef} onScroll={measure} className="overflow-x-auto pb-1 [scrollbar-width:none]">
         <div role="tablist" aria-label="Categorías" className="flex w-max gap-2">
           {categories.map((c) => {
             const active = (filter.category ?? 'all') === c.id
@@ -62,6 +110,7 @@ export function ProductFilters() {
             )
           })}
         </div>
+      </div>
       </div>
 
       <div className="grid gap-3 md:grid-cols-[1fr_200px_210px_auto] md:items-center">

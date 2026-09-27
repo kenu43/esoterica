@@ -2,7 +2,7 @@
 
 Web de las tres tiendas familiares del centro de Ibagué: **El Sortilegio** (1981),
 **La Colonia** (2004) y **Loto & Nirvana** (2023). Catálogo con precios, consulta por
-WhatsApp, encargos por correo, tarot, glosario, fase lunar y test de energía.
+WhatsApp, encargos por WhatsApp, tarot, numerología, glosario, fase lunar y test de energía.
 
 ## Estructura
 
@@ -10,8 +10,7 @@ WhatsApp, encargos por correo, tarot, glosario, fase lunar y test de energía.
 esoterica/
 ├── frontend/                   # React 19 + Vite 8 + HeroUI v3 + Tailwind 4 (Feature-Sliced Design)
 ├── studio-universo-esoterico/  # Sanity Studio: panel de administración del catálogo
-├── backend/functions/          # Cloud Function `sendRequest` (formularios → Resend)
-├── firebase.json               # Hosting + rewrite /api/requests → función
+├── firebase.json               # Firebase Hosting
 └── CLAUDE.md                   # Contexto corto para sesiones con Claude
 ```
 
@@ -21,7 +20,6 @@ esoterica/
 | Animación     | Motion (Framer Motion), GSAP ScrollTrigger, View Transitions      |
 | Datos         | TanStack Query + patrón Repository (Sanity con respaldo en mock)  |
 | CMS           | Sanity.io (proyecto `rx1vv2w8`, dataset `production`)             |
-| Correos       | Firebase Cloud Functions + Resend                                 |
 | Hosting       | Firebase Hosting (proyecto `esoterica-app`) + Analytics           |
 | Mapas         | Leaflet + OpenStreetMap (sin API key)                             |
 
@@ -32,7 +30,6 @@ pnpm dev                 # web en http://localhost:5173
 pnpm studio              # panel Sanity en http://localhost:3333
 pnpm build               # compila la web (genera sitemap.xml)
 pnpm run deploy          # publica la web en Firebase Hosting
-pnpm run deploy:functions
 pnpm run deploy:studio   # publica el panel en https://universo-esoterico.sanity.studio
 ```
 
@@ -43,18 +40,17 @@ pnpm run deploy:studio   # publica el panel en https://universo-esoterico.sanity
    cd studio-universo-esoterico
    pnpm exec sanity login          # entra con la cuenta dueña del proyecto
    pnpm cors                       # autoriza localhost y el dominio de Firebase
-   pnpm seed                       # sube los 36 productos de ejemplo con sus fotos + opiniones
+   pnpm seed                       # sube lo que FALTA (no pisa nada de lo ya editado)
+   pnpm migrate:categories         # solo si ya había productos: enlaza su categoría
    pnpm run deploy                 # publica el panel
    ```
    Luego invita a tu hermano como **Editor** en https://www.sanity.io/manage → proyecto → Members.
    Guía para él: [`studio-universo-esoterico/GUIA-PANEL.md`](studio-universo-esoterico/GUIA-PANEL.md).
 
-2. **Correos (Resend)** — ver [`backend/README.md`](backend/README.md). Requiere plan Blaze.
-
-3. **Publicar**
+2. **Publicar**
    ```bash
    pnpm add -g firebase-tools && firebase login
-   pnpm run deploy && pnpm run deploy:functions
+   pnpm run deploy
    ```
 
 ## ¿Cómo se actualiza el catálogo?

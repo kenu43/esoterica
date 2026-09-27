@@ -1,7 +1,7 @@
 import { buttonVariants } from '@heroui/react'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router'
-import { GLOSSARY } from '@/entities/glossary'
+import { useGlossary } from '@/entities/glossary'
 import { ROUTES } from '@/shared/config'
 import { cn } from '@/shared/lib'
 import { Container, Reveal, SectionHeading } from '@/shared/ui'
@@ -10,7 +10,10 @@ const FEATURED = ['santa-muerte', 'tetragramaton', 'bano-de-despojo', 'ruda', 'd
 
 /** Adelanto del glosario en la portada: responde dudas frecuentes y lleva tráfico de Google. */
 export function GlossaryTeaser() {
-  const terms = FEATURED.map((id) => GLOSSARY.find((t) => t.id === id)!).filter(Boolean)
+  const glossary = useGlossary()
+  const featured = FEATURED.map((id) => glossary.find((t) => t.id === id)).filter((t) => !!t)
+  // Si el editor borró alguno de los destacados, se completa con los primeros del glosario
+  const terms = featured.length >= 3 ? featured : glossary.slice(0, 6)
   return (
     <section className="py-24">
       <Container className="space-y-12">

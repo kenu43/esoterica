@@ -1,13 +1,18 @@
+import { BookIcon } from '@sanity/icons/Book'
+import { DocumentTextIcon } from '@sanity/icons/DocumentText'
+import { CalendarIcon } from '@sanity/icons/Calendar'
 import { CommentIcon } from '@sanity/icons/Comment'
 import { HomeIcon } from '@sanity/icons/Home'
+import { SparkleIcon } from '@sanity/icons/Sparkle'
 import { TagIcon } from '@sanity/icons/Tag'
+import { ThListIcon } from '@sanity/icons/ThList'
 import { WarningOutlineIcon } from '@sanity/icons/WarningOutline'
 import type { StructureResolver } from 'sanity/structure'
-import { CATEGORIES, STORES } from './schemaTypes/constants'
+import { STORES } from './schemaTypes/constants'
 
 /**
  * Menú lateral del panel: productos agrupados por tienda y por categoría,
- * más un atajo a los agotados. Así tu hermano encuentra todo en 2 clics.
+ * más atajos a agotados, categorías, glosario y opiniones. Así tu hermano encuentra todo en 2 clics.
  */
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -33,23 +38,17 @@ export const structure: StructureResolver = (S) =>
       ),
       S.divider(),
       S.listItem()
-        .title('Por categoría')
+        .title('Productos por categoría')
         .icon(TagIcon)
         .child(
-          S.list()
-            .title('Categorías')
-            .items(
-              CATEGORIES.map((c) =>
-                S.listItem()
-                  .title(c.title)
-                  .child(
-                    S.documentList()
-                      .title(c.title)
-                      .schemaType('product')
-                      .filter('_type == "product" && category == $category')
-                      .params({ category: c.value }),
-                  ),
-              ),
+          S.documentTypeList('category')
+            .title('Elige una categoría')
+            .child((categoryId) =>
+              S.documentList()
+                .title('Productos')
+                .schemaType('product')
+                .filter('_type == "product" && category._ref == $categoryId')
+                .params({ categoryId }),
             ),
         ),
       S.listItem()
@@ -62,6 +61,26 @@ export const structure: StructureResolver = (S) =>
             .filter('_type == "product" && inStock == false'),
         ),
       S.divider(),
+      S.listItem()
+        .title('Categorías (crear y editar)')
+        .icon(ThListIcon)
+        .child(S.documentTypeList('category').title('Categorías')),
+      S.listItem()
+        .title('Temporadas (Navidad, etc.)')
+        .icon(CalendarIcon)
+        .child(S.documentTypeList('season').title('Temporadas')),
+      S.listItem()
+        .title('Intenciones (amor, protección…)')
+        .icon(SparkleIcon)
+        .child(S.documentTypeList('intention').title('Intenciones')),
+      S.listItem()
+        .title('Aprende y Sanar (artículos)')
+        .icon(DocumentTextIcon)
+        .child(S.documentTypeList('article').title('Artículos')),
+      S.listItem()
+        .title('Glosario místico')
+        .icon(BookIcon)
+        .child(S.documentTypeList('glossaryTerm').title('Glosario místico')),
       S.listItem()
         .title('Opiniones de clientes')
         .icon(CommentIcon)

@@ -1,5 +1,6 @@
 import { BookOpen, Boxes, Church, Droplets, Flame, Shield, Sparkles, type LucideIcon } from 'lucide-react'
 import { z } from 'zod'
+import { BRANCH_CHOICES, DEFAULT_BRANCH_ID } from '@/entities/branch'
 
 /** Encargos sugeridos: lo que más piden los clientes y hay que conseguir o preparar. */
 export const SUGGESTIONS: { value: string; label: string; icon: LucideIcon }[] = [
@@ -12,12 +13,7 @@ export const SUGGESTIONS: { value: string; label: string; icon: LucideIcon }[] =
   { value: 'por-mayor', label: 'Compra al por mayor', icon: Boxes },
 ]
 
-export const STORE_OPTIONS = [
-  { value: 'cualquiera', label: 'La que tenga disponibilidad' },
-  { value: 'el-sortilegio', label: 'El Sortilegio' },
-  { value: 'la-colonia', label: 'La Colonia' },
-  { value: 'loto-nirvana', label: 'Loto & Nirvana' },
-]
+export const STORE_OPTIONS = BRANCH_CHOICES.map((b) => ({ value: b.id, label: b.name }))
 
 export const BUDGETS = [
   { value: 'sin-definir', label: 'Prefiero que me coticen' },
@@ -29,7 +25,8 @@ export const BUDGETS = [
 
 export const DELIVERY = [
   { value: 'recoger', label: 'Recoger en la tienda (Ibagué)' },
-  { value: 'envio', label: 'Envío a domicilio' },
+  { value: 'domicilio', label: 'Domicilio en Ibagué' },
+  { value: 'envio', label: 'Envío nacional' },
 ]
 
 const phoneRegex = /^[+\d\s()-]{7,20}$/
@@ -45,17 +42,15 @@ export const customOrderSchema = z
     // Paso 2 · Tus datos
     name: z.string().trim().min(3, 'Escribe tu nombre completo'),
     phone: z.string().trim().regex(phoneRegex, 'Número no válido'),
-    email: z.email('Correo no válido'),
     city: z.string().min(1, 'Elige tu ciudad'),
     delivery: z.string().min(1, 'Elige cómo quieres recibirlo'),
     address: z.string().optional(),
     // Paso 3 · Confirmar
     notes: z.string().max(1000).optional(),
     consent: z.literal(true, 'Debes aceptar para enviar el encargo'),
-    website: z.string().optional(), // honeypot
   })
   .superRefine((data, ctx) => {
-    if (data.delivery === 'envio' && (data.address ?? '').trim().length < 6)
+    if (data.delivery !== 'recoger' && data.delivery !== '' && (data.address ?? '').trim().length < 6)
       ctx.addIssue({ code: 'custom', path: ['address'], message: 'Escribe la dirección de entrega' })
   })
 
@@ -64,7 +59,7 @@ export type CustomOrderValues = z.input<typeof customOrderSchema>
 /** Campos a validar antes de avanzar en cada paso del asistente. */
 export const STEP_FIELDS: (keyof CustomOrderValues)[][] = [
   ['suggestions', 'request', 'quantity', 'store', 'budget'],
-  ['name', 'phone', 'email', 'city', 'delivery', 'address'],
+  ['name', 'phone', 'city', 'delivery', 'address'],
   ['consent'],
 ]
 
@@ -72,15 +67,13 @@ export const defaultValues: CustomOrderValues = {
   suggestions: [],
   request: '',
   quantity: '',
-  store: 'cualquiera',
+  store: DEFAULT_BRANCH_ID,
   budget: 'sin-definir',
   name: '',
   phone: '',
-  email: '',
   city: 'Ibagué',
   delivery: '',
   address: '',
   notes: '',
   consent: false as unknown as true,
-  website: '',
 }

@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 /**
  * Variables de entorno validadas al arrancar.
- * Solo contienen valores públicos: las claves secretas (Resend) viven en el backend.
+ * Solo contienen valores públicos.
  */
 const envSchema = z.object({
   /** "sanity" lee del CMS (con respaldo en mockData si falla); "mock" usa solo los datos locales. */
@@ -12,9 +12,6 @@ const envSchema = z.object({
   VITE_SANITY_DATASET: z.string().default('production'),
   VITE_SANITY_API_VERSION: z.string().default('2025-02-19'),
 
-  /** Endpoint de la Cloud Function que envía correos con Resend. */
-  VITE_API_URL: z.string().default('/api'),
-
   VITE_FIREBASE_API_KEY: z.string().optional(),
   VITE_FIREBASE_AUTH_DOMAIN: z.string().optional(),
   VITE_FIREBASE_PROJECT_ID: z.string().optional(),
@@ -22,6 +19,9 @@ const envSchema = z.object({
   VITE_FIREBASE_MESSAGING_SENDER_ID: z.string().optional(),
   VITE_FIREBASE_APP_ID: z.string().optional(),
   VITE_FIREBASE_MEASUREMENT_ID: z.string().optional(),
+
+  /** URL del Worker del asesor con IA (vacío = el asesor no aparece). */
+  VITE_CHAT_URL: z.url().optional(),
 
   VITE_SITE_URL: z.string().default('https://esoterica-app.web.app'),
 })

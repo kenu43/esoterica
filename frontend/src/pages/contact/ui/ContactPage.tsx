@@ -1,5 +1,5 @@
 import { Accordion } from '@heroui/react'
-import { Mail, MessageCircle, Phone } from 'lucide-react'
+import { MessageCircle, Phone } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { BRANCHES } from '@/entities/branch'
 import { ContactForm } from '@/features/contact-form'
@@ -77,7 +77,7 @@ export function ContactPage() {
         eyebrow="Hablemos"
         title="Estamos para ayudarte"
         highlight={['ayudarte']}
-        description="La forma más rápida de hablar con nosotros es WhatsApp. También puedes dejarnos un mensaje y te respondemos al correo."
+        description="La forma más rápida de hablar con nosotros es WhatsApp. También puedes dejarnos tu mensaje aquí y se abre el chat con todo escrito."
       />
 
       <Container className="grid items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
@@ -106,9 +106,9 @@ export function ContactPage() {
         <Reveal delay={0.1} className="h-full">
           <div className="h-full rounded-2xl border border-border bg-surface p-6 sm:p-8">
             <h2 className="mb-1 flex items-center gap-2 text-xl">
-              <Mail className="size-5 text-gold" aria-hidden /> Escríbenos
+              <MessageCircle className="size-5 text-gold" aria-hidden /> Escríbenos
             </h2>
-            <p className="mb-6 text-sm text-muted">Te respondemos al correo en menos de un día hábil.</p>
+            <p className="mb-6 text-sm text-muted">Se abre WhatsApp con tu mensaje listo para enviar.</p>
             <ContactForm />
           </div>
         </Reveal>

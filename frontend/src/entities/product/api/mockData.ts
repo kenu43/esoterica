@@ -11,7 +11,9 @@ import type { Product } from '../model/types'
  *  • Precios en pesos colombianos (COP), de referencia.
  * ─────────────────────────────────────────────────────────────
  */
-type MockProduct = Omit<Product, 'branches'>
+/** Los campos nuevos del Studio son opcionales aquí: el catálogo de ejemplo no los necesita. */
+type MockProduct = Omit<Product, 'branches' | 'intentions' | 'gallery' | 'colors'> &
+  Partial<Pick<Product, 'intentions' | 'gallery' | 'colors'>>
 
 export const mockProductsByStore: Record<BranchId, MockProduct[]> = {
   // ── El Sortilegio · desde 1981 · magia, santos y trabajos ─────────
@@ -641,5 +643,114 @@ export const mockProductsByStore: Record<BranchId, MockProduct[]> = {
 
 /** Catálogo plano: cada producto sabe en qué tienda está. */
 export const MOCK_PRODUCTS: Product[] = (Object.entries(mockProductsByStore) as [BranchId, MockProduct[]][]).flatMap(
-  ([store, products]) => products.map((p) => ({ ...p, branches: [store] })),
+  ([store, products]) =>
+    products.map((p) => ({ intentions: [], gallery: [], colors: [], ...p, branches: [store] })),
 )
+
+/**
+ * Productos de PRUEBA para ver todas las funciones (colores, descuento, galería, agotado,
+ * temporada, fase lunar, cómo se usa). Bórralos del Studio cuando ya no los necesites.
+ */
+const DEMO_PRODUCTS: Product[] = [
+  {
+    id: 'demo-001',
+    slug: 'velon-abrecaminos-demo',
+    name: 'Velón abre caminos (demo)',
+    category: 'velones',
+    price: 28000,
+    compareAtPrice: 35000,
+    unit: 'velón de 7 días',
+    shortDescription: 'Producto de prueba: colores, descuento, galería y guía de uso.',
+    description:
+      'Velón preparado para abrir caminos en el trabajo, el dinero y el amor. Elige el color según tu petición. Este producto existe solo para probar cómo se ve la página.',
+    benefits: ['Preparado a mano', 'Incluye oración', 'Dura 7 días'],
+    image: '/images/products/velones.webp',
+    gallery: ['/images/products/velas-rituales.webp', '/images/products/velones-figura.webp', '/images/products/vela-negra.webp'],
+    colors: [
+      { name: 'Rojo' },
+      { name: 'Verde' },
+      { name: 'Amarillo' },
+      { name: 'Dorado', hex: '#d4a72c' },
+      { name: 'Blanco' },
+      { name: 'Morado' },
+    ],
+    intentions: ['abundancia', 'trabajo', 'amor'],
+    moonPhase: 'creciente',
+    usageGuide:
+      '1. Limpia el velón con un paño y escribe tu petición en un papel.\n2. Enciéndelo en un lugar seguro, sobre un plato.\n3. Reza o pide con fe y déjalo consumir sin apagarlo.\n4. Repite durante 7 días seguidos.',
+    badges: ['nuevo', 'oferta'],
+    tags: ['velón', 'abre caminos', 'dinero'],
+    createdAt: '2026-09-20',
+    inStock: true,
+    branches: ['el-sortilegio', 'la-colonia'],
+  },
+  {
+    id: 'demo-002',
+    slug: 'kit-navideno-abundancia-demo',
+    name: 'Kit navideño de abundancia (demo)',
+    category: 'suerte',
+    price: 54000,
+    compareAtPrice: 72000,
+    unit: 'kit x 5 piezas',
+    shortDescription: 'Producto de prueba con temporada, edición limitada y varias fotos.',
+    description:
+      'Kit para recibir diciembre con buena energía: velón, riego, sahumerio, moneda de la suerte y oración. Solo en temporada.',
+    benefits: ['5 piezas', 'Incluye guía', 'Edición de temporada'],
+    image: '/images/products/duende.webp',
+    gallery: ['/images/products/gato-fortuna.webp', '/images/products/elefante.webp'],
+    colors: [{ name: 'Dorado', hex: '#d4a72c' }, { name: 'Rojo' }],
+    intentions: ['abundancia', 'suerte', 'proteccion'],
+    season: 'navidad',
+    moonPhase: 'llena',
+    usageGuide: 'Arma el kit en la puerta de tu casa el 24 de diciembre. Enciende el velón y sahúma de adentro hacia afuera.',
+    badges: ['edicion-limitada', 'destacado'],
+    tags: ['navidad', 'kit', 'suerte'],
+    createdAt: '2026-09-22',
+    inStock: true,
+    branches: ['loto-nirvana'],
+  },
+  {
+    id: 'demo-003',
+    slug: 'bano-de-despojo-agotado-demo',
+    name: 'Baño de despojo premium (demo)',
+    category: 'banos',
+    price: 22000,
+    unit: 'botella 500 ml',
+    shortDescription: 'Producto de prueba marcado como agotado.',
+    description: 'Baño de hierbas para despojar la mala energía. Está agotado a propósito para ver cómo se muestra.',
+    benefits: ['Hierbas frescas', 'Con oración'],
+    image: '/images/products/despojo.webp',
+    gallery: [],
+    colors: [],
+    intentions: ['limpieza', 'salud'],
+    moonPhase: 'menguante',
+    badges: [],
+    tags: ['despojo', 'limpieza'],
+    createdAt: '2026-09-18',
+    inStock: false,
+    branches: ['la-colonia'],
+  },
+  {
+    id: 'demo-004',
+    slug: 'pulsera-amor-y-amistad-demo',
+    name: 'Pulsera de cuarzo rosado (demo)',
+    category: 'amuletos',
+    price: 19000,
+    unit: 'pulsera ajustable',
+    shortDescription: 'Producto de prueba con temporada Amor y Amistad y colores.',
+    description: 'Pulsera de cuarzo rosado para atraer el amor y la armonía. Ideal para regalar en Amor y Amistad.',
+    benefits: ['Cuarzo natural', 'Ajustable'],
+    image: '/images/products/pulsera.webp',
+    gallery: ['/images/products/amuletos.webp'],
+    colors: [{ name: 'Rosado' }, { name: 'Negro' }, { name: 'Turquesa' }],
+    intentions: ['amor', 'paz'],
+    season: 'amor-y-amistad',
+    badges: ['nuevo'],
+    tags: ['pulsera', 'cuarzo', 'amor'],
+    createdAt: '2026-09-24',
+    inStock: true,
+    branches: ['loto-nirvana', 'la-colonia'],
+  },
+]
+
+MOCK_PRODUCTS.push(...DEMO_PRODUCTS)
