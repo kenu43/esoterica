@@ -8,7 +8,7 @@
     "build": "pnpm --dir frontend build",
     "lint": "pnpm --dir frontend lint",
     "studio": "pnpm --dir studio-universo-esoterico dev",
-    "deploy": "firebase deploy --only hosting",
+    "deploy": "pnpm build && firebase deploy --only hosting",
     "deploy:studio": "pnpm --dir studio-universo-esoterico deploy"
   },
   "engines": {

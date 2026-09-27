@@ -69,7 +69,7 @@ const toProduct = (doc: SanityProduct): Product => ({
   inStock: doc.inStock ?? true,
   createdAt: doc.createdAt.slice(0, 10),
   image: doc.image ? sanityImage(doc.image, 800) : '/images/products/amuletos.webp',
-  intentions: doc.intention ?? [],
+  intentions: (doc.intention ?? []).filter((v): v is string => !!v),
   moonPhase: doc.moonPhase || undefined,
   usageGuide: doc.usageGuide?.trim() || undefined,
   gallery: (doc.gallery ?? []).filter((g) => !!g?.asset).map((g) => sanityImage(g, 800)),

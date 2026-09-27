@@ -43,6 +43,7 @@ const humanize = (slug: string) => {
 /** Funciones para traducir el slug de una temporada o intención a su nombre visible. */
 export function useTaxonomyLabels() {
   const { data = defaults } = useQuery({ queryKey: ['taxonomy'], queryFn: fetchTaxonomy, staleTime: 5 * 60_000 })
-  const label = (list: Option[]) => (slug: string) => list.find((o) => o.value === slug)?.label ?? humanize(slug)
+  const label = (list: Option[]) => (slug?: string | null) =>
+    slug ? (list.find((o) => o.value === slug)?.label ?? humanize(slug)) : ''
   return { season: label(data.seasons), intention: label(data.intentions) }
 }
