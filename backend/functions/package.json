@@ -1,0 +1,22 @@
+{
+  "name": "esoterica-functions",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "lib/index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "serve": "pnpm build && firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions"
+  },
+  "dependencies": {
+    "firebase-functions": "^7.4.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.0"
+  }
+}

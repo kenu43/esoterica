@@ -1,0 +1,4 @@
+# Scripts de instalación de dependencias: ninguno es necesario para este proyecto
+allowBuilds:
+  '@firebase/util': false
+  protobufjs: false

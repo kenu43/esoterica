@@ -1,0 +1,41 @@
+import { Toast } from '@heroui/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MotionConfig } from 'motion/react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { applyTheme, useThemeStore, watchSystemTheme } from '@/features/theme-toggle'
+import { initAnalytics } from '@/shared/api'
+
+function createQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000, // el catálogo cambia poco: 5 min de caché "fresca"
+        gcTime: 30 * 60 * 1000,
+        refetchOnWindowFocus: false,
+        retry: 1,
+      },
+    },
+  })
+}
+
+/** Proveedores globales que no dependen del router. */
+export function AppProviders({ children }: { children: ReactNode }) {
+  const [queryClient] = useState(createQueryClient)
+  const theme = useThemeStore((s) => s.theme)
+
+  useEffect(() => applyTheme(theme), [theme])
+  useEffect(() => watchSystemTheme(), [])
+  useEffect(() => {
+    initAnalytics().catch(() => undefined)
+  }, [])
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {/* reducedMotion="user" respeta la preferencia del sistema operativo */}
+      <MotionConfig reducedMotion="user">
+        {children}
+        <Toast.Provider placement="bottom" />
+      </MotionConfig>
+    </QueryClientProvider>
+  )
+}

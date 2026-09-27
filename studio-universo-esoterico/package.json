@@ -1,0 +1,31 @@
+{
+  "name": "studio-universo-esoterico",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Panel de administración (Sanity Studio) de Universo Esotérico",
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "seed:build": "tsx scripts/build-seed.ts",
+    "seed": "pnpm seed:build && sanity dataset import seed/data.ndjson production --replace",
+    "cors": "sanity cors add http://localhost:5173 --no-credentials && sanity cors add https://esoterica-app.web.app --no-credentials && sanity cors add https://esoterica-app.firebaseapp.com --no-credentials"
+  },
+  "keywords": [
+    "sanity"
+  ],
+  "dependencies": {
+    "@sanity/icons": "^5.2.2",
+    "@sanity/vision": "^6.16.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "sanity": "^6.16.0",
+    "styled-components": "^6.5.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

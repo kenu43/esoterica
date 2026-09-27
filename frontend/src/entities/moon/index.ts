@@ -1,0 +1,102 @@
+import type { BranchId } from '@/entities/branch'
+import type { CategoryId } from '@/entities/category'
+
+/**
+ * Fase lunar calculada en el navegador (algoritmo del mes sinódico, precisión ±1 día).
+ * Se prefiere a una API externa: no depende de terceros, no consume red y nunca falla.
+ */
+const SYNODIC_MONTH = 29.530588853
+const KNOWN_NEW_MOON = Date.UTC(2000, 0, 6, 18, 14) // Luna nueva de referencia
+
+export interface MoonPhase {
+  /** 0 = luna nueva, 0.5 = luna llena, 1 = nueva otra vez. */
+  fraction: number
+  illumination: number
+  age: number
+  name: string
+  energy: string
+  /** Frase comercial: qué hacer hoy y con qué tienda. */
+  advice: string
+  store: BranchId
+  category: CategoryId
+}
+
+type PhaseInfo = Omit<MoonPhase, 'fraction' | 'illumination' | 'age'> & { until: number }
+
+const NEW_MOON: Omit<PhaseInfo, 'until'> = {
+  name: 'Luna nueva',
+  energy: 'Siembra de intenciones y nuevos comienzos.',
+  advice: 'Momento ideal para encender un velón con una petición nueva. Encuéntralo en El Sortilegio.',
+  store: 'el-sortilegio',
+  category: 'velones',
+}
+
+const PHASES: PhaseInfo[] = [
+  { until: 1.84, ...NEW_MOON },
+  {
+    until: 5.53,
+    name: 'Luna creciente',
+    energy: 'Impulso, crecimiento y atracción.',
+    advice: 'La energía crece: es tiempo de riegos de abundancia y abre caminos de La Colonia.',
+    store: 'la-colonia',
+    category: 'banos',
+  },
+  {
+    until: 9.22,
+    name: 'Cuarto creciente',
+    energy: 'Decisiones y superación de obstáculos.',
+    advice: 'Buen momento para activar tu duende o tu Ganesha de Loto & Nirvana y mover el dinero.',
+    store: 'loto-nirvana',
+    category: 'suerte',
+  },
+  {
+    until: 12.91,
+    name: 'Gibosa creciente',
+    energy: 'Paciencia y constancia antes de la cosecha.',
+    advice: 'Refuerza tus peticiones con un velón preparado de El Sortilegio.',
+    store: 'el-sortilegio',
+    category: 'velones',
+  },
+  {
+    until: 16.61,
+    name: 'Luna llena',
+    energy: 'Máxima energía, gratitud y poder.',
+    advice: 'Carga tus amuletos y figuras bajo la luna. Consagra tu tetragramatón en El Sortilegio.',
+    store: 'el-sortilegio',
+    category: 'amuletos',
+  },
+  {
+    until: 20.3,
+    name: 'Gibosa menguante',
+    energy: 'Soltar lo que ya no sirve.',
+    advice: 'Empieza a limpiar: un sahumerio de copal de La Colonia deja la casa liviana.',
+    store: 'la-colonia',
+    category: 'sahumerios',
+  },
+  {
+    until: 23.99,
+    name: 'Cuarto menguante',
+    energy: 'Cortar, perdonar y liberar.',
+    advice: 'Momento ideal para limpiezas energéticas con los baños de despojo de La Colonia.',
+    store: 'la-colonia',
+    category: 'banos',
+  },
+  {
+    until: 27.68,
+    name: 'Luna menguante',
+    energy: 'Descanso, protección y cierre de ciclos.',
+    advice: 'Hoy es luna menguante: tiempo de tumbar trabajos y protegerte con los productos de La Colonia.',
+    store: 'la-colonia',
+    category: 'banos',
+  },
+  { until: SYNODIC_MONTH + 1, ...NEW_MOON },
+]
+
+export function getMoonPhase(date = new Date()): MoonPhase {
+  const days = (date.getTime() - KNOWN_NEW_MOON) / 86_400_000
+  const age = ((days % SYNODIC_MONTH) + SYNODIC_MONTH) % SYNODIC_MONTH
+  const fraction = age / SYNODIC_MONTH
+  const illumination = Math.round(((1 - Math.cos(fraction * 2 * Math.PI)) / 2) * 100)
+  const { until: _until, ...phase } = PHASES.find((p) => age < p.until)!
+  return { fraction, illumination, age, ...phase }
+}

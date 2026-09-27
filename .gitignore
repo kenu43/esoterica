@@ -1,0 +1,16 @@
+node_modules
+dist
+.firebase
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+backend/functions/lib
+backend/functions/.secret.local
+backend/functions/.env
+studio-universo-esoterico/node_modules
+studio-universo-esoterico/dist

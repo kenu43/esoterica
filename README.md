@@ -1,0 +1,77 @@
+# Universo Esotérico
+
+Web de las tres tiendas familiares del centro de Ibagué: **El Sortilegio** (1981),
+**La Colonia** (2004) y **Loto & Nirvana** (2023). Catálogo con precios, consulta por
+WhatsApp, encargos por correo, tarot, glosario, fase lunar y test de energía.
+
+## Estructura
+
+```
+esoterica/
+├── frontend/                   # React 19 + Vite 8 + HeroUI v3 + Tailwind 4 (Feature-Sliced Design)
+├── studio-universo-esoterico/  # Sanity Studio: panel de administración del catálogo
+├── backend/functions/          # Cloud Function `sendRequest` (formularios → Resend)
+├── firebase.json               # Hosting + rewrite /api/requests → función
+└── CLAUDE.md                   # Contexto corto para sesiones con Claude
+```
+
+| Pieza         | Tecnología                                                        |
+| ------------- | ----------------------------------------------------------------- |
+| UI            | React 19, TypeScript, HeroUI v3, Tailwind CSS 4                   |
+| Animación     | Motion (Framer Motion), GSAP ScrollTrigger, View Transitions      |
+| Datos         | TanStack Query + patrón Repository (Sanity con respaldo en mock)  |
+| CMS           | Sanity.io (proyecto `rx1vv2w8`, dataset `production`)             |
+| Correos       | Firebase Cloud Functions + Resend                                 |
+| Hosting       | Firebase Hosting (proyecto `esoterica-app`) + Analytics           |
+| Mapas         | Leaflet + OpenStreetMap (sin API key)                             |
+
+## Comandos (desde la raíz)
+
+```bash
+pnpm dev                 # web en http://localhost:5173
+pnpm studio              # panel Sanity en http://localhost:3333
+pnpm build               # compila la web (genera sitemap.xml)
+pnpm run deploy          # publica la web en Firebase Hosting
+pnpm run deploy:functions
+pnpm run deploy:studio   # publica el panel en https://universo-esoterico.sanity.studio
+```
+
+## Puesta en marcha (una sola vez)
+
+1. **Sanity**
+   ```bash
+   cd studio-universo-esoterico
+   pnpm exec sanity login          # entra con la cuenta dueña del proyecto
+   pnpm cors                       # autoriza localhost y el dominio de Firebase
+   pnpm seed                       # sube los 36 productos de ejemplo con sus fotos + opiniones
+   pnpm run deploy                 # publica el panel
+   ```
+   Luego invita a tu hermano como **Editor** en https://www.sanity.io/manage → proyecto → Members.
+   Guía para él: [`studio-universo-esoterico/GUIA-PANEL.md`](studio-universo-esoterico/GUIA-PANEL.md).
+
+2. **Correos (Resend)** — ver [`backend/README.md`](backend/README.md). Requiere plan Blaze.
+
+3. **Publicar**
+   ```bash
+   pnpm add -g firebase-tools && firebase login
+   pnpm run deploy && pnpm run deploy:functions
+   ```
+
+## ¿Cómo se actualiza el catálogo?
+
+Todo desde el panel de Sanity: fotos, precios, productos nuevos, agotados y opiniones.
+La web lee Sanity en vivo (CDN), así que **no hay que volver a publicar** para ver los cambios.
+Si Sanity no responde o está vacío, la web usa `frontend/src/entities/product/api/mockData.ts`.
+
+## Personalizar
+
+| Qué                                   | Dónde                                                  |
+| ------------------------------------- | ------------------------------------------------------ |
+| Nombre, redes, WhatsApp principal     | `frontend/src/shared/config/site.ts`                   |
+| Tiendas (dirección, horario, teléfono)| `frontend/src/entities/branch/model/branches.data.ts`  |
+| Categorías                            | `frontend/src/entities/category` + `studio…/schemaTypes/constants.ts` |
+| Glosario, consejos del día, tarot     | `frontend/src/entities/{glossary,advice,tarot-card}`   |
+| Colores y tipografía                  | `frontend/src/app/styles/globals.css`                  |
+
+Créditos de imágenes: `frontend/public/images/CREDITS.md`. Las fotos de las tiendas son
+provisionales: reemplázalas por fotos reales de cada local para mejor conversión y SEO.
