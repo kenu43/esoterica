@@ -3,8 +3,11 @@ import type { TarotCard } from './types'
 type MajorSeed = Omit<TarotCard, 'id' | 'arcana' | 'image'>
 
 /**
- * Arcanos mayores del Rider–Waite–Smith con significados basados en la tradición
- * de Waite (1910) y la lectura contemporánea: general, invertida, amor y trabajo.
+ * Arcanos mayores del mazo Rider-Waite-Smith (A. E. Waite y Pamela Colman Smith, 1909-1911).
+ * Cada carta describe la escena clásica del mazo y su significado tradicional (derecho,
+ * invertido, amor y trabajo). Es redacción propia siguiendo esa tradición, no una cita
+ * textual de "The Pictorial Key to the Tarot": si necesitas una verificación formal,
+ * pide a un tarotista de confianza que revise este archivo contra la obra original.
  */
 const seeds: MajorSeed[] = [
   {

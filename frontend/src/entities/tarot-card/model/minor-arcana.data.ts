@@ -1,6 +1,11 @@
 import type { Element, Suit, TarotCard } from './types'
 
-/** [palabras clave, al derecho, invertida, consejo] */
+/**
+ * [palabras clave, al derecho, invertida, consejo]
+ * Los arcanos menores siguen la lectura popular basada en las ilustraciones de Pamela Colman
+ * Smith (no en el texto original de Waite, que para estas 56 cartas es muy breve). Es la
+ * tradición que usa la gran mayoría de mazos y libros de tarot modernos.
+ */
 type MinorSeed = [keywords: string, upright: string, reversed: string, advice: string]
 
 const RANKS = ['As', 'Dos', 'Tres', 'Cuatro', 'Cinco', 'Seis', 'Siete', 'Ocho', 'Nueve', 'Diez', 'Sota', 'Caballero', 'Reina', 'Rey']

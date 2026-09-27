@@ -1,5 +1,5 @@
 import { Button } from '@heroui/react'
-import { Menu, X } from 'lucide-react'
+import { Menu, Star, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router'
@@ -92,7 +92,12 @@ export function Header() {
                 >
                   {({ isActive }) => (
                     <>
-                      {item.label}
+                      <span className="inline-flex items-center gap-1.5">
+                        {item.icon === 'star' && (
+                          <Star className="size-3.5 fill-gold text-gold drop-shadow-[0_0_4px_var(--gold-soft)]" aria-hidden />
+                        )}
+                        {item.label}
+                      </span>
                       {isActive && (
                         <motion.span
                           layoutId="nav-active"
@@ -157,11 +162,12 @@ export function Header() {
                     onClick={() => setOpen(false)}
                     className={({ isActive }) =>
                       cn(
-                        'block border-b border-separator py-3.5 font-display text-2xl',
+                        'flex items-center gap-2.5 border-b border-separator py-3.5 font-display text-2xl',
                         isActive ? 'text-gold' : 'text-foreground',
                       )
                     }
                   >
+                    {item.icon === 'star' && <Star className="size-4 fill-gold text-gold" aria-hidden />}
                     {item.label}
                   </NavLink>
                 </motion.li>

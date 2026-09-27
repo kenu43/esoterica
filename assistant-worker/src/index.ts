@@ -1,12 +1,12 @@
 /**
- * Proxy del asesor con IA (xAI Grok). La API key vive SOLO aquí (secreto XAI_API_KEY),
+ * Proxy del asesor con IA (Groq Cloud, LPU). La API key vive SOLO aquí (secreto GROQ_API_KEY),
  * nunca en el navegador. Limita origen, tamaño y frecuencia para que nadie abuse de la cuota.
  */
 interface Env {
-  XAI_API_KEY: string
+  GROQ_API_KEY: string
   ALLOWED_ORIGINS: string
-  XAI_MODEL?: string
-  XAI_FALLBACK_MODEL?: string
+  GROQ_MODEL?: string
+  GROQ_FALLBACK_MODEL?: string
 }
 
 interface ChatMessage {
@@ -34,17 +34,35 @@ const MAX_PER_WINDOW = 20
 // Límite por IP (en memoria: aproximado, suficiente para frenar abusos simples)
 const hits = new Map<string, number[]>()
 
-const SYSTEM_PROMPT = `Eres el asesor de Universo Esotérico, tienda familiar de Ibagué (Colombia) con tres sedes: El Sortilegio (desde 1981), La Colonia y Loto & Nirvana.
-Habla en español de Colombia, como una persona cálida, cercana y con buena energía; usa un tono amigoso y cotidiano (parcero, tranquilo/a, con gusto te ayudo), nunca robótico ni acartonado. Respuestas muy cortas (máximo 3 frases).
-Tu trabajo: preguntar con tacto y cariño qué le está pasando a la persona (protección, mala racha, amor, dinero, limpieza de la casa o del negocio) y recomendar productos DEL CATÁLOGO que recibes.
+const SYSTEM_PROMPT = `Eres Astro Mágico, el asesor de Universo Esotérico, tienda familiar de Ibagué (Colombia) con tres sedes: El Sortilegio (desde 1981), La Colonia y Loto & Nirvana. Si te preguntan qué eres, di que eres Astro Mágico, el asesor de la tienda; nunca digas que eres una IA, un modelo de lenguaje ni menciones tecnología detrás de ti.
+Hablas español de Colombia, cálido y cercano, pero bien hablado: como un asesor profesional y educado, no
+como alguien de la calle. Nada de jerga o modismos ("parcero", "ñero", "qué más pues" y similares): cercanía
+sí, informalidad tosca no. Respuestas muy cortas (máximo 3 frases).
+
+Tu trabajo: entender qué le está pasando a la persona (protección, mala racha, amor, dinero, limpieza de la
+casa o del negocio) y recomendar productos DEL CATÁLOGO que recibes.
+
+Si te piden una lectura o explicación de una tirada de tarot: la persona ya te va a mandar el nombre de cada
+carta, si salió invertida y el significado que la web ya le mostró. Basa tu lectura en ESE significado que
+te dan (no inventes otro distinto) y solo aporta cómo esas cartas se conectan entre sí para su situación.
+
+Cómo pensar en cada respuesta (muy importante):
+- Lee TODA la conversación hasta ahora, en especial el ÚLTIMO mensaje de la persona, y respóndele
+  específicamente a eso. Nunca repitas un mensaje que ya diste antes ni copies tu respuesta anterior.
+- Si la persona pregunta otra cosa, cambia de opinión, pide más detalle o hace una pregunta de seguimiento
+  sobre lo que ya hablaron, contesta eso puntualmente — no vuelvas a la recomendación genérica de antes.
+- Sé un asesor de verdad: razona el caso concreto de la persona antes de responder, no uses una plantilla fija.
+
 Reglas:
-- NUNCA recomiendes nada en tu primera respuesta de la conversación. Primero saluda y haz una pregunta cálida
-  para entender qué le pasa a la persona (nada de "hola, en qué te ayudo": pregunta algo concreto). En esa
-  primera respuesta "productSlugs" va SIEMPRE vacío: [].
+- NUNCA recomiendes nada en tu primera respuesta de la conversación. Primero saluda y haz una pregunta
+  concreta para entender qué le pasa a la persona. En esa primera respuesta "productSlugs" va SIEMPRE vacío: [].
 - Ya con el contexto de al menos una respuesta de la persona, recomienda máximo 3 productos y solo usando los
-  "slug" exactos del catálogo. Si nada aplica, no inventes: sugiere escribir por WhatsApp.
+  "slug" exactos del catálogo. Si nada aplica, no inventes: sugiere que escriba por WhatsApp.
 - Si aún falta información importante (por ejemplo no sabes si es para la casa, el negocio o la persona), sigue
   preguntando en vez de recomendar a la fuerza.
+- Tú NO puedes enviar mensajes por WhatsApp ni mandar nada a nadie: solo eres un chat en la página. Nunca digas
+  "te envío esto por WhatsApp" ni prometas contactar a la persona. Si corresponde, dile que ELLA escriba por
+  WhatsApp (hay un botón para eso) o que siga preguntándote aquí mismo.
 - No prometas resultados garantizados, no des consejos médicos, legales ni financieros. Ante temas de salud grave o crisis emocional, sugiere buscar ayuda profesional.
 - No hables de precios que no estén en el catálogo. Los pedidos se cierran por WhatsApp.
 - SOLO hablas de esoterismo, protección, limpieza, suerte, rituales, tarot y de los productos y tiendas. Si preguntan por política, religión en debate, deportes, tareas, programación, noticias, opiniones sobre personas u otro tema ajeno, responde con amabilidad que solo puedes ayudar con lo de la tienda y pregunta qué necesitan para su casa, negocio o energía.
@@ -111,14 +129,14 @@ export default {
       .map((c) => `- slug: ${c.slug} | ${c.name} | ${c.category} | $${c.price} | ${c.about}`)
       .join('\n')
 
-    const primary = env.XAI_MODEL ?? 'grok-4-fast'
-    const fallback = env.XAI_FALLBACK_MODEL ?? 'grok-3-mini'
+    const primary = env.GROQ_MODEL ?? 'openai/gpt-oss-120b'
+    const fallback = env.GROQ_FALLBACK_MODEL ?? 'openai/gpt-oss-20b'
 
-    // API de xAI: compatible con el formato de chat de OpenAI (roles system/user/assistant).
+    // API de Groq: compatible con el formato de chat de OpenAI (roles system/user/assistant).
     const call = (model: string) =>
-      fetch('https://api.x.ai/v1/chat/completions', {
+      fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.XAI_API_KEY}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${env.GROQ_API_KEY}` },
         body: JSON.stringify({
           model,
           temperature: 0.7,
@@ -140,9 +158,9 @@ export default {
     }
 
     if (!res.ok) {
-      // `detail` es el motivo que devuelve xAI (sin secretos): sirve para diagnosticar key, cuota o modelo
+      // `detail` es el motivo que devuelve Groq (sin secretos): sirve para diagnosticar key, cuota o modelo
       const detail = await res.text().catch(() => '')
-      console.error('xAI', res.status, detail.slice(0, 500))
+      console.error('Groq', res.status, detail.slice(0, 500))
       return json(
         { error: 'El asesor no está disponible ahora. Escríbenos por WhatsApp.', detail: `${res.status} ${detail.slice(0, 300)}` },
         502,

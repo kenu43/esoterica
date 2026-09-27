@@ -8,6 +8,7 @@ import { ScrollProgress } from '@/shared/ui'
 import { Footer } from '@/widgets/footer'
 import { Header } from '@/widgets/header'
 import { PageLoader } from './PageLoader'
+import { PreviewVisualEditing } from '../providers/PreviewVisualEditing'
 
 /**
  * Layout raíz: header, footer y overlays globales.
@@ -48,6 +49,7 @@ export function RootLayout() {
       <InquiryDrawer />
       <WhatsAppFab />
       <AssistantChat />
+      <PreviewVisualEditing />
       <ScrollRestoration />
     </AriaRouterProvider>
   )

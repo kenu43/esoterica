@@ -23,7 +23,7 @@ const toCatalog = (products: Product[]) =>
       about: [p.shortDescription, ...p.intentions].join(' · '),
     }))
 
-/** Pregunta al asesor (Cloudflare Worker → Gemini). Lanza Error con un mensaje listo para mostrar. */
+/** Pregunta al asesor (Cloudflare Worker → Groq). Lanza Error con un mensaje listo para mostrar. */
 export async function askAssistant(messages: ChatMessage[], products: Product[]) {
   const res = await fetch(env.VITE_CHAT_URL!, {
     method: 'POST',

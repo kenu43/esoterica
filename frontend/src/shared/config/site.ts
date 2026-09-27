@@ -25,11 +25,13 @@ export const SITE = {
 export interface NavItem {
   label: string
   to: string
+  /** Ícono opcional (nombre de lucide-react) para destacar el ítem en el menú. */
+  icon?: 'star'
 }
 
 export const NAV_ITEMS: NavItem[] = [
   { label: 'Inicio', to: ROUTES.home },
-  { label: 'Productos', to: ROUTES.products },
+  { label: 'Productos', to: ROUTES.products, icon: 'star' },
   { label: 'Tarot', to: ROUTES.tarot },
   { label: 'Glosario', to: ROUTES.glossary },
   { label: 'Aprende', to: ROUTES.learn },

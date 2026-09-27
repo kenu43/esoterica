@@ -1,5 +1,5 @@
 import { Button } from '@heroui/react'
-import { Check, Loader2, MessageCircle, Plus, RotateCw, Send, X } from 'lucide-react'
+import { Check, Loader2, MessageCircle, Plus, RotateCw, Send, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
@@ -8,18 +8,22 @@ import { useInquiryStore } from '@/features/whatsapp-inquiry'
 import { ROUTES, SITE } from '@/shared/config'
 import { buildWhatsAppUrl, cn, formatPrice } from '@/shared/lib'
 import { WitchHatIcon } from '@/shared/ui'
+import { useAssistantStore } from '../model/assistant.store'
 import { askAssistant, isAssistantEnabled, type ChatMessage } from '../model/chat'
 
 const GREETING: ChatMessage = {
   role: 'assistant',
-  text: 'Hola, soy el asesor de Universo Esotérico. Cuéntame qué está pasando en tu vida o en tu casa y te oriento con lo que tenemos.',
+  text: 'Hola, soy Astro Mágico. Cuéntame qué está pasando en tu vida o en tu casa y te oriento con lo que tenemos.',
 }
 
 const SUGGESTIONS = ['Siento mala energía en mi casa', 'Quiero proteger mi negocio', 'Busco atraer el amor', 'Llevo una mala racha']
 
-/** Asesor con IA: pregunta qué le pasa al cliente y recomienda productos reales del catálogo. */
+/** Astro Mágico: pregunta qué le pasa al cliente y recomienda productos reales del catálogo. */
 export function AssistantChat() {
-  const [open, setOpen] = useState(false)
+  const open = useAssistantStore((s) => s.isOpen)
+  const setOpen = useAssistantStore((s) => s.setOpen)
+  const pendingMessage = useAssistantStore((s) => s.pendingMessage)
+  const clearPendingMessage = useAssistantStore((s) => s.clearPendingMessage)
   const [messages, setMessages] = useState<ChatMessage[]>([GREETING])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -30,8 +34,6 @@ export function AssistantChat() {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [messages, loading, open])
-
-  if (!isAssistantEnabled) return null
 
   const send = async (text: string, retry = false) => {
     const clean = text.trim()
@@ -51,6 +53,16 @@ export function AssistantChat() {
     }
   }
 
+  // Otra parte de la web (ej. la tirada de tarot) pidió abrir el asesor con un mensaje ya listo
+  useEffect(() => {
+    if (!pendingMessage || loading) return
+    clearPendingMessage()
+    send(pendingMessage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingMessage, loading])
+
+  if (!isAssistantEnabled) return null
+
   const userTexts = messages.filter((m) => m.role === 'user').map((m) => m.text)
   const whatsappUrl = buildWhatsAppUrl(
     SITE.ordersWhatsapp,
@@ -63,7 +75,7 @@ export function AssistantChat() {
         {open && (
           <motion.section
             role="dialog"
-            aria-label="Asesor con IA"
+            aria-label="Astro Mágico"
             initial={{ opacity: 0, y: 16, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
@@ -75,9 +87,23 @@ export function AssistantChat() {
                 <WitchHatIcon className="size-5" />
               </span>
               <div className="flex-1">
-                <p className="font-display text-base leading-none">Asesor con IA</p>
+                <p className="font-display text-base leading-none">Astro Mágico</p>
                 <p className="mt-1 text-xs text-muted">Te orienta y recomienda productos</p>
               </div>
+              <Button
+                isIconOnly
+                size="sm"
+                variant="ghost"
+                aria-label="Borrar conversación y empezar de nuevo"
+                isDisabled={messages.length <= 1 && !error}
+                onPress={() => {
+                  setMessages([GREETING])
+                  setError('')
+                  setInput('')
+                }}
+              >
+                <Trash2 className="size-4" />
+              </Button>
               <Button isIconOnly size="sm" variant="ghost" aria-label="Cerrar asesor" onPress={() => setOpen(false)}>
                 <X className="size-4" />
               </Button>
@@ -172,12 +198,12 @@ export function AssistantChat() {
 
       <motion.button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(!open)}
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1.4, type: 'spring', stiffness: 260, damping: 18 }}
         whileTap={{ scale: 0.92 }}
-        aria-label={open ? 'Cerrar asesor con IA' : 'Hablar con el asesor con IA'}
+        aria-label={open ? 'Cerrar Astro Mágico' : 'Hablar con Astro Mágico'}
         className="fixed bottom-[6rem] right-5 z-40 grid size-14 place-items-center rounded-full bg-gradient-to-br from-[oklch(0.42_0.2_300)] to-[oklch(0.3_0.16_290)] text-[oklch(0.9_0.12_85)] shadow-lg shadow-[oklch(0.42_0.2_300)]/40 ring-1 ring-gold/50 sm:bottom-[7rem] sm:right-8"
       >
         <span className="absolute inset-0 animate-pulse-glow rounded-full bg-gold/20" aria-hidden />

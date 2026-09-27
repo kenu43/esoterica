@@ -1,9 +1,10 @@
 import { Button, Chip } from '@heroui/react'
-import { Shuffle, Sparkles } from 'lucide-react'
+import { Shuffle, Sparkles, WandSparkles } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { drawCards, FlipTarotCard, type TarotCard } from '@/entities/tarot-card'
+import { isAssistantEnabled, useAssistantStore } from '@/features/ai-assistant'
 import { ROUTES } from '@/shared/config'
 import { SpotlightCard } from '@/shared/ui'
 
@@ -16,6 +17,7 @@ export function TarotSpread() {
   const [draw, setDraw] = useState<Draw | null>(null)
   const [revealed, setRevealed] = useState<boolean[]>([false, false, false])
   const [shuffling, setShuffling] = useState(false)
+  const askWithMessage = useAssistantStore((s) => s.askWithMessage)
 
   const shuffle = () => {
     setShuffling(true)
@@ -24,6 +26,22 @@ export function TarotSpread() {
       setDraw(drawCards(3))
       setShuffling(false)
     }, 900)
+  }
+
+  /** Arma una mini lectura con las 3 cartas ya reveladas y se la pide a Astro Mágico. */
+  const askForReading = () => {
+    if (!draw) return
+    const lines = draw
+      .map(
+        (item, i) =>
+          `${POSITIONS[i]}: ${item.card.name}${item.reversed ? ' (invertida)' : ''} — ${
+            item.reversed ? item.card.reversed : item.card.upright
+          }`,
+      )
+      .join('\n')
+    askWithMessage(
+      `Saqué esta tirada de tres cartas (pasado, presente, futuro) para mi situación actual:\n${lines}\n\nDame una lectura breve que una estas tres cartas para mi situación.`,
+    )
   }
 
   return (
@@ -108,6 +126,15 @@ export function TarotSpread() {
               </div>
             ) : null,
           )}
+        </div>
+      )}
+
+      {isAssistantEnabled && draw && revealed.every(Boolean) && (
+        <div className="mt-8 flex justify-center">
+          <Button variant="outline" size="lg" onPress={askForReading} className="gap-2">
+            <WandSparkles className="size-4" />
+            Pedir explicación a Astro Mágico
+          </Button>
         </div>
       )}
     </SpotlightCard>
