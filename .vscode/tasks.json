@@ -1,9 +1,55 @@
 {
-  // Ejecutar: Ctrl+Shift+P → "Tasks: Run Task" (o Ctrl+Shift+B para levantar todo)
+  // Cómo usarlas: Ctrl+Shift+P → escribe "Tasks: Run Task" → Enter → elige una de la lista.
+  // "Levantar todo" también corre con Ctrl+Shift+B (es la que se ejecuta por defecto con ese atajo).
+  // El orden de abajo es el orden en que normalmente las necesitas la primera vez.
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Frontend (web :5173)",
+      "label": "1. Instalar dependencias (frontend + panel)",
+      "detail": "Ejecuta esto primero, una sola vez, después de clonar el repo o si alguien agregó una librería nueva.",
+      "type": "shell",
+      "command": "pnpm --dir frontend install; pnpm --dir studio-universo-esoterico install",
+      "problemMatcher": []
+    },
+    {
+      "label": "2. Sanity: iniciar sesión",
+      "detail": "Abre el navegador para entrar con la cuenta de Sanity. Necesario una sola vez por computador antes de usar las tareas de Sanity.",
+      "type": "shell",
+      "command": "pnpm --dir studio-universo-esoterico exec sanity login",
+      "problemMatcher": []
+    },
+    {
+      "label": "3. Sanity: autorizar este computador y la web (CORS)",
+      "detail": "Deja que localhost:5173 y el dominio de la web puedan pedirle datos a Sanity. Se hace una sola vez.",
+      "type": "shell",
+      "command": "pnpm --dir studio-universo-esoterico cors",
+      "problemMatcher": []
+    },
+    {
+      "label": "4. Sanity: cargar catálogo de ejemplo (no borra nada existente)",
+      "detail": "Sube categorías, productos, glosario, artículos y opiniones de ejemplo. Solo agrega lo que falta: nunca reemplaza ni borra lo que ya editó tu hermano en el panel. Se puede correr varias veces sin problema.",
+      "type": "shell",
+      "command": "pnpm --dir studio-universo-esoterico seed",
+      "problemMatcher": []
+    },
+    {
+      "label": "5. Sanity: enlazar categoría en productos antiguos",
+      "detail": "Solo hace falta correrla UNA VEZ si ya tenías productos publicados antes de que las categorías fueran editables. Arregla la categoría de esos productos; no toca nada más.",
+      "type": "shell",
+      "command": "pnpm --dir studio-universo-esoterico migrate:categories",
+      "problemMatcher": []
+    },
+    {
+      "label": "6. Levantar todo para trabajar (web + panel)",
+      "detail": "Prende la web en http://localhost:5173 y el panel de Sanity en http://localhost:3333 al mismo tiempo, cada uno en su propia terminal. Úsala en el día a día mientras programas o mientras tu hermano prueba el panel local.",
+      "dependsOn": ["Solo la web (localhost:5173)", "Solo el panel de Sanity (localhost:3333)"],
+      "dependsOrder": "parallel",
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "Solo la web (localhost:5173)",
+      "detail": "Prende únicamente la página web en modo desarrollo. Queda corriendo: para detenerla, cierra su panel de terminal.",
       "type": "shell",
       "command": "pnpm dev",
       "isBackground": true,
@@ -11,7 +57,8 @@
       "presentation": { "group": "dev", "panel": "dedicated" }
     },
     {
-      "label": "Studio (panel :3333)",
+      "label": "Solo el panel de Sanity (localhost:3333)",
+      "detail": "Prende únicamente el panel de administración en modo desarrollo (una copia local, además de la publicada en universo-esoterico.sanity.studio). Queda corriendo: para detenerlo, cierra su panel de terminal.",
       "type": "shell",
       "command": "pnpm studio",
       "isBackground": true,
@@ -19,58 +66,24 @@
       "presentation": { "group": "dev", "panel": "dedicated" }
     },
     {
-      "label": "Levantar todo (web + panel)",
-      "dependsOn": ["Frontend (web :5173)", "Studio (panel :3333)"],
-      "dependsOrder": "parallel",
-      "group": { "kind": "build", "isDefault": true },
-      "problemMatcher": []
-    },
-    {
-      "label": "Instalar dependencias",
-      "type": "shell",
-      "command": "pnpm --dir frontend install; pnpm --dir studio-universo-esoterico install",
-      "problemMatcher": []
-    },
-    {
-      "label": "Verificar (tipos + lint + build)",
+      "label": "7. Verificar que todo compile (antes de publicar)",
+      "detail": "Revisa tipos, estilo de código y que la web y el panel compilen sin errores. Córrela antes de publicar cualquier cambio de código.",
       "type": "shell",
       "command": "pnpm --dir frontend exec tsc -b; pnpm --dir frontend lint; pnpm --dir frontend build; pnpm --dir studio-universo-esoterico build",
       "problemMatcher": []
     },
     {
-      "label": "Sanity: iniciar sesión",
-      "type": "shell",
-      "command": "pnpm --dir studio-universo-esoterico exec sanity login",
-      "problemMatcher": []
-    },
-    {
-      "label": "Sanity: autorizar dominios (CORS)",
-      "type": "shell",
-      "command": "pnpm --dir studio-universo-esoterico cors",
-      "problemMatcher": []
-    },
-    {
-      "label": "Sanity: cargar datos de ejemplo (solo lo que falta)",
-      "type": "shell",
-      "command": "pnpm --dir studio-universo-esoterico seed",
-      "problemMatcher": []
-    },
-    {
-      "label": "Sanity: migrar categorías de productos viejos",
-      "type": "shell",
-      "command": "pnpm --dir studio-universo-esoterico migrate:categories",
-      "problemMatcher": []
-    },
-    {
-      "label": "Publicar panel (Sanity Studio)",
-      "type": "shell",
-      "command": "pnpm deploy:studio",
-      "problemMatcher": []
-    },
-    {
-      "label": "Publicar web (Firebase Hosting)",
+      "label": "8. Publicar la web (Firebase Hosting)",
+      "detail": "Compila la web y la sube a https://esoterica-app.web.app. Los cambios de contenido en Sanity NO necesitan esto: se ven solos, en vivo, sin publicar nada.",
       "type": "shell",
       "command": "pnpm build; pnpm deploy",
+      "problemMatcher": []
+    },
+    {
+      "label": "9. Publicar el panel (Sanity Studio)",
+      "detail": "Sube los cambios de estructura del panel (campos nuevos, menús) a https://universo-esoterico.sanity.studio, donde tu hermano lo usa. Solo hace falta cuando TÚ cambias el diseño del panel, no cuando él edita contenido.",
+      "type": "shell",
+      "command": "pnpm deploy:studio",
       "problemMatcher": []
     }
   ]

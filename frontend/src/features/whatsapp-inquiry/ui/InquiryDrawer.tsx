@@ -21,11 +21,17 @@ export function InquiryDrawer() {
     () =>
       items.flatMap((i) => {
         const product = products.find((p) => p.id === i.productId)
-        return product ? [{ product, quantity: i.quantity }] : []
+        return product
+          ? [{ product, quantity: i.quantity, color: i.color, size: i.size, material: i.material, customText: i.customText }]
+          : []
       }),
     [items, products],
   )
-  const total = lines.reduce((acc, l) => acc + l.product.price * l.quantity, 0)
+  const unitPrice = (l: (typeof lines)[number]) =>
+    l.product.sizes.find((s) => s.name === l.size)?.price ??
+    l.product.materials.find((m) => m.name === l.material)?.price ??
+    l.product.price
+  const total = lines.reduce((acc, l) => acc + unitPrice(l) * l.quantity, 0)
   const branch = resolveBranch(branchId)
 
   const send = () =>
@@ -77,9 +83,13 @@ export function InquiryDrawer() {
                 <>
                   <ul className="space-y-3">
                     <AnimatePresence initial={false}>
-                      {lines.map(({ product, quantity }) => (
+                      {lines.map((line) => {
+                        const { product, quantity, color, size, material, customText } = line
+                        const price = unitPrice(line)
+                        const variant = { color, size, material, customText }
+                        return (
                         <motion.li
-                          key={product.id}
+                          key={`${product.id}-${color ?? ''}-${size ?? ''}-${material ?? ''}-${customText ?? ''}`}
                           layout
                           initial={{ opacity: 0, x: 40 }}
                           animate={{ opacity: 1, x: 0 }}
@@ -89,7 +99,13 @@ export function InquiryDrawer() {
                           <img src={product.image} alt="" className="size-16 shrink-0 rounded-xl object-cover" />
                           <div className="flex min-w-0 flex-1 flex-col">
                             <span className="truncate font-semibold">{product.name}</span>
-                            <span className="text-xs text-muted">{product.unit}</span>
+                            <span className="text-xs text-muted">
+                              {product.unit}
+                              {product.colors.length > 0 && ` · ${color ?? 'Cualquiera'}`}
+                              {product.sizes.length > 0 && ` · ${size ?? 'Cualquiera'}`}
+                              {product.materials.length > 0 && ` · ${material ?? 'Cualquiera'}`}
+                              {customText && ` · "${customText}"`}
+                            </span>
                             <div className="mt-auto flex items-center justify-between gap-2 pt-1">
                               <div className="flex items-center gap-1">
                                 <Button
@@ -97,7 +113,7 @@ export function InquiryDrawer() {
                                   size="sm"
                                   variant="ghost"
                                   aria-label="Disminuir cantidad"
-                                  onPress={() => setQuantity(product.id, quantity - 1)}
+                                  onPress={() => setQuantity(product.id, quantity - 1, variant)}
                                 >
                                   <Minus className="size-3.5" />
                                 </Button>
@@ -107,12 +123,12 @@ export function InquiryDrawer() {
                                   size="sm"
                                   variant="ghost"
                                   aria-label="Aumentar cantidad"
-                                  onPress={() => setQuantity(product.id, quantity + 1)}
+                                  onPress={() => setQuantity(product.id, quantity + 1, variant)}
                                 >
                                   <Plus className="size-3.5" />
                                 </Button>
                               </div>
-                              <span className="text-sm font-bold">{formatPrice(product.price * quantity)}</span>
+                              <span className="text-sm font-bold">{formatPrice(price * quantity)}</span>
                             </div>
                           </div>
                           <Button
@@ -120,13 +136,14 @@ export function InquiryDrawer() {
                             size="sm"
                             variant="ghost"
                             aria-label={`Quitar ${product.name}`}
-                            onPress={() => remove(product.id)}
+                            onPress={() => remove(product.id, variant)}
                             className="self-start text-muted hover:text-danger"
                           >
                             <Trash2 className="size-4" />
                           </Button>
                         </motion.li>
-                      ))}
+                        )
+                      })}
                     </AnimatePresence>
                   </ul>
 

@@ -20,8 +20,8 @@ export function Footer() {
         <div className="space-y-5">
           <Logo />
           <p className="max-w-sm text-sm leading-relaxed text-muted">
-            Tres tiendas de una misma familia: Doña Cielo abrió El Sortilegio en 1981 y junto a su hija
-            Giomara la tradición creció hasta La Colonia y Loto & Nirvana.
+            Una familia, varias tiendas: Doña Cielo abrió El Sortilegio y junto a su hija Giomara la
+            tradición creció hasta La Colonia y Loto & Nirvana.
           </p>
           <div className="flex gap-2">
             {SOCIALS.map(({ href, label, Icon }) => (
@@ -89,7 +89,6 @@ export function Footer() {
         <p>
           © {year} {SITE.name} · Ibagué, Tolima · Envíos a toda Colombia
         </p>
-        <p>Los productos esotéricos son de uso tradicional y no reemplazan la atención médica.</p>
       </Container>
     </footer>
   )

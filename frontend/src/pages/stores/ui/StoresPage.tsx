@@ -13,7 +13,7 @@ export function StoresPage() {
         eyebrow="Visítanos"
         title="Nuestras tiendas en Ibagué"
         highlight={['Ibagué']}
-        description="Tres tiendas en el centro, a pocos pasos una de la otra. Toca una tarjeta para ubicarla en el mapa."
+        description="Todas en el centro de Ibagué, a pocos pasos una de la otra. Toca una tarjeta para ubicarla en el mapa."
       />
       <BranchesSection variant="page" />
     </>

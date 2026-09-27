@@ -86,6 +86,13 @@ const products = MOCK_PRODUCTS.map((p) => ({
   ...(p.colors.length && {
     colors: p.colors.map((c, i) => ({ _type: 'productColor', _key: `c${i}`, name: c.name, hex: c.hex })),
   }),
+  ...(p.sizes.length && {
+    sizes: p.sizes.map((sz, i) => ({ _type: 'productSize', _key: `sz${i}`, name: sz.name, price: sz.price })),
+  }),
+  ...(p.materials.length && {
+    materials: p.materials.map((m, i) => ({ _type: 'productMaterial', _key: `m${i}`, name: m.name, price: m.price })),
+  }),
+  ...(p.customizationLabel && { customizationLabel: p.customizationLabel }),
   ...(p.gallery.length && {
     gallery: p.gallery.map((g, i) => ({ ...imageRef(g), _key: `g${i}`, alt: p.name })),
   }),

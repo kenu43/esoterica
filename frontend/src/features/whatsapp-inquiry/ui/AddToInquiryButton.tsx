@@ -9,16 +9,31 @@ import { useInquiryStore } from '../model/inquiry.store'
 interface AddToInquiryButtonProps {
   product: Product
   variant?: 'icon' | 'full'
+  /** Color, tamaño, material y texto de personalización elegidos (todos opcionales). */
+  color?: string
+  size?: string
+  material?: string
+  customText?: string
+  quantity?: number
   className?: string
 }
 
-export function AddToInquiryButton({ product, variant = 'icon', className }: AddToInquiryButtonProps) {
+export function AddToInquiryButton({
+  product,
+  variant = 'icon',
+  color,
+  size,
+  material,
+  customText,
+  quantity = 1,
+  className,
+}: AddToInquiryButtonProps) {
   const add = useInquiryStore((s) => s.add)
   const setOpen = useInquiryStore((s) => s.setOpen)
   const [added, setAdded] = useState(false)
 
   const onPress = () => {
-    add(product.id)
+    add(product.id, { color, size, material, customText }, quantity)
     setAdded(true)
     setTimeout(() => setAdded(false), 1400)
     toast.success(`${product.name} agregado a tu consulta`, {

@@ -46,8 +46,7 @@ export function EnergyQuiz() {
       : ''
 
   return (
-    <div className="relative mx-auto w-full max-w-2xl">
-      {/* Cartas "detrás" para dar sensación de baraja */}
+    <motion.div layout transition={{ layout: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }} className="relative mx-auto w-full max-w-2xl">
       {!done &&
         [2, 1].map((i) =>
           step + i <= QUESTIONS.length ? (
@@ -163,6 +162,6 @@ export function EnergyQuiz() {
           )
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   )
 }

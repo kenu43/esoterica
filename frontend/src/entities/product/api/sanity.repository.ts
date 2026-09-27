@@ -2,7 +2,7 @@ import type { SanityImageSource } from '@sanity/image-url'
 import { sanityFetch, sanityImage } from '@/shared/api'
 import type { BranchId } from '@/entities/branch'
 import type { CategoryId } from '@/entities/category'
-import type { Product, ProductBadge, ProductColor } from '../model/types'
+import type { Product, ProductBadge, ProductColor, ProductMaterial, ProductSize } from '../model/types'
 import { applyFilter, type ProductRepository } from './product.repository'
 
 /** Forma del documento `product` tal como lo devuelve la consulta GROQ. */
@@ -30,6 +30,9 @@ interface SanityProduct {
   gallery?: ({ asset?: unknown } & SanityImageSource)[]
   season?: string
   colors?: ProductColor[]
+  sizes?: ProductSize[]
+  materials?: ProductMaterial[]
+  customizationLabel?: string
 }
 
 const PRODUCT_PROJECTION = `{
@@ -40,7 +43,7 @@ const PRODUCT_PROJECTION = `{
   "category": coalesce(category->slug.current, category),
   "inStock": coalesce(inStock, true),
   "createdAt": coalesce(releaseDate, _createdAt),
-  image, moonPhase, usageGuide, colors, gallery,
+  image, moonPhase, usageGuide, colors, sizes, materials, customizationLabel, gallery,
   "intention": intention[]->slug.current,
   "season": season->slug.current
 }`
@@ -75,6 +78,9 @@ const toProduct = (doc: SanityProduct): Product => ({
   gallery: (doc.gallery ?? []).filter((g) => !!g?.asset).map((g) => sanityImage(g, 800)),
   season: doc.season || undefined,
   colors: (doc.colors ?? []).filter((c) => c?.name?.trim()),
+  sizes: (doc.sizes ?? []).filter((s) => s?.name?.trim()),
+  materials: (doc.materials ?? []).filter((m) => m?.name?.trim()),
+  customizationLabel: doc.customizationLabel?.trim() || undefined,
 })
 
 /**

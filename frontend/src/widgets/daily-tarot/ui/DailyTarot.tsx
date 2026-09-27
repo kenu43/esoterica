@@ -26,6 +26,7 @@ export function DailyTarot() {
             description="Respira profundo, formula una pregunta en silencio y toca la carta para revelarla."
           />
 
+          <motion.div layout transition={{ layout: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}>
           <AnimatePresence mode="wait">
             {flipped ? (
               <motion.div
@@ -91,6 +92,7 @@ export function DailyTarot() {
               </motion.p>
             )}
           </AnimatePresence>
+          </motion.div>
         </div>
 
         <div className="order-1 flex justify-center lg:order-2">

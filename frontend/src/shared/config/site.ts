@@ -5,9 +5,9 @@ import { ROUTES } from './routes'
 export const SITE = {
   name: 'Universo Esotérico',
   shortName: 'Universo',
-  tagline: 'Protección, suerte y fe desde 1981',
+  tagline: 'Protección, suerte y fe para tu camino',
   description:
-    'Figuras de santos y de la Santa Muerte, velones, baños, riegos, sahumerios y amuletos. Tres tiendas familiares en el centro de Ibagué con envíos a toda Colombia.',
+    'Figuras de santos y de la Santa Muerte, velones, baños, riegos, sahumerios y amuletos. Tienda familiar en el centro de Ibagué con envíos a toda Colombia.',
   city: 'Ibagué, Tolima',
   url: env.VITE_SITE_URL,
   /** WhatsApp principal (formato internacional, solo dígitos). */

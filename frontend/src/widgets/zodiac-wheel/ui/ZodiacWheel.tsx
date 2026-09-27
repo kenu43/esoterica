@@ -47,7 +47,6 @@ export function ZodiacWheel() {
           ease: 'none',
           scrollTrigger: { trigger: scope.current, start: 'top bottom', end: 'bottom top', scrub: 1.5 },
         })
-        // Contrarrota los glifos para que siempre se lean derechos
         gsap.to('.zodiac-glyph > span', {
           rotate: -180,
           ease: 'none',
@@ -117,6 +116,8 @@ export function ZodiacWheel() {
                     top: `${50 - 40 * Math.cos((angle * Math.PI) / 180)}%`,
                   }}
                 >
+                  {/* Este span se contrarrota junto con su contenido: el nombre queda anidado
+                      dentro para heredar la misma corrección y no desplazarse hacia un lado. */}
                   <span className="relative grid size-full place-items-center">
                     <span
                       className={cn(
@@ -128,12 +129,13 @@ export function ZodiacWheel() {
                     >
                       {z.symbol}
                     </span>
-                    {/* Etiqueta con el nombre: aparece al pasar el cursor o con el teclado */}
                     <span
-                      role="tooltip"
-                      className="pointer-events-none absolute left-1/2 top-full z-20 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-foreground px-2 py-1 text-xs font-medium text-background opacity-0 shadow-lg transition-opacity duration-200 group-hover/glyph:opacity-100 group-focus-visible/glyph:opacity-100"
+                      className={cn(
+                        'absolute left-1/2 top-full mt-1.5 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium transition-colors duration-300 sm:text-xs',
+                        active ? 'text-gold' : 'text-muted',
+                      )}
                     >
-                      {z.name} · {z.dates}
+                      {z.name}
                     </span>
                   </span>
                 </button>

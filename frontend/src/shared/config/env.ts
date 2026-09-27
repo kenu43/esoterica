@@ -23,6 +23,12 @@ const envSchema = z.object({
   /** URL del Worker del asesor con IA (vacío = el asesor no aparece). */
   VITE_CHAT_URL: z.url().optional(),
 
+  /**
+   * Token "Viewer" (solo lectura) de Sanity para la vista previa sin publicar.
+   * Va también al build público: solo permite LEER borradores, nunca editar ni borrar.
+   */
+  VITE_SANITY_PREVIEW_TOKEN: z.string().optional(),
+
   VITE_SITE_URL: z.string().default('https://esoterica-app.web.app'),
 })
 

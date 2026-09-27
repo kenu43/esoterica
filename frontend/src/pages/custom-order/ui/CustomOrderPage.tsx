@@ -6,7 +6,7 @@ import { PageHeader } from '@/widgets/page-header'
 
 const STEPS = [
   { icon: ClipboardList, title: 'Nos cuentas qué necesitas', text: 'Elige una sugerencia o descríbelo: figura, velón, kit, tarot o compra al por mayor.' },
-  { icon: MessageCircle, title: 'Te cotizamos por WhatsApp', text: 'Revisamos disponibilidad en las tres tiendas y te enviamos precio y tiempo de entrega.' },
+  { icon: MessageCircle, title: 'Te cotizamos por WhatsApp', text: 'Revisamos disponibilidad y te enviamos precio y tiempo de entrega.' },
   { icon: PackageCheck, title: 'Lo recoges o te lo enviamos', text: 'Pasa por la tienda en Ibagué o recíbelo en cualquier ciudad de Colombia.' },
 ]
 

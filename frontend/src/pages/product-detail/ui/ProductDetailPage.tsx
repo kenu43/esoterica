@@ -1,6 +1,6 @@
 import { Breadcrumbs, Button, Chip, Skeleton } from '@heroui/react'
-import { Check, Clock, MapPin, MessageCircle, Moon, ScrollText, Truck } from 'lucide-react'
-import { motion } from 'motion/react'
+import { Check, ChevronLeft, ChevronRight, Clock, MapPin, MessageCircle, Moon, ScrollText, Truck } from 'lucide-react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { getBranch } from '@/entities/branch'
@@ -28,6 +28,12 @@ export function ProductDetailPage() {
   const category = useCategory(product?.category)
   const labels = useTaxonomyLabels()
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [direction, setDirection] = useState(1)
+  const [selectedColor, setSelectedColor] = useState<string | null>(null)
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null)
+  const [customText, setCustomText] = useState('')
+  const [quantity, setQuantity] = useState(1)
 
   useSeo({
     title: product ? `${product.name} en Ibagué` : undefined,
@@ -70,12 +76,29 @@ export function ProductDetailPage() {
 
   const branches = product.branches.map(getBranch).filter((b) => !!b)
   const main = branches[0]
-  const whatsappUrl = buildWhatsAppUrl(main?.whatsapp ?? SITE.whatsapp, buildSingleProductMessage(product, main))
-  // Solo es descuento si el precio anterior es realmente mayor
-  const hasDiscount = !!product.compareAtPrice && product.compareAtPrice > product.price
+  const sizePrice = product.sizes.find((s) => s.name === selectedSize)?.price
+  const materialPrice = product.materials.find((m) => m.name === selectedMaterial)?.price
+  const variantPrice = sizePrice ?? materialPrice
+  const displayPrice = variantPrice ?? product.price
+  const whatsappUrl = buildWhatsAppUrl(
+    main?.whatsapp ?? SITE.whatsapp,
+    buildSingleProductMessage(product, main, {
+      color: selectedColor ?? undefined,
+      size: selectedSize ?? undefined,
+      material: selectedMaterial ?? undefined,
+      customText: customText.trim() || undefined,
+      price: variantPrice,
+    }),
+  )
+  const hasDiscount = !variantPrice && !!product.compareAtPrice && product.compareAtPrice > product.price
   const discount = hasDiscount ? Math.round((1 - product.price / product.compareAtPrice!) * 100) : 0
   const photos = [product.image, ...product.gallery]
   const activePhoto = selectedImage && photos.includes(selectedImage) ? selectedImage : product.image
+  const activeIndex = photos.indexOf(activePhoto)
+  const goTo = (step: number) => {
+    setDirection(step > 0 ? 1 : -1)
+    setSelectedImage(photos[(activeIndex + step + photos.length) % photos.length])
+  }
 
   return (
     <>
@@ -94,9 +117,63 @@ export function ProductDetailPage() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="space-y-3 lg:sticky lg:top-28 lg:self-start"
           >
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-surface-secondary">
-              <img src={activePhoto} alt={product.name} width={800} height={800} className="aspect-square w-full object-cover" />
+            <div
+              className="relative overflow-hidden rounded-2xl border border-border bg-surface-secondary"
+              tabIndex={photos.length > 1 ? 0 : undefined}
+              onKeyDown={(e) => {
+                if (photos.length < 2) return
+                if (e.key === 'ArrowLeft') goTo(-1)
+                if (e.key === 'ArrowRight') goTo(1)
+              }}
+            >
+              <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                <motion.img
+                  key={activePhoto}
+                  src={activePhoto}
+                  alt={product.name}
+                  width={800}
+                  height={800}
+                  custom={direction}
+                  initial={{ x: `${direction * 60}%`, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: `${direction * -60}%`, opacity: 0 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute inset-0 aspect-square w-full touch-pan-y object-cover"
+                  drag={photos.length > 1 ? 'x' : false}
+                  dragElastic={0.2}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  onDragEnd={(_, info) => {
+                    // Deslizar con el dedo en celular: umbral de 60 px o un gesto rápido
+                    if (info.offset.x < -60 || info.velocity.x < -400) goTo(1)
+                    else if (info.offset.x > 60 || info.velocity.x > 400) goTo(-1)
+                  }}
+                />
+              </AnimatePresence>
+              <img src={activePhoto} alt="" aria-hidden className="invisible aspect-square w-full object-cover" />
               <ProductBadges badges={product.badges} discount={discount} className="absolute left-4 top-4 right-4" />
+              {photos.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => goTo(-1)}
+                    aria-label="Foto anterior"
+                    className="absolute left-3 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-white backdrop-blur-sm transition-colors hover:bg-black/70"
+                  >
+                    <ChevronLeft className="size-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => goTo(1)}
+                    aria-label="Foto siguiente"
+                    className="absolute right-3 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-full bg-black/50 text-white backdrop-blur-sm transition-colors hover:bg-black/70"
+                  >
+                    <ChevronRight className="size-5" />
+                  </button>
+                  <span className="absolute bottom-3 right-3 rounded-full bg-black/55 px-2.5 py-1 text-xs text-white">
+                    {activeIndex + 1} / {photos.length}
+                  </span>
+                </>
+              )}
               {!product.inStock && (
                 <span className="absolute inset-x-4 bottom-4 rounded-lg bg-black/75 py-2 text-center text-sm font-semibold text-white">
                   Agotado por ahora
@@ -140,35 +217,150 @@ export function ProductDetailPage() {
             </div>
 
             <div className="flex flex-wrap items-end gap-3">
-              <span className="text-3xl font-bold">{formatPrice(product.price)}</span>
+              <span className="text-3xl font-bold">{formatPrice(displayPrice)}</span>
               {hasDiscount && (
                 <span className="pb-1 text-lg text-muted line-through">{formatPrice(product.compareAtPrice!)}</span>
               )}
               <span className="pb-1.5 text-sm text-muted">{product.unit}</span>
             </div>
 
-            {product.colors.length > 0 && (
+            {product.sizes.length > 0 && (
               <div>
-                <p className="mb-2 text-sm font-medium">Colores disponibles</p>
-                <ul className="flex flex-wrap gap-2">
-                  {product.colors.map((c) => {
-                    const swatch = resolveColor(c.name, c.hex)
+                <p className="mb-2 text-sm font-medium">
+                  Tamaño{selectedSize ? `: ${selectedSize}` : ' (opcional)'}
+                </p>
+                <div role="radiogroup" aria-label="Tamaño" className="flex flex-wrap gap-2">
+                  {product.sizes.map((s) => {
+                    const active = selectedSize === s.name
                     return (
-                      <li
-                        key={c.name}
-                        className="flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1.5 text-sm"
+                      <button
+                        key={s.name}
+                        type="button"
+                        role="radio"
+                        aria-checked={active}
+                        onClick={() => setSelectedSize(active ? null : s.name)}
+                        className={cn(
+                          'flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors',
+                          active ? 'border-gold bg-gold-soft shadow-[0_0_0_1px_var(--gold)]' : 'border-border bg-surface hover:border-gold/40',
+                        )}
                       >
-                        {swatch && <span className="size-4 rounded-full ring-1 ring-border" style={{ background: swatch }} aria-hidden />}
-                        {c.name}
-                      </li>
+                        {s.name}
+                        {s.price != null && <span className="text-xs text-muted">{formatPrice(s.price)}</span>}
+                        {active && <Check className="size-3.5 text-gold" strokeWidth={3} aria-hidden />}
+                      </button>
                     )
                   })}
-                </ul>
+                </div>
               </div>
             )}
 
+            {product.materials.length > 0 && (
+              <div>
+                <p className="mb-2 text-sm font-medium">
+                  Material{selectedMaterial ? `: ${selectedMaterial}` : ' (opcional)'}
+                </p>
+                <div role="radiogroup" aria-label="Material" className="flex flex-wrap gap-2">
+                  {product.materials.map((m) => {
+                    const active = selectedMaterial === m.name
+                    return (
+                      <button
+                        key={m.name}
+                        type="button"
+                        role="radio"
+                        aria-checked={active}
+                        onClick={() => setSelectedMaterial(active ? null : m.name)}
+                        className={cn(
+                          'flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors',
+                          active ? 'border-gold bg-gold-soft shadow-[0_0_0_1px_var(--gold)]' : 'border-border bg-surface hover:border-gold/40',
+                        )}
+                      >
+                        {m.name}
+                        {m.price != null && <span className="text-xs text-muted">{formatPrice(m.price)}</span>}
+                        {active && <Check className="size-3.5 text-gold" strokeWidth={3} aria-hidden />}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            {product.customizationLabel && (
+              <label className="block space-y-2">
+                <span className="text-sm font-medium">{product.customizationLabel}</span>
+                <input
+                  value={customText}
+                  onChange={(e) => setCustomText(e.target.value)}
+                  maxLength={60}
+                  placeholder="Escribe aquí (opcional)"
+                  className="h-10 w-full rounded-xl border border-field-border bg-field-background px-3 text-sm outline-none focus:border-gold"
+                />
+              </label>
+            )}
+
+            {product.colors.length > 0 && (
+              <div>
+                <p className="mb-2 text-sm font-medium">
+                  Color{selectedColor ? `: ${selectedColor}` : ' (opcional)'}
+                </p>
+                <div role="radiogroup" aria-label="Color" className="flex flex-wrap gap-2">
+                  {product.colors.map((c) => {
+                    const swatch = resolveColor(c.name, c.hex)
+                    const active = selectedColor === c.name
+                    return (
+                      <button
+                        key={c.name}
+                        type="button"
+                        role="radio"
+                        aria-checked={active}
+                        onClick={() => setSelectedColor(active ? null : c.name)}
+                        className={cn(
+                          'flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors',
+                          active ? 'border-gold bg-gold-soft shadow-[0_0_0_1px_var(--gold)]' : 'border-border bg-surface hover:border-gold/40',
+                        )}
+                      >
+                        {swatch && <span className="size-4 rounded-full ring-1 ring-border" style={{ background: swatch }} aria-hidden />}
+                        {c.name}
+                        {active && <Check className="size-3.5 text-gold" strokeWidth={3} aria-hidden />}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium">Cantidad</span>
+              <div className="flex items-center rounded-full border border-border">
+                <button
+                  type="button"
+                  aria-label="Quitar una unidad"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  className="grid size-9 place-items-center text-lg text-muted transition-colors hover:text-foreground"
+                >
+                  −
+                </button>
+                <span className="w-8 text-center text-sm font-semibold tabular-nums">{quantity}</span>
+                <button
+                  type="button"
+                  aria-label="Agregar una unidad"
+                  onClick={() => setQuantity((q) => q + 1)}
+                  className="grid size-9 place-items-center text-lg text-muted transition-colors hover:text-foreground"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
             <div className="flex flex-wrap gap-3">
-              <AddToInquiryButton product={product} variant="full" />
+              <AddToInquiryButton
+                product={product}
+                variant="full"
+                color={selectedColor ?? undefined}
+                size={selectedSize ?? undefined}
+                material={selectedMaterial ?? undefined}
+                customText={customText.trim() || undefined}
+                quantity={quantity}
+              />
               <Button
                 size="lg"
                 variant="outline"
@@ -222,8 +414,8 @@ export function ProductDetailPage() {
             {product.benefits.length > 0 && (
               <ul className="grid gap-2 sm:grid-cols-2">
                 {product.benefits.map((b) => (
-                  <li key={b} className="flex items-start gap-2 text-sm">
-                    <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-gold-soft text-gold">
+                  <li key={b} className="flex items-center gap-2.5 text-sm leading-5">
+                    <span className="grid size-5 shrink-0 place-items-center rounded-full bg-gold-soft text-gold">
                       <Check className="size-3" strokeWidth={3} />
                     </span>
                     {b}

@@ -67,7 +67,7 @@ export const DEFAULT_ARTICLES: Article[] = [
     topic: 'Plantas y resinas',
     publishedAt: '2026-09-15',
     body: [
-      p('El palo santo y la salvia blanca se usan desde hace siglos para limpiar y armonizar los espacios. Esto es lo que se les atribuye de forma tradicional; no reemplazan ningún tratamiento médico.'),
+      p('El palo santo y la salvia blanca se usan desde hace siglos para limpiar y armonizar los espacios. Esto es lo que se les atribuye de forma tradicional.'),
       h2('Palo santo'),
       li('Su aroma dulce y amaderado ayuda a relajarse y a soltar el estrés.'),
       li('Se usa antes de meditar o de dormir para crear calma.'),

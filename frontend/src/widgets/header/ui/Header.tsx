@@ -1,24 +1,54 @@
 import { Button } from '@heroui/react'
 import { Menu, X } from 'lucide-react'
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router'
 import { ThemeToggle } from '@/features/theme-toggle'
 import { InquiryTrigger } from '@/features/whatsapp-inquiry'
+import { isPreviewMode } from '@/shared/api'
 import { NAV_ITEMS, ROUTES } from '@/shared/config'
 import { cn } from '@/shared/lib'
 import { Logo } from '@/shared/ui'
 
+const IDLE_MS = 500
+
 export function Header() {
-  const { scrollY } = useScroll()
   const [scrolled, setScrolled] = useState(false)
+  const [hidden, setHidden] = useState(false)
   const [open, setOpen] = useState(false)
   const [hovered, setHovered] = useState<string | null>(null)
 
-  // Se compacta al bajar. Histéresis (40 / 8 px) para que no parpadee cerca del umbral.
-  useMotionValueEvent(scrollY, 'change', (y) => {
-    setScrolled((was) => (was ? y > 8 : y > 40))
-  })
+  useEffect(() => {
+    let lastY = window.scrollY
+    let ticking = false
+    let idleTimer: ReturnType<typeof setTimeout>
+
+    const onScroll = () => {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        ticking = false
+        const y = window.scrollY
+        const delta = y - lastY
+        lastY = y
+
+        setScrolled((was) => (was ? y > 8 : y > 40))
+        if (open || y < 120) setHidden(false)
+        else if (delta > 4) setHidden(true)
+        else if (delta < -4) setHidden(false)
+
+        // Reaparece por sí solo si el usuario deja de mover la página, aunque no suba.
+        clearTimeout(idleTimer)
+        idleTimer = setTimeout(() => setHidden(false), IDLE_MS)
+      })
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      clearTimeout(idleTimer)
+    }
+  }, [open])
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -26,7 +56,16 @@ export function Header() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6">
+      <motion.header
+        animate={{ y: hidden ? '-130%' : '0%' }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6"
+      >
+        {isPreviewMode() && (
+          <p className="mx-auto mb-1.5 max-w-7xl rounded-lg bg-gold py-1 text-center text-xs font-semibold text-[oklch(0.18_0.04_290)]">
+            Vista previa: puede mostrar cambios sin publicar
+          </p>
+        )}
         <nav
           aria-label="Principal"
           className={cn(
@@ -89,7 +128,7 @@ export function Header() {
             </Button>
           </div>
         </nav>
-      </header>
+      </motion.header>
 
       {/* Menú móvil a pantalla completa */}
       <AnimatePresence>

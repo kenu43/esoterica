@@ -1,11 +1,13 @@
 import { Button } from '@heroui/react'
-import { Loader2, MessageCircle, Send, Sparkles, X } from 'lucide-react'
+import { Check, Loader2, MessageCircle, Plus, RotateCw, Send, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { useProducts } from '@/entities/product'
+import { useProducts, type Product } from '@/entities/product'
+import { useInquiryStore } from '@/features/whatsapp-inquiry'
 import { ROUTES, SITE } from '@/shared/config'
 import { buildWhatsAppUrl, cn, formatPrice } from '@/shared/lib'
+import { WitchHatIcon } from '@/shared/ui'
 import { askAssistant, isAssistantEnabled, type ChatMessage } from '../model/chat'
 
 const GREETING: ChatMessage = {
@@ -31,16 +33,15 @@ export function AssistantChat() {
 
   if (!isAssistantEnabled) return null
 
-  const send = async (text: string) => {
+  const send = async (text: string, retry = false) => {
     const clean = text.trim()
     if (!clean || loading) return
-    const next: ChatMessage[] = [...messages, { role: 'user', text: clean }]
+    const next: ChatMessage[] = retry ? messages : [...messages, { role: 'user', text: clean }]
     setMessages(next)
     setInput('')
     setError('')
     setLoading(true)
     try {
-      // La IA no necesita el saludo inicial: la conversación real empieza con el usuario
       const { reply, productSlugs } = await askAssistant(next.slice(1), products)
       setMessages([...next, { role: 'assistant', text: reply, productSlugs }])
     } catch (err) {
@@ -67,11 +68,11 @@ export function AssistantChat() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-3 bottom-40 z-50 flex max-h-[min(560px,calc(100svh-11rem))] flex-col overflow-hidden rounded-2xl border border-border bg-overlay shadow-2xl shadow-black/30 sm:inset-x-auto sm:right-8 sm:w-[380px]"
+            className="fixed inset-x-3 bottom-[10.5rem] z-50 flex max-h-[min(560px,calc(100svh-12rem))] flex-col overflow-hidden rounded-2xl border border-border bg-overlay shadow-2xl shadow-black/30 sm:inset-x-auto sm:right-8 sm:w-[380px]"
           >
             <header className="flex items-center gap-3 border-b border-separator px-4 py-3">
               <span className="grid size-9 place-items-center rounded-full bg-gold-soft text-gold">
-                <Sparkles className="size-5" aria-hidden />
+                <WitchHatIcon className="size-5" />
               </span>
               <div className="flex-1">
                 <p className="font-display text-base leading-none">Asesor con IA</p>
@@ -95,20 +96,7 @@ export function AssistantChat() {
                   </p>
                   {m.productSlugs?.map((slug) => {
                     const p = products.find((x) => x.slug === slug)
-                    return p ? (
-                      <Link
-                        key={slug}
-                        to={ROUTES.product(slug)}
-                        onClick={() => setOpen(false)}
-                        className="flex w-full items-center gap-3 rounded-xl border border-border bg-surface p-2 transition-colors hover:border-gold/40"
-                      >
-                        <img src={p.image} alt="" className="size-12 rounded-lg object-cover" />
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-sm font-medium">{p.name}</span>
-                          <span className="text-xs text-muted">{formatPrice(p.price)}</span>
-                        </span>
-                      </Link>
-                    ) : null
+                    return p ? <RecommendedProduct key={slug} product={p} onNavigate={() => setOpen(false)} /> : null
                   })}
                 </div>
               ))}
@@ -133,7 +121,19 @@ export function AssistantChat() {
                   <Loader2 className="size-4 animate-spin" aria-hidden /> Pensando…
                 </p>
               )}
-              {error && <p className="text-sm text-danger">{error}</p>}
+              {error && (
+                <div className="space-y-2 rounded-xl border border-danger/30 bg-danger/5 p-3">
+                  <p className="text-sm text-danger">{error}</p>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="gap-2"
+                    onPress={() => send(userTexts[userTexts.length - 1] ?? '', true)}
+                  >
+                    <RotateCw className="size-3.5" /> Reintentar
+                  </Button>
+                </div>
+              )}
               <div ref={endRef} />
             </div>
 
@@ -165,9 +165,6 @@ export function AssistantChat() {
               >
                 <MessageCircle className="size-3.5" aria-hidden /> Prefiero hablar con una persona por WhatsApp
               </a>
-              <p className="text-center text-[11px] text-muted">
-                Orientación general. No reemplaza a un médico ni a un profesional.
-              </p>
             </div>
           </motion.section>
         )}
@@ -181,10 +178,56 @@ export function AssistantChat() {
         transition={{ delay: 1.4, type: 'spring', stiffness: 260, damping: 18 }}
         whileTap={{ scale: 0.92 }}
         aria-label={open ? 'Cerrar asesor con IA' : 'Hablar con el asesor con IA'}
-        className="fixed bottom-[5.5rem] right-5 z-40 grid size-12 place-items-center rounded-full border border-gold/40 bg-surface text-gold shadow-lg sm:bottom-[6.5rem] sm:right-8"
+        className="fixed bottom-[6rem] right-5 z-40 grid size-14 place-items-center rounded-full bg-gradient-to-br from-[oklch(0.42_0.2_300)] to-[oklch(0.3_0.16_290)] text-[oklch(0.9_0.12_85)] shadow-lg shadow-[oklch(0.42_0.2_300)]/40 ring-1 ring-gold/50 sm:bottom-[7rem] sm:right-8"
       >
-        <Sparkles className="size-5" />
+        <span className="absolute inset-0 animate-pulse-glow rounded-full bg-gold/20" aria-hidden />
+        <WitchHatIcon className="relative size-8" />
       </motion.button>
     </>
+  )
+}
+
+/** Tarjeta de producto recomendado, con botón para agregarlo a la lista de consulta. */
+function RecommendedProduct({ product, onNavigate }: { product: Product; onNavigate: () => void }) {
+  const add = useInquiryStore((st) => st.add)
+  const setOpen = useInquiryStore((st) => st.setOpen)
+  const [added, setAdded] = useState(false)
+  const needsColor = product.colors.length > 0
+
+  return (
+    <div className="flex w-full items-center gap-3 rounded-xl border border-border bg-surface p-2">
+      <Link to={ROUTES.product(product.slug)} onClick={onNavigate} className="flex min-w-0 flex-1 items-center gap-3">
+        <img src={product.image} alt="" className="size-12 shrink-0 rounded-lg object-cover" />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-medium">{product.name}</span>
+          <span className="text-xs text-muted">{formatPrice(product.price)}</span>
+        </span>
+      </Link>
+      {needsColor ? (
+        <Link
+          to={ROUTES.product(product.slug)}
+          onClick={onNavigate}
+          className="shrink-0 rounded-lg border border-border px-2.5 py-1.5 text-xs transition-colors hover:border-gold/40"
+        >
+          Elegir color
+        </Link>
+      ) : added ? (
+        <Button size="sm" variant="secondary" className="shrink-0 gap-1" onPress={() => setOpen(true)}>
+          <Check className="size-3.5" /> Ver lista
+        </Button>
+      ) : (
+        <Button
+          size="sm"
+          variant="primary"
+          className="shrink-0 gap-1"
+          onPress={() => {
+            add(product.id)
+            setAdded(true)
+          }}
+        >
+          <Plus className="size-3.5" /> Agregar
+        </Button>
+      )}
+    </div>
   )
 }

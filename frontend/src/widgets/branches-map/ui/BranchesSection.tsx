@@ -23,7 +23,7 @@ export function BranchesSection({ variant = 'home' }: BranchesSectionProps) {
         {variant === 'home' && (
           <SectionHeading
             eyebrow="Nuestras tiendas"
-            title="Tres tiendas a pocos pasos en el centro de Ibagué"
+            title="Nuestras tiendas en el centro de Ibagué"
             highlight={['Ibagué']}
             description="El Sortilegio y La Colonia están en la misma cuadra de la Carrera 3, y Loto & Nirvana a dos calles. Cada una tiene su especialidad."
           />

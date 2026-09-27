@@ -47,7 +47,11 @@ pnpm run deploy:studio   # publica el panel en https://universo-esoterico.sanity
    Luego invita a tu hermano como **Editor** en https://www.sanity.io/manage → proyecto → Members.
    Guía para él: [`studio-universo-esoterico/GUIA-PANEL.md`](studio-universo-esoterico/GUIA-PANEL.md).
 
-2. **Publicar**
+2. **Vista previa sin publicar (opcional)** — crea un token "Viewer" en manage.sanity.io → proyecto → API →
+   Tokens, y ponlo en `frontend/.env.local` como `VITE_SANITY_PREVIEW_TOKEN`. Con eso el menú **Presentation**
+   del panel muestra la web con los cambios aún no publicados. Detalles en `studio-universo-esoterico/GUIA-PANEL.md`.
+
+3. **Publicar**
    ```bash
    pnpm add -g firebase-tools && firebase login
    pnpm run deploy

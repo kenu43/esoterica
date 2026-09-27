@@ -62,6 +62,14 @@ El campo **Orden** decide en qué posición sale en la web (número bajo = prime
 
 - **Más fotos**: miniaturas debajo de la foto principal.
 - **Colores disponibles**: para velones y velas (nombre del color; el código exacto es opcional).
+- **Tamaños o presentaciones**: si el producto viene en varios tamaños (ej.: figuras de 15, 30 y 60 cm) y el
+  precio cambia según el tamaño, agrega uno por fila con su precio. Si el precio es igual para todos los
+  tamaños, deja el precio de cada fila vacío (usa el "Precio (COP)" de arriba).
+- **Materiales disponibles**: igual que los tamaños, pero para cuando el mismo diseño existe en varios
+  materiales (ej.: madera, resina, plata) y cada uno puede tener su propio precio.
+- **Se puede personalizar**: escribe ahí lo que el cliente debe indicarte (ej.: "Nombre a grabar"). En la
+  ficha del producto aparece un campo de texto para que lo escriba antes de agregarlo a su lista. Si el
+  producto no se personaliza, déjalo vacío.
 - **Cómo se usa (ritual)**, **Intención**, **Fase lunar recomendada** y **Temporada**.
 - Las **Temporadas** (Navidad, Día del Padre…) y las **Intenciones** (amor, protección…) se crean y editan en sus menús; luego se eligen en el producto.
 - **Descuento (%)**: pon por ejemplo 20 y la web calcula sola el precio final; el "Precio (COP)" es el normal y sale tachado.
@@ -74,6 +82,13 @@ Menú **Aprende y Sanar (artículos)** → **+**. Título tal como lo buscaría 
 ## 10. Glosario místico
 
 Menú **Glosario místico** → **+**: término, tema, respuesta corta y explicación. Aparece en la página Glosario.
+
+## 11. Ver cómo va a quedar antes de publicar
+
+Menú **Presentation** (arriba a la izquierda). Ahí ves la web real al lado de tus cambios: mientras editas un
+producto o artículo, en ese panel se ve cómo se vería en la página, aunque todavía no hayas tocado "Publish".
+Solo la ven quienes entran a **Presentation** desde aquí: los clientes de la web normal nunca ven lo que no
+has publicado.
 
 ---
 

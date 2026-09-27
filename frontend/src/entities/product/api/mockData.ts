@@ -12,8 +12,8 @@ import type { Product } from '../model/types'
  * ─────────────────────────────────────────────────────────────
  */
 /** Los campos nuevos del Studio son opcionales aquí: el catálogo de ejemplo no los necesita. */
-type MockProduct = Omit<Product, 'branches' | 'intentions' | 'gallery' | 'colors'> &
-  Partial<Pick<Product, 'intentions' | 'gallery' | 'colors'>>
+type MockProduct = Omit<Product, 'branches' | 'intentions' | 'gallery' | 'colors' | 'sizes' | 'materials'> &
+  Partial<Pick<Product, 'intentions' | 'gallery' | 'colors' | 'sizes' | 'materials'>>
 
 export const mockProductsByStore: Record<BranchId, MockProduct[]> = {
   // ── El Sortilegio · desde 1981 · magia, santos y trabajos ─────────
@@ -644,7 +644,7 @@ export const mockProductsByStore: Record<BranchId, MockProduct[]> = {
 /** Catálogo plano: cada producto sabe en qué tienda está. */
 export const MOCK_PRODUCTS: Product[] = (Object.entries(mockProductsByStore) as [BranchId, MockProduct[]][]).flatMap(
   ([store, products]) =>
-    products.map((p) => ({ intentions: [], gallery: [], colors: [], ...p, branches: [store] })),
+    products.map((p) => ({ intentions: [], gallery: [], colors: [], sizes: [], materials: [], ...p, branches: [store] })),
 )
 
 /**
@@ -674,6 +674,8 @@ const DEMO_PRODUCTS: Product[] = [
       { name: 'Blanco' },
       { name: 'Morado' },
     ],
+    sizes: [],
+    materials: [],
     intentions: ['abundancia', 'trabajo', 'amor'],
     moonPhase: 'creciente',
     usageGuide:
@@ -699,6 +701,8 @@ const DEMO_PRODUCTS: Product[] = [
     image: '/images/products/duende.webp',
     gallery: ['/images/products/gato-fortuna.webp', '/images/products/elefante.webp'],
     colors: [{ name: 'Dorado', hex: '#d4a72c' }, { name: 'Rojo' }],
+    sizes: [],
+    materials: [],
     intentions: ['abundancia', 'suerte', 'proteccion'],
     season: 'navidad',
     moonPhase: 'llena',
@@ -722,6 +726,8 @@ const DEMO_PRODUCTS: Product[] = [
     image: '/images/products/despojo.webp',
     gallery: [],
     colors: [],
+    sizes: [],
+    materials: [],
     intentions: ['limpieza', 'salud'],
     moonPhase: 'menguante',
     badges: [],
@@ -743,6 +749,8 @@ const DEMO_PRODUCTS: Product[] = [
     image: '/images/products/pulsera.webp',
     gallery: ['/images/products/amuletos.webp'],
     colors: [{ name: 'Rosado' }, { name: 'Negro' }, { name: 'Turquesa' }],
+    sizes: [],
+    materials: [],
     intentions: ['amor', 'paz'],
     season: 'amor-y-amistad',
     badges: ['nuevo'],
@@ -750,6 +758,61 @@ const DEMO_PRODUCTS: Product[] = [
     createdAt: '2026-09-24',
     inStock: true,
     branches: ['loto-nirvana', 'la-colonia'],
+  },
+  {
+    id: 'demo-005',
+    slug: 'santa-muerte-tamanos-demo',
+    name: 'Figura de la Santa Muerte (demo tamaños)',
+    category: 'figuras',
+    price: 65000,
+    unit: 'figura en resina',
+    shortDescription: 'Producto de prueba: el cliente elige el tamaño y el precio cambia según su elección.',
+    description:
+      'Figura de la Santa Muerte en resina, disponible en tres tamaños. El precio de la ficha se ajusta automáticamente al tamaño que elijas. Este producto existe solo para probar cómo se ve la página.',
+    benefits: ['Pintada a mano', 'Tres tamaños disponibles'],
+    image: '/images/products/santa-muerte.webp',
+    gallery: [],
+    colors: [],
+    sizes: [
+      { name: '15 cm' },
+      { name: '30 cm', price: 95000 },
+      { name: '60 cm', price: 180000 },
+    ],
+    materials: [],
+    intentions: ['proteccion'],
+    badges: ['nuevo'],
+    tags: ['santa muerte', 'figura', 'tamaños'],
+    createdAt: '2026-09-26',
+    inStock: true,
+    branches: ['el-sortilegio'],
+  },
+  {
+    id: 'demo-006',
+    slug: 'tetragramaton-personalizado-demo',
+    name: 'Tetragramatón (demo material y personalización)',
+    category: 'amuletos',
+    price: 38000,
+    unit: 'dije + cadena',
+    shortDescription: 'Producto de prueba: el cliente elige el material y escribe un texto para grabar.',
+    description:
+      'Tetragramatón de protección, disponible en varios materiales. Se puede grabar una iniciar o fecha en la parte de atrás. Este producto existe solo para probar cómo se ve la página.',
+    benefits: ['Grabado incluido', 'Tres materiales disponibles'],
+    image: '/images/products/tetragramaton.webp',
+    gallery: [],
+    colors: [],
+    sizes: [],
+    materials: [
+      { name: 'Acero' },
+      { name: 'Plata 925', price: 68000 },
+      { name: 'Oro laminado', price: 82000 },
+    ],
+    customizationLabel: 'Iniciales o fecha a grabar (opcional)',
+    intentions: ['proteccion'],
+    badges: [],
+    tags: ['tetragramatón', 'personalizado', 'material'],
+    createdAt: '2026-09-27',
+    inStock: true,
+    branches: ['el-sortilegio'],
   },
 ]
 

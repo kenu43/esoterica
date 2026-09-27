@@ -5,15 +5,36 @@ import { DEFAULT_BRANCH_ID, type BranchChoiceId } from '@/entities/branch'
 export interface InquiryItem {
   productId: string
   quantity: number
+  /** Color elegido (velones, pulseras…). */
+  color?: string
+  /** Tamaño elegido (figuras en varios tamaños…). */
+  size?: string
+  /** Material elegido (madera, resina, metal…). */
+  material?: string
+  /** Texto para personalizar (grabado, iniciales…). */
+  customText?: string
 }
+
+export interface InquiryVariant {
+  color?: string
+  size?: string
+  material?: string
+  customText?: string
+}
+
+const VARIANT_KEYS = ['color', 'size', 'material', 'customText'] as const
+
+/** Dos líneas son la misma si son el mismo producto con las mismas opciones elegidas. */
+const same = (i: InquiryItem, productId: string, variant: InquiryVariant = {}) =>
+  i.productId === productId && VARIANT_KEYS.every((k) => (i[k] ?? '') === (variant[k] ?? ''))
 
 interface InquiryState {
   items: InquiryItem[]
   branchId: BranchChoiceId
   isOpen: boolean
-  add: (productId: string) => void
-  remove: (productId: string) => void
-  setQuantity: (productId: string, quantity: number) => void
+  add: (productId: string, variant?: InquiryVariant, quantity?: number) => void
+  remove: (productId: string, variant?: InquiryVariant) => void
+  setQuantity: (productId: string, quantity: number, variant?: InquiryVariant) => void
   setBranch: (branchId: BranchChoiceId) => void
   clear: () => void
   setOpen: (open: boolean) => void
@@ -29,22 +50,22 @@ export const useInquiryStore = create<InquiryState>()(
       items: [],
       branchId: DEFAULT_BRANCH_ID,
       isOpen: false,
-      add: (productId) =>
+      add: (productId, variant = {}, quantity = 1) =>
         set((s) => {
-          const existing = s.items.find((i) => i.productId === productId)
+          const existing = s.items.find((i) => same(i, productId, variant))
           return {
             items: existing
-              ? s.items.map((i) => (i.productId === productId ? { ...i, quantity: i.quantity + 1 } : i))
-              : [...s.items, { productId, quantity: 1 }],
+              ? s.items.map((i) => (same(i, productId, variant) ? { ...i, quantity: i.quantity + quantity } : i))
+              : [...s.items, { productId, quantity, ...variant }],
           }
         }),
-      remove: (productId) => set((s) => ({ items: s.items.filter((i) => i.productId !== productId) })),
-      setQuantity: (productId, quantity) =>
+      remove: (productId, variant) => set((s) => ({ items: s.items.filter((i) => !same(i, productId, variant)) })),
+      setQuantity: (productId, quantity, variant) =>
         set((s) => ({
           items:
             quantity <= 0
-              ? s.items.filter((i) => i.productId !== productId)
-              : s.items.map((i) => (i.productId === productId ? { ...i, quantity } : i)),
+              ? s.items.filter((i) => !same(i, productId, variant))
+              : s.items.map((i) => (same(i, productId, variant) ? { ...i, quantity } : i)),
         })),
       setBranch: (branchId) => set({ branchId }),
       clear: () => set({ items: [] }),

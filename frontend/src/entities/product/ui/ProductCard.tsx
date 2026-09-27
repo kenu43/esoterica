@@ -24,6 +24,10 @@ export function ProductCard({ product, action, index = 0 }: ProductCardProps) {
   const discount = product.compareAtPrice
     ? Math.round((1 - product.price / product.compareAtPrice) * 100)
     : 0
+  const minOf = (list: { price?: number }[]) =>
+    list.reduce<number | null>((min, v) => (v.price != null && (min === null || v.price < min) ? v.price : min), null)
+  const variantPrices = [minOf(product.sizes), minOf(product.materials)].filter((v): v is number => v != null)
+  const minVariantPrice = variantPrices.length ? Math.min(...variantPrices) : null
 
   return (
     <motion.article
@@ -83,7 +87,10 @@ export function ProductCard({ product, action, index = 0 }: ProductCardProps) {
             {product.compareAtPrice && (
               <span className="text-xs text-muted line-through">{formatPrice(product.compareAtPrice)}</span>
             )}
-            <span className="text-xl font-bold tracking-tight">{formatPrice(product.price)}</span>
+            <span className="text-xl font-bold tracking-tight">
+              {minVariantPrice != null && minVariantPrice < product.price && 'Desde '}
+              {formatPrice(minVariantPrice != null ? Math.min(minVariantPrice, product.price) : product.price)}
+            </span>
             <span className="text-xs text-muted">{product.unit}</span>
           </div>
           {action}

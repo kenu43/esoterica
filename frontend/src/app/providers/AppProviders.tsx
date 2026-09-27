@@ -22,11 +22,20 @@ function createQueryClient() {
 export function AppProviders({ children }: { children: ReactNode }) {
   const [queryClient] = useState(createQueryClient)
   const theme = useThemeStore((s) => s.theme)
+  // En celular los toasts van arriba: abajo quedan tapados por el teclado y por el FAB de WhatsApp
+  const [toastPlacement, setToastPlacement] = useState<'top' | 'bottom'>('bottom')
 
   useEffect(() => applyTheme(theme), [theme])
   useEffect(() => watchSystemTheme(), [])
   useEffect(() => {
     initAnalytics().catch(() => undefined)
+  }, [])
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)')
+    const update = () => setToastPlacement(mq.matches ? 'top' : 'bottom')
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
   }, [])
 
   return (
@@ -34,7 +43,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
       {/* reducedMotion="user" respeta la preferencia del sistema operativo */}
       <MotionConfig reducedMotion="user">
         {children}
-        <Toast.Provider placement="bottom" />
+        <Toast.Provider placement={toastPlacement} />
       </MotionConfig>
     </QueryClientProvider>
   )

@@ -38,12 +38,33 @@ export interface Product {
   season?: string
   /** Colores disponibles (velones, velas…). */
   colors: ProductColor[]
+  /** Tamaños o presentaciones entre los que el cliente elige (ej.: figuras en varios tamaños). */
+  sizes: ProductSize[]
+  /** Materiales entre los que el cliente elige (ej.: madera, resina, metal…). */
+  materials: ProductMaterial[]
+  /**
+   * Si tiene texto, el producto se puede personalizar y esta es la instrucción que ve el
+   * cliente (ej.: "Nombre a grabar"). Si no, no se ofrece personalización.
+   */
+  customizationLabel?: string
 }
 
 export interface ProductColor {
   name: string
   /** Hex opcional (#RRGGBB); si falta se deduce del nombre. */
   hex?: string
+}
+
+export interface ProductSize {
+  name: string
+  /** Precio de este tamaño; si falta, se usa `Product.price`. */
+  price?: number
+}
+
+export interface ProductMaterial {
+  name: string
+  /** Precio de este material; si falta, se usa `Product.price`. */
+  price?: number
 }
 
 export type ProductSort = 'relevance' | 'price-asc' | 'price-desc' | 'newest'

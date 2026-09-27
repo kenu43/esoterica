@@ -7,7 +7,16 @@ const config = {
   dataset: env.VITE_SANITY_DATASET,
 }
 
+/**
+ * Vista previa: la abre el Studio (herramienta "Presentation") con `?preview=1` en la URL.
+ * Mientras está activa, la web muestra los borradores sin publicar, no el catálogo público.
+ * Requiere `VITE_SANITY_PREVIEW_TOKEN` (token "Viewer", de solo lectura) en el build.
+ */
+export const isPreviewMode = () =>
+  typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('preview') === '1' && !!env.VITE_SANITY_PREVIEW_TOKEN
+
 let clientPromise: Promise<SanityClient> | null = null
+let previewClientPromise: Promise<SanityClient> | null = null
 
 /**
  * Cliente de lectura de Sanity, importado bajo demanda para no inflar el bundle inicial.
@@ -18,6 +27,20 @@ export function getSanityClient() {
     createClient({ ...config, apiVersion: env.VITE_SANITY_API_VERSION, useCdn: true, perspective: 'published' }),
   )
   return clientPromise
+}
+
+/** Cliente de vista previa: lee también los borradores. La CDN no los sirve, por eso `useCdn: false`. */
+function getPreviewSanityClient() {
+  previewClientPromise ??= import('@sanity/client').then(({ createClient }) =>
+    createClient({
+      ...config,
+      apiVersion: env.VITE_SANITY_API_VERSION,
+      useCdn: false,
+      perspective: 'previewDrafts',
+      token: env.VITE_SANITY_PREVIEW_TOKEN,
+    }),
+  )
+  return previewClientPromise
 }
 
 /**
@@ -31,7 +54,7 @@ let circuitOpenUntil = 0
 export async function sanityFetch<T>(query: string, params: Record<string, unknown> = {}) {
   if (Date.now() < circuitOpenUntil) throw new Error('Sanity no disponible temporalmente')
   try {
-    const client = await getSanityClient()
+    const client = await (isPreviewMode() ? getPreviewSanityClient() : getSanityClient())
     return await client.fetch<T>(query, params)
   } catch (err) {
     circuitOpenUntil = Date.now() + 60_000

@@ -29,7 +29,7 @@ export function useSeo({ title, description, image, jsonLd }: SeoOptions = {}) {
   const jsonLdString = jsonLd ? JSON.stringify(jsonLd) : ''
 
   useEffect(() => {
-    const fullTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · Tienda esotérica en Ibagué desde 1981`
+    const fullTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · Tienda esotérica en Ibagué`
     const desc = description ?? SITE.description
     const url = `${SITE.url}${pathname === '/' ? '/' : pathname}`
     const img = image?.startsWith('http') ? image : `${SITE.url}${image ?? '/images/products/figuras-tienda.webp'}`

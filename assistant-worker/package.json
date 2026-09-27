@@ -3,11 +3,11 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Proxy del asesor con IA (Gemini): guarda la API key fuera del navegador",
+  "description": "Proxy del asesor con IA (xAI Grok): guarda la API key fuera del navegador",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "secret": "wrangler secret put GEMINI_API_KEY"
+    "secret": "wrangler secret put XAI_API_KEY"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

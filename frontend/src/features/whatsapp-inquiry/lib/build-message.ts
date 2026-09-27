@@ -5,6 +5,10 @@ import { buildFormMessage, formatPrice } from '@/shared/lib'
 interface Line {
   product: Product
   quantity: number
+  color?: string
+  size?: string
+  material?: string
+  customText?: string
 }
 
 export const SHIPPING_OPTIONS = [
@@ -23,11 +27,27 @@ interface InquiryOptions {
   note?: string
 }
 
+/** Precio unitario real: el del tamaño o material elegido si tiene uno propio, si no el del producto. */
+const unitPrice = (l: Line) =>
+  l.product.sizes.find((s) => s.name === l.size)?.price ?? l.product.materials.find((m) => m.name === l.material)?.price ?? l.product.price
+
+const variantParts = (l: Pick<Line, 'color' | 'size' | 'material' | 'customText'>) =>
+  [
+    l.color && `color ${l.color}`,
+    l.size && `tamaño ${l.size}`,
+    l.material && `material ${l.material}`,
+    l.customText && `personalizado: "${l.customText}"`,
+  ].filter(Boolean)
+
 /** Mensaje de pedido para la lista de consulta. */
 export function buildInquiryMessage(lines: Line[], { branch, anyBranch, shipping, note }: InquiryOptions) {
-  const total = lines.reduce((acc, l) => acc + l.product.price * l.quantity, 0)
+  const total = lines.reduce((acc, l) => acc + unitPrice(l) * l.quantity, 0)
+  const variant = (l: Line) => {
+    const parts = variantParts(l)
+    return parts.length ? `, ${parts.join(', ')}` : ''
+  }
   const items = lines
-    .map((l) => `   • ${l.quantity} x ${l.product.name} (${l.product.unit}) — ${formatPrice(l.product.price * l.quantity)}`)
+    .map((l) => `   • ${l.quantity} x ${l.product.name} (${l.product.unit})${variant(l)} — ${formatPrice(unitPrice(l) * l.quantity)}`)
     .join('\n')
   const shippingLabel = SHIPPING_OPTIONS.find((s) => s.value === shipping)?.label
 
@@ -40,11 +60,25 @@ export function buildInquiryMessage(lines: Line[], { branch, anyBranch, shipping
   ])
 }
 
+interface SingleProductOptions {
+  color?: string
+  size?: string
+  material?: string
+  customText?: string
+  /** Precio del tamaño o material elegido, si tiene uno propio. */
+  price?: number
+}
+
 /** Mensaje rápido para consultar un solo producto. */
-export function buildSingleProductMessage(product: Product, branch?: Branch) {
+export function buildSingleProductMessage(product: Product, branch?: Branch, options: SingleProductOptions = {}) {
+  const { color, size, material, customText, price } = options
   return buildFormMessage([
     { icon: '🛍️', label: 'Pedido', value: `${product.name} (${product.unit})` },
-    { icon: '💰', label: 'Precio', value: formatPrice(product.price) },
+    { icon: '🎨', label: 'Color', value: color },
+    { icon: '📏', label: 'Tamaño', value: size },
+    { icon: '🧱', label: 'Material', value: material },
+    { icon: '✏️', label: 'Personalización', value: customText },
+    { icon: '💰', label: 'Precio', value: formatPrice(price ?? product.price) },
     { icon: '📍', label: 'Sede', value: branch ? `${branch.name} (${branch.city})` : undefined },
   ])
 }

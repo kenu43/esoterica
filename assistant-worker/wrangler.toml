@@ -9,4 +9,5 @@ preview_urls = false
 [vars]
 # Dominios que pueden usar el asistente (separados por coma)
 ALLOWED_ORIGINS = "https://esoterica-app.web.app,https://esoterica-app.firebaseapp.com,http://localhost:5173"
-GEMINI_MODEL = "gemini-2.5-flash"
+XAI_MODEL = "grok-4-fast"
+XAI_FALLBACK_MODEL = "grok-3-mini"

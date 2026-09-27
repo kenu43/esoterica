@@ -157,6 +157,73 @@ export const product = defineType({
       group: 'detalle',
     }),
     defineField({
+      name: 'sizes',
+      title: 'Tamaños o presentaciones',
+      description:
+        'Si el producto viene en varios tamaños (ej.: 15 cm, 30 cm, 60 cm) y el cliente debe elegir uno. Si tiene un solo tamaño, usa mejor "Presentación" y deja esto vacío.',
+      type: 'array',
+      group: 'detalle',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'productSize',
+          fields: [
+            defineField({ name: 'name', title: 'Nombre del tamaño', description: 'Ej.: "15 cm", "Paquete x 10".', type: 'string', validation: (r) => r.required().max(30) }),
+            defineField({
+              name: 'price',
+              title: 'Precio de este tamaño (opcional)',
+              description: 'Si lo dejas vacío, usa el "Precio (COP)" de arriba para este tamaño.',
+              type: 'number',
+              validation: (r) => r.min(0).integer(),
+            }),
+          ],
+          preview: {
+            select: { title: 'name', price: 'price' },
+            prepare: ({ title, price }) => ({ title, subtitle: price ? formatCOP(price) : undefined }),
+          },
+        }),
+      ],
+      validation: (r) => r.max(8),
+    }),
+    defineField({
+      name: 'materials',
+      title: 'Materiales disponibles',
+      description:
+        'Si el mismo diseño existe en varios materiales (ej.: madera, resina, metal) y el cliente debe elegir uno.',
+      type: 'array',
+      group: 'detalle',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'productMaterial',
+          fields: [
+            defineField({ name: 'name', title: 'Nombre del material', description: 'Ej.: "Madera", "Resina", "Plata 925".', type: 'string', validation: (r) => r.required().max(30) }),
+            defineField({
+              name: 'price',
+              title: 'Precio de este material (opcional)',
+              description: 'Si lo dejas vacío, usa el "Precio (COP)" de arriba para este material.',
+              type: 'number',
+              validation: (r) => r.min(0).integer(),
+            }),
+          ],
+          preview: {
+            select: { title: 'name', price: 'price' },
+            prepare: ({ title, price }) => ({ title, subtitle: price ? formatCOP(price) : undefined }),
+          },
+        }),
+      ],
+      validation: (r) => r.max(8),
+    }),
+    defineField({
+      name: 'customizationLabel',
+      title: 'Se puede personalizar (opcional)',
+      description:
+        'Actívalo escribiendo lo que el cliente debe indicar, ej.: "Nombre a grabar" o "Color del listón". En la ficha aparece un campo de texto para que lo escriba antes de agregarlo a su lista. Deja vacío si no aplica.',
+      type: 'string',
+      group: 'detalle',
+      validation: (r) => r.max(60),
+    }),
+    defineField({
       name: 'colors',
       title: 'Colores disponibles',
       description: 'Para velones, velas, pulseras… Escribe el nombre (Rojo, Verde…). El color exacto es opcional.',
