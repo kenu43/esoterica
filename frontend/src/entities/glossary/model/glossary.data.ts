@@ -1,6 +1,5 @@
 import type { GlossaryTerm } from './types'
 
-/** Glosario por defecto: respaldo si Sanity no responde y semilla del Studio (`pnpm seed`). */
 export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
   {
     id: 'santa-muerte',

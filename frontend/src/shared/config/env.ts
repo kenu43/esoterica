@@ -1,11 +1,6 @@
 import { z } from 'zod'
 
-/**
- * Variables de entorno validadas al arrancar.
- * Solo contienen valores públicos.
- */
 const envSchema = z.object({
-  /** "sanity" lee del CMS (con respaldo en mockData si falla); "mock" usa solo los datos locales. */
   VITE_DATA_SOURCE: z.enum(['sanity', 'mock']).default('mock'),
 
   VITE_SANITY_PROJECT_ID: z.string().default('rx1vv2w8'),
@@ -20,19 +15,13 @@ const envSchema = z.object({
   VITE_FIREBASE_APP_ID: z.string().optional(),
   VITE_FIREBASE_MEASUREMENT_ID: z.string().optional(),
 
-  /** URL del Worker del asesor con IA (vacío = el asesor no aparece). */
   VITE_CHAT_URL: z.url().optional(),
 
-  /**
-   * Token "Viewer" (solo lectura) de Sanity para la vista previa sin publicar.
-   * Va también al build público: solo permite LEER borradores, nunca editar ni borrar.
-   */
   VITE_SANITY_PREVIEW_TOKEN: z.string().optional(),
 
   VITE_SITE_URL: z.string().default('https://esoterica-app.web.app'),
 })
 
-// Vacíos en .env se tratan como "no definidos"
 const raw = Object.fromEntries(Object.entries(import.meta.env).filter(([, v]) => v !== ''))
 
 export const env = envSchema.parse(raw)

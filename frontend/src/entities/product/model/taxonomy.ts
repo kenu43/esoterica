@@ -1,7 +1,3 @@
-/**
- * Intenciones y temporadas: se editan en el Studio; estas son las de respaldo y la semilla (`pnpm seed`).
- * La fase lunar es fija (solo hay cuatro) y debe coincidir con `studio-universo-esoterico/schemaTypes/constants.ts`.
- */
 export const INTENTIONS = [
   { value: 'amor', label: 'Amor' },
   { value: 'proteccion', label: 'Protección' },
@@ -35,7 +31,6 @@ const labelIn = (list: readonly { value: string; label: string }[], value: strin
 
 export const moonPhaseLabel = (v: string) => labelIn(MOON_PHASES, v)
 
-/** Colores comunes de velones y velas, para pintar la muestra si en el Studio solo escriben el nombre. */
 const COLOR_HEX: Record<string, string> = {
   blanco: '#f5f2ea',
   negro: '#1c1a1f',

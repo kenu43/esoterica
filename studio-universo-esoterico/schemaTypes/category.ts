@@ -1,13 +1,12 @@
-import { ThListIcon } from '@sanity/icons/ThList'
 import { defineField, defineType } from 'sanity'
 import { CATEGORY_ICONS } from './constants'
+import { emojiIcon } from './emojiIcon'
 
-/** Categorías del catálogo: se pueden crear, renombrar, reordenar y quitar desde el panel. */
 export const category = defineType({
   name: 'category',
   title: 'Categoría',
   type: 'document',
-  icon: ThListIcon,
+  icon: emojiIcon('🗂️'),
   fields: [
     defineField({
       name: 'name',

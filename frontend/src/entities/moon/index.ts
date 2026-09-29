@@ -1,15 +1,9 @@
 import type { BranchId } from '@/entities/branch'
 import type { CategoryId } from '@/entities/category'
 
-/**
- * Fase lunar calculada en el navegador con la elongación Luna–Sol (Meeus, "Astronomical
- * Algorithms", cap. 48, con sus términos periódicos principales). La iluminación acierta
- * a ~1 % y la edad a pocas horas. No depende de terceros, no consume red y nunca falla.
- */
 const SYNODIC_MONTH = 29.530588853
 const rad = (deg: number) => (deg * Math.PI) / 180
 
-/** Elongación geocéntrica de la Luna respecto al Sol, en grados [0, 360): 0 = nueva, 180 = llena. */
 function elongation(date: Date) {
   const jd = date.getTime() / 86_400_000 + 2440587.5
   const t = (jd - 2451545) / 36525
@@ -28,13 +22,11 @@ function elongation(date: Date) {
 }
 
 export interface MoonPhase {
-  /** 0 = luna nueva, 0.5 = luna llena, 1 = nueva otra vez. */
   fraction: number
   illumination: number
   age: number
   name: string
   energy: string
-  /** Frase comercial: qué hacer hoy y con qué tienda. */
   advice: string
   store: BranchId
   category: CategoryId

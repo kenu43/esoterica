@@ -4,21 +4,20 @@ import { defineLocations, presentationTool } from 'sanity/presentation'
 import { structureTool } from 'sanity/structure'
 import { schemaTypes } from './schemaTypes'
 import { structure } from './structure'
+import { StudioBrand } from './src/StudioBrand'
 
-/**
- * Vista previa ("Presentation"): abre la web real dentro del panel, mostrando también lo
- * que aún no se ha publicado. Necesita que la web tenga `VITE_SANITY_PREVIEW_TOKEN` en su
- * build — ver `frontend/.env.example`.
- */
 const SITE_URL = 'https://esoterica-app.web.app'
 
 export default defineConfig({
   name: 'default',
-  title: 'Universo Esotérico',
+  title: 'Panel de catálogo · El Sortilegio, La Colonia y Loto & Nirvana',
   projectId: 'rx1vv2w8',
   dataset: 'production',
+  components: {
+    Brand: StudioBrand,
+  },
   plugins: [
-    structureTool({ structure, title: 'Catálogo' }),
+    structureTool({ structure, title: 'Panel de catálogo' }),
     presentationTool({
       previewUrl: { initial: `${SITE_URL}/?preview=1`, previewMode: { enable: `${SITE_URL}/?preview=1` } },
       resolve: {
@@ -44,7 +43,6 @@ export default defineConfig({
         },
       },
     }),
-    // Vision (consultas GROQ) solo para desarrolladores
     ...(process.env.NODE_ENV === 'development' ? [visionTool()] : []),
   ],
   schema: { types: schemaTypes },

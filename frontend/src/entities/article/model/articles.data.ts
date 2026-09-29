@@ -4,10 +4,6 @@ const p = (text: string): ArticleBlock => ({ kind: 'p', inline: [{ text }] })
 const h2 = (text: string): ArticleBlock => ({ kind: 'h2', inline: [{ text }] })
 const li = (text: string): ArticleBlock => ({ kind: 'bullet', inline: [{ text }] })
 
-/**
- * Artículos por defecto: respaldo si Sanity no responde y semilla del Studio.
- * En producción se escriben desde el Studio → "Aprende y Sanar".
- */
 export const DEFAULT_ARTICLES: Article[] = [
   {
     id: 'limpiar-casa-sahumerios',
@@ -50,7 +46,7 @@ export const DEFAULT_ARTICLES: Article[] = [
       h2('El riego'),
       p('Es para el lugar: la casa, el negocio o la puerta. Se trapea o se rocía con una preparación (abre caminos, abundancia, protección) desde el fondo hacia la entrada. Atrae lo bueno y protege el espacio.'),
       h2('La velación'),
-      p('Es una petición. Se enciende un velón o veladora dedicada a un santo o a una intención concreta (dinero, amor, trabajo, justicia) mientras se reza o se pide con fe, normalmente durante varios días.'),
+      p('Es una petición. Se enciende un velón o veladora dedicada a un santo o a una intención concreta (dinero, amor, trabajo, justicia) mientras se reza o se pide con devoción, normalmente durante varios días.'),
       h2('¿Cuál necesito?'),
       li('Si te sientes cargado o con mala racha: baño de despojo.'),
       li('Si el problema es la casa o el negocio: riego.'),

@@ -1,1 +1,1 @@
-export { NumerologyCalculator } from './ui/NumerologyCalculator'
+export { LuckyNumbers } from './ui/LuckyNumbers'

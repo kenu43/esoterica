@@ -1,4 +1,3 @@
-/** Texto con negrita/cursiva (lo que el editor marca en Sanity). */
 export interface Inline {
   text: string
   strong?: boolean
@@ -14,11 +13,9 @@ export interface Article {
   id: string
   slug: string
   title: string
-  /** Resumen de 1-2 frases: sale en el listado y como descripción de Google. */
   excerpt: string
   cover?: string
   topic: string
-  /** ISO date. */
   publishedAt: string
   body: ArticleBlock[]
 }

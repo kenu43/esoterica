@@ -2,17 +2,13 @@ import type { CategoryId } from '@/entities/category'
 
 export interface NumberProfile {
   title: string
-  /** Frase corta que resume el número. */
   essence: string
   meaning: string
-  /** Cristal o amuleto aliado. */
   ally: string
   color: string
-  /** Categoría del catálogo donde encontrarlo. */
   category: CategoryId
 }
 
-/** Perfiles de los números 1–9 y los maestros 11, 22 y 33. */
 export const PROFILES: Record<number, NumberProfile> = {
   1: {
     title: 'El que abre camino',
@@ -131,7 +127,6 @@ const sumDigits = (n: number) =>
     .split('')
     .reduce((acc, d) => acc + Number(d), 0)
 
-/** Reduce a un dígito, respetando los números maestros (11, 22 y 33). */
 function reduce(n: number): number {
   let value = n
   while (value > 9 && !MASTER.has(value)) value = sumDigits(value)
@@ -141,23 +136,4 @@ function reduce(n: number): number {
 /** Número de vida (camino de vida): suma de todos los dígitos de la fecha de nacimiento. */
 export function lifePathNumber(day: number, month: number, year: number) {
   return reduce(sumDigits(day) + sumDigits(month) + sumDigits(year))
-}
-
-/** Número personal del año en curso (día + mes de nacimiento + año actual), siempre de 1 a 9. */
-export function personalYearNumber(day: number, month: number, year = new Date().getFullYear()) {
-  let n = sumDigits(day) + sumDigits(month) + sumDigits(year)
-  while (n > 9) n = sumDigits(n)
-  return n
-}
-
-/** ¿Es una fecha real? (rechaza 31/02, fechas futuras, años anteriores a 1900). */
-export function isValidBirthDate(day: number, month: number, year: number) {
-  const date = new Date(year, month - 1, day)
-  return (
-    date.getFullYear() === year &&
-    date.getMonth() === month - 1 &&
-    date.getDate() === day &&
-    date <= new Date() &&
-    year >= 1900
-  )
 }

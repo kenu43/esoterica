@@ -11,6 +11,9 @@
     "seed:build": "tsx scripts/build-seed.ts",
     "seed": "pnpm seed:build && sanity dataset import seed/data.ndjson production --missing",
     "migrate:categories": "sanity exec scripts/migrate-categories.ts --with-user-token",
+    "export:products": "sanity exec scripts/export-products.ts --with-user-token",
+    "template:products": "sanity exec scripts/product-template.ts --with-user-token",
+    "import:products": "sanity exec scripts/import-products.ts --with-user-token",
     "cors": "sanity cors add http://localhost:5173 --no-credentials && sanity cors add https://esoterica-app.web.app --no-credentials && sanity cors add https://esoterica-app.firebaseapp.com --no-credentials"
   },
   "keywords": [
@@ -27,6 +30,7 @@
   "devDependencies": {
     "@types/react": "^19.3.0",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "xlsx": "^0.18.5"
   }
 }

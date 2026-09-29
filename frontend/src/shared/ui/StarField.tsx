@@ -122,13 +122,11 @@ export function StarField({ className, density = 0.00018, shootingStars = true }
     const ro = new ResizeObserver(resize)
     ro.observe(canvas)
 
-    // Pausa el render cuando el canvas no se ve (ahorra batería)
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting
     })
     io.observe(canvas)
 
-    // Re-lee el color cuando cambia el tema
     const mo = new MutationObserver(() => {
       rgb = readColor()
       if (reduce) draw(0)

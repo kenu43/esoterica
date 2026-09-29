@@ -116,8 +116,6 @@ export function ZodiacWheel() {
                     top: `${50 - 40 * Math.cos((angle * Math.PI) / 180)}%`,
                   }}
                 >
-                  {/* Este span se contrarrota junto con su contenido: el nombre queda anidado
-                      dentro para heredar la misma corrección y no desplazarse hacia un lado. */}
                   <span className="relative grid size-full place-items-center">
                     <span
                       className={cn(

@@ -15,7 +15,6 @@ interface Taxonomy {
 
 const defaults: Taxonomy = { seasons: [...SEASONS], intentions: [...INTENTIONS] }
 
-/** Temporadas e intenciones desde Sanity; si falla o están vacías, las de `taxonomy.ts`. */
 async function fetchTaxonomy(): Promise<Taxonomy> {
   if (env.VITE_DATA_SOURCE !== 'sanity') return defaults
   try {
@@ -34,7 +33,6 @@ async function fetchTaxonomy(): Promise<Taxonomy> {
   }
 }
 
-/** "navidad-2026" → "Navidad 2026": último recurso si la etiqueta no existe. */
 const humanize = (slug: string) => {
   const text = slug.replace(/-/g, ' ')
   return text.charAt(0).toUpperCase() + text.slice(1)

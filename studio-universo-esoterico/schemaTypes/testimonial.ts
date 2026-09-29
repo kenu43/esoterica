@@ -1,13 +1,12 @@
-import { CommentIcon } from '@sanity/icons/Comment'
 import { defineField, defineType } from 'sanity'
 import { STORES } from './constants'
+import { emojiIcon } from './emojiIcon'
 
-/** Opiniones de clientes para la sección "Altar de experiencias". */
 export const testimonial = defineType({
   name: 'testimonial',
   title: 'Opinión de cliente',
   type: 'document',
-  icon: CommentIcon,
+  icon: emojiIcon('💬'),
   fields: [
     defineField({ name: 'name', title: 'Nombre (ej.: "Luz Marina R.")', type: 'string', validation: (r) => r.required() }),
     defineField({ name: 'city', title: 'Ciudad', type: 'string', initialValue: 'Ibagué' }),

@@ -22,7 +22,17 @@ export function InquiryDrawer() {
       items.flatMap((i) => {
         const product = products.find((p) => p.id === i.productId)
         return product
-          ? [{ product, quantity: i.quantity, color: i.color, size: i.size, material: i.material, customText: i.customText }]
+          ? [
+              {
+                product,
+                quantity: i.quantity,
+                color: i.color,
+                size: i.size,
+                material: i.material,
+                variant: i.variant,
+                customText: i.customText,
+              },
+            ]
           : []
       }),
     [items, products],
@@ -30,6 +40,7 @@ export function InquiryDrawer() {
   const unitPrice = (l: (typeof lines)[number]) =>
     l.product.sizes.find((s) => s.name === l.size)?.price ??
     l.product.materials.find((m) => m.name === l.material)?.price ??
+    l.product.variants.find((v) => v.name === l.variant)?.price ??
     l.product.price
   const total = lines.reduce((acc, l) => acc + unitPrice(l) * l.quantity, 0)
   const branch = resolveBranch(branchId)
@@ -84,12 +95,12 @@ export function InquiryDrawer() {
                   <ul className="space-y-3">
                     <AnimatePresence initial={false}>
                       {lines.map((line) => {
-                        const { product, quantity, color, size, material, customText } = line
+                        const { product, quantity, color, size, material, variant: optionValue, customText } = line
                         const price = unitPrice(line)
-                        const variant = { color, size, material, customText }
+                        const variant = { color, size, material, variant: optionValue, customText }
                         return (
                         <motion.li
-                          key={`${product.id}-${color ?? ''}-${size ?? ''}-${material ?? ''}-${customText ?? ''}`}
+                          key={`${product.id}-${color ?? ''}-${size ?? ''}-${material ?? ''}-${optionValue ?? ''}-${customText ?? ''}`}
                           layout
                           initial={{ opacity: 0, x: 40 }}
                           animate={{ opacity: 1, x: 0 }}
@@ -104,6 +115,7 @@ export function InquiryDrawer() {
                               {product.colors.length > 0 && ` · ${color ?? 'Cualquiera'}`}
                               {product.sizes.length > 0 && ` · ${size ?? 'Cualquiera'}`}
                               {product.materials.length > 0 && ` · ${material ?? 'Cualquiera'}`}
+                              {product.variants.length > 0 && ` · ${optionValue ?? 'Cualquiera'}`}
                               {customText && ` · "${customText}"`}
                             </span>
                             <div className="mt-auto flex items-center justify-between gap-2 pt-1">
@@ -219,6 +231,9 @@ export function InquiryDrawer() {
                   <span className="text-sm text-muted">Total estimado</span>
                   <span className="text-2xl font-bold">{formatPrice(total)}</span>
                 </div>
+                {lines.some((l) => unitPrice(l) <= 0) && (
+                  <p className="-mt-2 text-xs text-muted">Incluye productos con precio a consultar, no sumado arriba.</p>
+                )}
                 <Button
                   fullWidth
                   size="lg"

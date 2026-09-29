@@ -1,34 +1,42 @@
 import { Button, Chip } from '@heroui/react'
-import { Shuffle, Sparkles, WandSparkles } from 'lucide-react'
+import { Shuffle, Sparkles, Timer, WandSparkles } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { drawCards, FlipTarotCard, type TarotCard } from '@/entities/tarot-card'
 import { isAssistantEnabled, useAssistantStore } from '@/features/ai-assistant'
+import { SeekerForm, seededRandom, seekerSeed, useSeekerStore } from '@/features/seeker'
 import { ROUTES } from '@/shared/config'
+import { useCountdownToMidnight } from '@/shared/hooks'
+import { dayKey } from '@/shared/lib'
 import { SpotlightCard } from '@/shared/ui'
 
 const POSITIONS = ['Pasado', 'Presente', 'Futuro']
 
 type Draw = { card: TarotCard; reversed: boolean }[]
 
-/** Tirada interactiva de tres cartas: barajar → revelar una a una. */
+/** Tirada interactiva de tres cartas: pide tu nombre y fecha, baraja y revela una a una. */
 export function TarotSpread() {
   const [draw, setDraw] = useState<Draw | null>(null)
   const [revealed, setRevealed] = useState<boolean[]>([false, false, false])
   const [shuffling, setShuffling] = useState(false)
   const askWithMessage = useAssistantStore((s) => s.askWithMessage)
+  const seeker = useSeekerStore()
+  const known = Boolean(seeker.name && seeker.birth)
+  const countdown = useCountdownToMidnight()
+  const doneToday = known && seeker.doneOn.spread === dayKey()
 
   const shuffle = () => {
     setShuffling(true)
     setRevealed([false, false, false])
+    const rng = seededRandom(seekerSeed(seeker, 'spread'))
     setTimeout(() => {
-      setDraw(drawCards(3))
+      setDraw(drawCards(3, undefined, rng))
       setShuffling(false)
-    }, 900)
+      seeker.markDone('spread')
+    }, 1100)
   }
 
-  /** Arma una mini lectura con las 3 cartas ya reveladas y se la pide a Astro Mágico. */
   const askForReading = () => {
     if (!draw) return
     const lines = draw
@@ -49,13 +57,36 @@ export function TarotSpread() {
       <div className="mb-10 flex flex-col items-center gap-4 text-center">
         <h2 className="text-2xl sm:text-4xl">Tirada de tres cartas</h2>
         <p className="max-w-xl text-muted">
-          Piensa en una situación concreta. Baraja el mazo y revela, en orden, las cartas de tu pasado,
-          presente y futuro.
+          {known
+            ? `${seeker.name}, baraja el mazo y revela, en orden, las cartas de tu pasado, presente y futuro.`
+            : 'Cuéntanos quién eres para que la baraja lea tu energía: la tirada sale de tu nombre y tu fecha de nacimiento.'}
         </p>
-        <Button variant="primary" size="lg" onPress={shuffle} isDisabled={shuffling} className="gap-2">
-          <Shuffle className={shuffling ? 'size-4 animate-spin' : 'size-4'} />
-          {draw ? 'Barajar de nuevo' : 'Barajar y tirar'}
-        </Button>
+        {known ? (
+          <div className="flex flex-col items-center gap-2">
+            {draw && !shuffling ? (
+              <p className="inline-flex items-center gap-1.5 text-sm text-muted">
+                <Timer className="size-4" aria-hidden /> Nueva tirada en <strong className="tabular-nums text-foreground">{countdown.label}</strong>
+              </p>
+            ) : (
+              <Button variant="primary" size="lg" onPress={shuffle} isDisabled={shuffling} className="gap-2">
+                <Shuffle className={shuffling ? 'size-4 animate-spin' : 'size-4'} />
+                {doneToday ? 'Ver mi tirada de hoy' : 'Barajar y tirar'}
+              </Button>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                seeker.setSeeker('', '')
+                setDraw(null)
+              }}
+              className="text-xs text-muted underline-offset-2 hover:underline"
+            >
+              Barajar para alguien más
+            </button>
+          </div>
+        ) : (
+          <SeekerForm cta="Continuar" />
+        )}
       </div>
 
       <div className="grid grid-cols-3 gap-3 sm:gap-8">
@@ -68,10 +99,15 @@ export function TarotSpread() {
                 className="w-full max-w-[220px]"
                 animate={
                   shuffling
-                    ? { x: [0, (1 - i) * 60, 0], rotate: [0, (i - 1) * 12, 0], y: [0, -20, 0] }
-                    : { x: 0, rotate: 0, y: 0 }
+                    ? {
+                        x: [0, (1 - i) * 70, (i - 1) * 50, (1 - i) * 30, 0],
+                        y: [0, -30, -8, -18, 0],
+                        rotate: [0, (i - 1) * 16, (1 - i) * 10, (i - 1) * 6, 0],
+                        scale: [1, 0.94, 1.02, 0.97, 1],
+                      }
+                    : { x: 0, y: 0, rotate: 0, scale: 1 }
                 }
-                transition={{ duration: 0.9, ease: 'easeInOut' }}
+                transition={{ duration: 1.1, ease: 'easeInOut', times: [0, 0.3, 0.55, 0.8, 1] }}
               >
                 {item ? (
                   <FlipTarotCard
@@ -112,7 +148,6 @@ export function TarotSpread() {
         })}
       </div>
 
-      {/* En móvil el detalle va debajo para no estrechar las cartas */}
       {draw && revealed.some(Boolean) && (
         <div className="mt-8 space-y-4 sm:hidden">
           {draw.map((item, i) =>
@@ -133,7 +168,7 @@ export function TarotSpread() {
         <div className="mt-8 flex justify-center">
           <Button variant="outline" size="lg" onPress={askForReading} className="gap-2">
             <WandSparkles className="size-4" />
-            Pedir explicación a Astro Mágico
+            Pedir explicación a Merlín
           </Button>
         </div>
       )}

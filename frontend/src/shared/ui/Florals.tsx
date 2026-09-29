@@ -1,11 +1,6 @@
 import { useId } from 'react'
 import { cn } from '@/shared/lib'
 
-/**
- * Decoraciones florales de inspiración japonesa (loto y sakura) en SVG puro.
- * Usan currentColor/tokens para adaptarse a claro/oscuro y pesan casi nada.
- */
-
 /** Ícono de loto de línea fina (sustituye a los emojis y destellos genéricos). */
 export function LotusIcon({ className }: { className?: string }) {
   return (

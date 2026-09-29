@@ -1,9 +1,5 @@
 import type { CategorySeed } from './types'
 
-/**
- * Categorías por defecto: respaldo si Sanity no responde y semilla del Studio
- * (`pnpm seed`). En producción se administran desde Sanity → Categorías.
- */
 export const DEFAULT_CATEGORIES: CategorySeed[] = [
   {
     id: 'figuras',

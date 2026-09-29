@@ -5,13 +5,10 @@ import { DEFAULT_BRANCH_ID, type BranchChoiceId } from '@/entities/branch'
 export interface InquiryItem {
   productId: string
   quantity: number
-  /** Color elegido (velones, pulseras…). */
   color?: string
-  /** Tamaño elegido (figuras en varios tamaños…). */
   size?: string
-  /** Material elegido (madera, resina, metal…). */
   material?: string
-  /** Texto para personalizar (grabado, iniciales…). */
+  variant?: string
   customText?: string
 }
 
@@ -19,12 +16,12 @@ export interface InquiryVariant {
   color?: string
   size?: string
   material?: string
+  variant?: string
   customText?: string
 }
 
-const VARIANT_KEYS = ['color', 'size', 'material', 'customText'] as const
+const VARIANT_KEYS = ['color', 'size', 'material', 'variant', 'customText'] as const
 
-/** Dos líneas son la misma si son el mismo producto con las mismas opciones elegidas. */
 const same = (i: InquiryItem, productId: string, variant: InquiryVariant = {}) =>
   i.productId === productId && VARIANT_KEYS.every((k) => (i[k] ?? '') === (variant[k] ?? ''))
 

@@ -9,7 +9,7 @@ export function MoonVisual({ fraction, className }: { fraction: number; classNam
   const id = (name: string) => `${name}-${uid}`
 
   const waxing = fraction < 0.5
-  const k = Math.cos(fraction * 2 * Math.PI) // 1 nueva → -1 llena
+  const k = Math.cos(fraction * 2 * Math.PI)
   const rx = Math.abs(k) * 90
 
   return (
@@ -58,7 +58,6 @@ export function MoonVisual({ fraction, className }: { fraction: number; classNam
       <g clipPath={`url(#${id('disc')})`}>
         <rect width="200" height="200" fill={`url(#${id('base')})`} />
 
-        {/* Mares (zonas oscuras) */}
         <g fill="#6f695b" opacity="0.5" filter={`url(#${id('mare')})`}>
           <path d="M52 62c10-14 30-16 40-6 8 8 4 20-6 26-12 8-30 6-36-6-2-5-1-10 2-14Z" />
           <path d="M40 96c8-6 18-4 22 4 6 12-2 26-12 30-10 3-18-6-18-16 0-8 3-14 8-18Z" />
@@ -67,7 +66,6 @@ export function MoonVisual({ fraction, className }: { fraction: number; classNam
           <path d="M84 118c7-4 15 0 15 7 0 6-7 10-13 8-6-2-8-9-2-15Z" />
         </g>
 
-        {/* Cráteres */}
         <g fill={`url(#${id('crater')})`}>
           <circle cx="70" cy="150" r="9" />
           <circle cx="132" cy="70" r="6" />
@@ -79,7 +77,6 @@ export function MoonVisual({ fraction, className }: { fraction: number; classNam
           <circle cx="92" cy="52" r="4" />
           <circle cx="112" cy="46" r="3" />
         </g>
-        {/* Tycho y sus rayos */}
         <g opacity="0.85">
           <circle cx="96" cy="166" r="14" fill={`url(#${id('tycho')})`} opacity="0.55" />
           <circle cx="96" cy="166" r="3.2" fill="#fff" />
@@ -88,7 +85,6 @@ export function MoonVisual({ fraction, className }: { fraction: number; classNam
         <rect width="200" height="200" filter={`url(#${id('grain')})`} opacity="0.5" style={{ mixBlendMode: 'multiply' }} />
         <circle cx="100" cy="100" r="90" fill={`url(#${id('limb')})`} />
 
-        {/* Sombra de la fase con terminador suave */}
         <rect width="200" height="200" fill="#04040e" opacity="0.94" mask={`url(#${id('shadow')})`} />
       </g>
     </svg>

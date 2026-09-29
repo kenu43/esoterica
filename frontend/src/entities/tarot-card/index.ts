@@ -1,6 +1,6 @@
 export type { Arcana, Element, Suit, TarotCard } from './model/types'
 export { MAJOR_ARCANA } from './model/major-arcana.data'
 export { MINOR_ARCANA, SUITS } from './model/minor-arcana.data'
-export { TAROT_DECK, drawCards, getDailyCard, getTarotCard } from './model/deck'
+export { TAROT_DECK, drawCards, getDailyCard, getPersonalDailyCard, getTarotCard } from './model/deck'
 export { FlipTarotCard } from './ui/FlipTarotCard'
 export { TarotCardBack } from './ui/TarotCardBack'

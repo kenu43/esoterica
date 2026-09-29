@@ -12,7 +12,6 @@ import { ProductBadges } from './ProductBadges'
 
 interface ProductCardProps {
   product: Product
-  /** Slot de acciones (p. ej. "Agregar a mi consulta") inyectado desde features. */
   action?: ReactNode
   index?: number
 }
@@ -77,7 +76,7 @@ export function ProductCard({ product, action, index = 0 }: ProductCardProps) {
         </Link>
         <p className="line-clamp-2 text-sm text-muted">{product.shortDescription}</p>
         {store && (
-          <p className="flex items-center gap-1 text-xs text-muted">
+          <p className="hidden items-center gap-1 text-xs text-muted sm:flex">
             <MapPin className="size-3" aria-hidden /> {store.name}
           </p>
         )}

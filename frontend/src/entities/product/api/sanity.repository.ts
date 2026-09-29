@@ -2,16 +2,16 @@ import type { SanityImageSource } from '@sanity/image-url'
 import { sanityFetch, sanityImage } from '@/shared/api'
 import type { BranchId } from '@/entities/branch'
 import type { CategoryId } from '@/entities/category'
-import type { Product, ProductBadge, ProductColor, ProductMaterial, ProductSize } from '../model/types'
+import type { Product, ProductBadge, ProductColor, ProductMaterial, ProductSize, ProductVariant } from '../model/types'
 import { applyFilter, type ProductRepository } from './product.repository'
 
-/** Forma del documento `product` tal como lo devuelve la consulta GROQ. */
 interface SanityProduct {
   id: string
   slug: string
   name: string
   category: CategoryId
-  price: number
+  extraCategories?: CategoryId[]
+  price?: number
   compareAtPrice?: number
   discountPercent?: number
   unit?: string
@@ -32,6 +32,8 @@ interface SanityProduct {
   colors?: ProductColor[]
   sizes?: ProductSize[]
   materials?: ProductMaterial[]
+  variants?: ProductVariant[]
+  variantLabel?: string
   customizationLabel?: string
 }
 
@@ -41,17 +43,16 @@ const PRODUCT_PROJECTION = `{
   name, price, compareAtPrice, discountPercent, unit,
   shortDescription, description, benefits, badges, tags, stores,
   "category": coalesce(category->slug.current, category),
+  "extraCategories": extraCategories[]->slug.current,
   "inStock": coalesce(inStock, true),
   "createdAt": coalesce(releaseDate, _createdAt),
-  image, moonPhase, usageGuide, colors, sizes, materials, customizationLabel, gallery,
+  image, moonPhase, usageGuide, colors, sizes, materials, variants, variantLabel, customizationLabel, gallery,
   "intention": intention[]->slug.current,
   "season": season->slug.current
 }`
 
-/** Mapper: documento de Sanity → entidad de dominio (la UI nunca ve Sanity). */
-/** Con descuento en %, el precio del Studio es el normal (queda tachado) y el final se calcula aquí, redondeado a $100. */
-function resolvePrices({ price, compareAtPrice, discountPercent }: SanityProduct) {
-  if (discountPercent && discountPercent > 0 && discountPercent < 100)
+function resolvePrices({ price = 0, compareAtPrice, discountPercent }: SanityProduct) {
+  if (price > 0 && discountPercent && discountPercent > 0 && discountPercent < 100)
     return { price: Math.round((price * (1 - discountPercent / 100)) / 100) * 100, compareAtPrice: price }
   return { price, compareAtPrice }
 }
@@ -61,6 +62,7 @@ const toProduct = (doc: SanityProduct): Product => ({
   slug: doc.slug,
   name: doc.name,
   category: typeof doc.category === 'string' ? doc.category : 'otros',
+  extraCategories: (doc.extraCategories ?? []).filter((c): c is CategoryId => !!c),
   ...resolvePrices(doc),
   unit: doc.unit ?? 'unidad',
   shortDescription: doc.shortDescription ?? '',
@@ -80,17 +82,14 @@ const toProduct = (doc: SanityProduct): Product => ({
   colors: (doc.colors ?? []).filter((c) => c?.name?.trim()),
   sizes: (doc.sizes ?? []).filter((s) => s?.name?.trim()),
   materials: (doc.materials ?? []).filter((m) => m?.name?.trim()),
+  variants: (doc.variants ?? []).filter((v) => v?.name?.trim()),
+  variantLabel: doc.variantLabel?.trim() || undefined,
   customizationLabel: doc.customizationLabel?.trim() || undefined,
 })
 
-/**
- * Catálogo pequeño (< 500 productos): se descarga completo una vez y se filtra
- * en el cliente; TanStack Query lo cachea. Cero índices ni costos extra.
- */
 let cache: { at: number; promise: Promise<Product[]> } | null = null
 
 async function fetchAll(): Promise<Product[]> {
-  // Una sola petición compartida por todas las consultas durante 60 s
   if (!cache || Date.now() - cache.at > 60_000) {
     const promise = sanityFetch<SanityProduct[]>(
       `*[_type == "product" && defined(slug.current)] | order(_createdAt desc) ${PRODUCT_PROJECTION}`,

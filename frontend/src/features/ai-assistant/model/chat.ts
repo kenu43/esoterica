@@ -4,13 +4,11 @@ import { env } from '@/shared/config'
 export interface ChatMessage {
   role: 'user' | 'assistant'
   text: string
-  /** Slugs de productos recomendados (solo en respuestas del asesor). */
   productSlugs?: string[]
 }
 
 export const isAssistantEnabled = Boolean(env.VITE_CHAT_URL)
 
-/** Resumen mínimo del catálogo: lo justo para que la IA recomiende sin gastar tokens de más. */
 const toCatalog = (products: Product[]) =>
   products
     .filter((p) => p.inStock)
@@ -34,6 +32,6 @@ export async function askAssistant(messages: ChatMessage[], products: Product[])
     }),
   })
   const data = (await res.json().catch(() => ({}))) as { reply?: string; productSlugs?: string[]; error?: string }
-  if (!res.ok || !data.reply) throw new Error(data.error ?? 'El asesor no está disponible ahora.')
+  if (!res.ok || !data.reply) throw new Error(data.error ?? 'Merlín tiene interferencias mágicas justo ahora. Intenta de nuevo.')
   return { reply: data.reply, productSlugs: data.productSlugs ?? [] }
 }

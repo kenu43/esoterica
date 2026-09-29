@@ -5,10 +5,6 @@ import { ROUTES } from '@/shared/config'
 import { RootLayout } from '../layouts/RootLayout'
 import { RouteError } from './RouteError'
 
-/**
- * Rutas con code-splitting: solo la home viaja en el bundle inicial,
- * el resto se descarga bajo demanda (`lazy`).
- */
 export const router = createBrowserRouter([
   {
     element: <RootLayout />,
@@ -30,6 +26,10 @@ export const router = createBrowserRouter([
       {
         path: `${ROUTES.tarot}/:id`,
         lazy: async () => ({ Component: (await import('@/pages/tarot-card')).TarotCardPage }),
+      },
+      {
+        path: ROUTES.duendesAbundancia,
+        lazy: async () => ({ Component: (await import('@/pages/duendes-abundancia')).DuendesAbundanciaPage }),
       },
       {
         path: ROUTES.glossary,

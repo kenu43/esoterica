@@ -5,11 +5,9 @@ import { BranchCard, googleDirectionsUrl, useBranches, type BranchId } from '@/e
 import { buildWhatsAppUrl } from '@/shared/lib'
 import { Container, Reveal, SectionHeading } from '@/shared/ui'
 
-// Leaflet (~150 kB) se descarga solo cuando esta sección se renderiza
 const BranchesMap = lazy(() => import('./BranchesMap'))
 
 interface BranchesSectionProps {
-  /** En la página dedicada se muestra una versión más completa. */
   variant?: 'home' | 'page'
 }
 

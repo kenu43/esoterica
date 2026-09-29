@@ -1,9 +1,5 @@
 import type { Branch } from './types'
 
-/**
- * Tiendas físicas. Datos tomados de las fichas de Google Maps.
- * Para cambiar horarios o teléfonos basta con editar este archivo.
- */
 export const BRANCHES: Branch[] = [
   {
     id: 'el-sortilegio',

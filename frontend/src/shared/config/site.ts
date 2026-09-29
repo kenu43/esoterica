@@ -1,18 +1,15 @@
 import { env } from './env'
 import { ROUTES } from './routes'
 
-/** Configuración de marca. Cambia aquí nombre, contactos y redes sin tocar componentes. */
 export const SITE = {
   name: 'Universo Esotérico',
   shortName: 'Universo',
-  tagline: 'Protección, suerte y fe para tu camino',
+  tagline: 'Protección, suerte y energía para tu camino',
   description:
     'Figuras de santos y de la Santa Muerte, velones, baños, riegos, sahumerios y amuletos. Tienda familiar en el centro de Ibagué con envíos a toda Colombia.',
   city: 'Ibagué, Tolima',
   url: env.VITE_SITE_URL,
-  /** WhatsApp principal (formato internacional, solo dígitos). */
   whatsapp: '573144778105',
-  /** WhatsApp que recibe encargos y mensajes de contacto (La Colonia). */
   ordersWhatsapp: '573003236179',
   instagram: 'https://www.instagram.com/conexiondemagia/',
   instagramHandle: '@conexiondemagia',
@@ -25,7 +22,6 @@ export const SITE = {
 export interface NavItem {
   label: string
   to: string
-  /** Ícono opcional (nombre de lucide-react) para destacar el ítem en el menú. */
   icon?: 'star'
 }
 
@@ -33,6 +29,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Inicio', to: ROUTES.home },
   { label: 'Productos', to: ROUTES.products, icon: 'star' },
   { label: 'Tarot', to: ROUTES.tarot },
+  { label: 'Duendes', to: ROUTES.duendesAbundancia },
   { label: 'Glosario', to: ROUTES.glossary },
   { label: 'Aprende', to: ROUTES.learn },
   { label: 'Tiendas', to: ROUTES.stores },

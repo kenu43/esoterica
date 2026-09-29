@@ -1,5 +1,5 @@
 import { Button } from '@heroui/react'
-import { Check, Loader2, MessageCircle, Plus, RotateCw, Send, Trash2, X } from 'lucide-react'
+import { Check, MessageCircle, Plus, RotateCw, Send, Sparkles, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
@@ -7,18 +7,20 @@ import { useProducts, type Product } from '@/entities/product'
 import { useInquiryStore } from '@/features/whatsapp-inquiry'
 import { ROUTES, SITE } from '@/shared/config'
 import { buildWhatsAppUrl, cn, formatPrice } from '@/shared/lib'
-import { WitchHatIcon } from '@/shared/ui'
+import merlinIcon from '@/shared/ui/merlin-icon.png'
 import { useAssistantStore } from '../model/assistant.store'
 import { askAssistant, isAssistantEnabled, type ChatMessage } from '../model/chat'
 
 const GREETING: ChatMessage = {
   role: 'assistant',
-  text: 'Hola, soy Astro Mágico. Cuéntame qué está pasando en tu vida o en tu casa y te oriento con lo que tenemos.',
+  text: '¡Bienvenido(a)! Soy Merlín. Contame qué está pasando en tu vida o en tu casa, y vemos juntos qué te conviene.',
 }
 
 const SUGGESTIONS = ['Siento mala energía en mi casa', 'Quiero proteger mi negocio', 'Busco atraer el amor', 'Llevo una mala racha']
 
-/** Astro Mágico: pregunta qué le pasa al cliente y recomienda productos reales del catálogo. */
+const THINKING_PHRASES = ['Alineando los astros…', 'Leyendo tu energía…', 'Consultando las cartas…', 'Un momento, dejame ver…']
+
+/** Merlín: pregunta qué le pasa al cliente y recomienda productos reales del catálogo. */
 export function AssistantChat() {
   const open = useAssistantStore((s) => s.isOpen)
   const setOpen = useAssistantStore((s) => s.setOpen)
@@ -28,12 +30,25 @@ export function AssistantChat() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [thinkingPhrase, setThinkingPhrase] = useState(THINKING_PHRASES[0])
   const { data: products = [] } = useProducts()
   const endRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
   }, [messages, loading, open])
+
+  useEffect(() => {
+    if (!loading) return
+    setThinkingPhrase(THINKING_PHRASES[Math.floor(Math.random() * THINKING_PHRASES.length)])
+    const id = setInterval(() => {
+      setThinkingPhrase((prev) => {
+        const rest = THINKING_PHRASES.filter((p) => p !== prev)
+        return rest[Math.floor(Math.random() * rest.length)]
+      })
+    }, 1800)
+    return () => clearInterval(id)
+  }, [loading])
 
   const send = async (text: string, retry = false) => {
     const clean = text.trim()
@@ -47,13 +62,12 @@ export function AssistantChat() {
       const { reply, productSlugs } = await askAssistant(next.slice(1), products)
       setMessages([...next, { role: 'assistant', text: reply, productSlugs }])
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No pude responder. Intenta de nuevo.')
+      setError(err instanceof Error ? err.message : 'Merlín tiene interferencias mágicas justo ahora. Intenta de nuevo.')
     } finally {
       setLoading(false)
     }
   }
 
-  // Otra parte de la web (ej. la tirada de tarot) pidió abrir el asesor con un mensaje ya listo
   useEffect(() => {
     if (!pendingMessage || loading) return
     clearPendingMessage()
@@ -75,7 +89,7 @@ export function AssistantChat() {
         {open && (
           <motion.section
             role="dialog"
-            aria-label="Astro Mágico"
+            aria-label="Merlín"
             initial={{ opacity: 0, y: 16, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.97 }}
@@ -83,11 +97,11 @@ export function AssistantChat() {
             className="fixed inset-x-3 bottom-[10.5rem] z-50 flex max-h-[min(560px,calc(100svh-12rem))] flex-col overflow-hidden rounded-2xl border border-border bg-overlay shadow-2xl shadow-black/30 sm:inset-x-auto sm:right-8 sm:w-[380px]"
           >
             <header className="flex items-center gap-3 border-b border-separator px-4 py-3">
-              <span className="grid size-9 place-items-center rounded-full bg-gold-soft text-gold">
-                <WitchHatIcon className="size-5" />
+              <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-full bg-gold-soft">
+                <img src={merlinIcon} alt="" className="size-full object-cover" />
               </span>
               <div className="flex-1">
-                <p className="font-display text-base leading-none">Astro Mágico</p>
+                <p className="font-display text-base leading-none">Merlín</p>
                 <p className="mt-1 text-xs text-muted">Te orienta y recomienda productos</p>
               </div>
               <Button
@@ -143,9 +157,26 @@ export function AssistantChat() {
               )}
 
               {loading && (
-                <p className="flex items-center gap-2 text-sm text-muted">
-                  <Loader2 className="size-4 animate-spin" aria-hidden /> Pensando…
-                </p>
+                <div className="flex items-center gap-2 text-sm text-muted">
+                  <motion.span
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2.2, repeat: Infinity, ease: 'linear' }}
+                    className="grid place-items-center text-gold"
+                  >
+                    <Sparkles className="size-4" aria-hidden />
+                  </motion.span>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={thinkingPhrase}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      {thinkingPhrase}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
               )}
               {error && (
                 <div className="space-y-2 rounded-xl border border-danger/30 bg-danger/5 p-3">
@@ -203,22 +234,21 @@ export function AssistantChat() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1.4, type: 'spring', stiffness: 260, damping: 18 }}
         whileTap={{ scale: 0.92 }}
-        aria-label={open ? 'Cerrar Astro Mágico' : 'Hablar con Astro Mágico'}
-        className="fixed bottom-[6rem] right-5 z-40 grid size-14 place-items-center rounded-full bg-gradient-to-br from-[oklch(0.42_0.2_300)] to-[oklch(0.3_0.16_290)] text-[oklch(0.9_0.12_85)] shadow-lg shadow-[oklch(0.42_0.2_300)]/40 ring-1 ring-gold/50 sm:bottom-[7rem] sm:right-8"
+        aria-label={open ? 'Cerrar Merlín' : 'Hablar con Merlín'}
+        className="fixed bottom-[6rem] right-5 z-40 grid size-14 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-[oklch(0.42_0.2_300)] to-[oklch(0.3_0.16_290)] shadow-lg shadow-[oklch(0.42_0.2_300)]/40 ring-1 ring-gold/50 sm:bottom-[7rem] sm:right-8"
       >
         <span className="absolute inset-0 animate-pulse-glow rounded-full bg-gold/20" aria-hidden />
-        <WitchHatIcon className="relative size-8" />
+        <img src={merlinIcon} alt="" className="relative size-9" />
       </motion.button>
     </>
   )
 }
 
-/** Tarjeta de producto recomendado, con botón para agregarlo a la lista de consulta. */
 function RecommendedProduct({ product, onNavigate }: { product: Product; onNavigate: () => void }) {
   const add = useInquiryStore((st) => st.add)
   const setOpen = useInquiryStore((st) => st.setOpen)
   const [added, setAdded] = useState(false)
-  const needsColor = product.colors.length > 0
+  const needsColor = product.colors.length > 0 || product.sizes.length > 0 || product.materials.length > 0 || product.variants.length > 0
 
   return (
     <div className="flex w-full items-center gap-3 rounded-xl border border-border bg-surface p-2">
@@ -235,7 +265,7 @@ function RecommendedProduct({ product, onNavigate }: { product: Product; onNavig
           onClick={onNavigate}
           className="shrink-0 rounded-lg border border-border px-2.5 py-1.5 text-xs transition-colors hover:border-gold/40"
         >
-          Elegir color
+          Elegir opciones
         </Link>
       ) : added ? (
         <Button size="sm" variant="secondary" className="shrink-0 gap-1" onPress={() => setOpen(true)}>

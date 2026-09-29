@@ -32,7 +32,6 @@ function ExperienceCard({ t }: { t: Testimonial }) {
 /** "Altar de experiencias": carrusel infinito (Aceternity Infinite Moving Cards) con tarjetas de cristal. */
 export function Testimonials() {
   const { data = [] } = useTestimonials()
-  // Cada fila muestra opiniones distintas para que no se sientan repetidas
   const half = Math.ceil(data.length / 2)
   const rows = [data.slice(0, half), data.slice(half)]
 

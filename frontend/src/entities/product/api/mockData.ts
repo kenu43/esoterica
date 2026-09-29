@@ -1,22 +1,10 @@
 import type { BranchId } from '@/entities/branch'
 import type { Product } from '../model/types'
 
-/**
- * ─────────────────────────────────────────────────────────────
- *  DATOS DE EJEMPLO (mock) — catálogo dividido por tienda.
- *
- *  • Es la fuente mientras Sanity está vacío y el respaldo si Sanity falla.
- *  • También sirve de semilla: `pnpm seed` en studio-universo-esoterico
- *    sube todo esto (con fotos) al panel de administración.
- *  • Precios en pesos colombianos (COP), de referencia.
- * ─────────────────────────────────────────────────────────────
- */
-/** Los campos nuevos del Studio son opcionales aquí: el catálogo de ejemplo no los necesita. */
-type MockProduct = Omit<Product, 'branches' | 'intentions' | 'gallery' | 'colors' | 'sizes' | 'materials'> &
-  Partial<Pick<Product, 'intentions' | 'gallery' | 'colors' | 'sizes' | 'materials'>>
+type MockProduct = Omit<Product, 'branches' | 'intentions' | 'gallery' | 'colors' | 'sizes' | 'materials' | 'variants' | 'extraCategories'> &
+  Partial<Pick<Product, 'intentions' | 'gallery' | 'colors' | 'sizes' | 'materials' | 'variants' | 'extraCategories'>>
 
 export const mockProductsByStore: Record<BranchId, MockProduct[]> = {
-  // ── El Sortilegio · desde 1981 · magia, santos y trabajos ─────────
   'el-sortilegio': [
     {
       id: 'sor-001',
@@ -224,7 +212,6 @@ export const mockProductsByStore: Record<BranchId, MockProduct[]> = {
     },
   ],
 
-  // ── La Colonia · desde 2004 · baños, riegos y limpiezas ───────────
   'la-colonia': [
     {
       id: 'col-001',
@@ -432,7 +419,6 @@ export const mockProductsByStore: Record<BranchId, MockProduct[]> = {
     },
   ],
 
-  // ── Loto & Nirvana · desde 2023 · suerte, oriente y meditación ────
   'loto-nirvana': [
     {
       id: 'lot-001',
@@ -641,16 +627,11 @@ export const mockProductsByStore: Record<BranchId, MockProduct[]> = {
   ],
 }
 
-/** Catálogo plano: cada producto sabe en qué tienda está. */
 export const MOCK_PRODUCTS: Product[] = (Object.entries(mockProductsByStore) as [BranchId, MockProduct[]][]).flatMap(
   ([store, products]) =>
-    products.map((p) => ({ intentions: [], gallery: [], colors: [], sizes: [], materials: [], ...p, branches: [store] })),
+    products.map((p) => ({ intentions: [], gallery: [], colors: [], sizes: [], materials: [], variants: [], extraCategories: [], ...p, branches: [store] })),
 )
 
-/**
- * Productos de PRUEBA para ver todas las funciones (colores, descuento, galería, agotado,
- * temporada, fase lunar, cómo se usa). Bórralos del Studio cuando ya no los necesites.
- */
 const DEMO_PRODUCTS: Product[] = [
   {
     id: 'demo-001',
@@ -676,10 +657,12 @@ const DEMO_PRODUCTS: Product[] = [
     ],
     sizes: [],
     materials: [],
+    variants: [],
+    extraCategories: [],
     intentions: ['abundancia', 'trabajo', 'amor'],
     moonPhase: 'creciente',
     usageGuide:
-      '1. Limpia el velón con un paño y escribe tu petición en un papel.\n2. Enciéndelo en un lugar seguro, sobre un plato.\n3. Reza o pide con fe y déjalo consumir sin apagarlo.\n4. Repite durante 7 días seguidos.',
+      '1. Limpia el velón con un paño y escribe tu petición en un papel.\n2. Enciéndelo en un lugar seguro, sobre un plato.\n3. Reza o pide con devoción y déjalo consumir sin apagarlo.\n4. Repite durante 7 días seguidos.',
     badges: ['nuevo', 'oferta'],
     tags: ['velón', 'abre caminos', 'dinero'],
     createdAt: '2026-09-20',
@@ -703,6 +686,8 @@ const DEMO_PRODUCTS: Product[] = [
     colors: [{ name: 'Dorado', hex: '#d4a72c' }, { name: 'Rojo' }],
     sizes: [],
     materials: [],
+    variants: [],
+    extraCategories: [],
     intentions: ['abundancia', 'suerte', 'proteccion'],
     season: 'navidad',
     moonPhase: 'llena',
@@ -728,6 +713,8 @@ const DEMO_PRODUCTS: Product[] = [
     colors: [],
     sizes: [],
     materials: [],
+    variants: [],
+    extraCategories: [],
     intentions: ['limpieza', 'salud'],
     moonPhase: 'menguante',
     badges: [],
@@ -735,6 +722,36 @@ const DEMO_PRODUCTS: Product[] = [
     createdAt: '2026-09-18',
     inStock: false,
     branches: ['la-colonia'],
+  },
+  {
+    id: 'demo-007',
+    slug: 'esencia-aromatica-demo',
+    name: 'Esencia aromática (demo)',
+    category: 'sahumerios',
+    price: 9000,
+    unit: 'frasco 30 ml',
+    shortDescription: 'Producto de prueba con muchas opciones: se elige el aroma en una lista desplegable.',
+    description:
+      'Esencia aromática para difusor, riegos o sahumar. Disponible en decenas de aromas. Elige el que más te llame en la lista de "Aroma".',
+    benefits: ['Aroma concentrado', 'Rinde para varios usos'],
+    image: '/images/products/aceites-esenciales.webp',
+    gallery: [],
+    colors: [],
+    sizes: [],
+    materials: [],
+    variantLabel: 'Aroma',
+    variants: [
+      { name: 'Canela' }, { name: 'Chicle' }, { name: 'Suerte rápida' }, { name: 'Rosas' }, { name: 'Sándalo' },
+      { name: 'Lavanda' }, { name: 'Coco' }, { name: 'Vainilla' }, { name: 'Siete potencias' }, { name: 'Abre caminos' },
+      { name: 'Dinero' }, { name: 'Amor' }, { name: 'Ruda' }, { name: 'Palo santo' }, { name: 'Copal' },
+    ],
+    extraCategories: [],
+    intentions: ['abundancia', 'amor', 'limpieza'],
+    badges: ['nuevo'],
+    tags: ['esencia', 'aroma', 'riego'],
+    createdAt: '2026-09-25',
+    inStock: true,
+    branches: ['loto-nirvana', 'la-colonia'],
   },
   {
     id: 'demo-004',
@@ -751,6 +768,8 @@ const DEMO_PRODUCTS: Product[] = [
     colors: [{ name: 'Rosado' }, { name: 'Negro' }, { name: 'Turquesa' }],
     sizes: [],
     materials: [],
+    variants: [],
+    extraCategories: [],
     intentions: ['amor', 'paz'],
     season: 'amor-y-amistad',
     badges: ['nuevo'],
@@ -779,6 +798,8 @@ const DEMO_PRODUCTS: Product[] = [
       { name: '60 cm', price: 180000 },
     ],
     materials: [],
+    variants: [],
+    extraCategories: [],
     intentions: ['proteccion'],
     badges: ['nuevo'],
     tags: ['santa muerte', 'figura', 'tamaños'],
@@ -807,6 +828,8 @@ const DEMO_PRODUCTS: Product[] = [
       { name: 'Oro laminado', price: 82000 },
     ],
     customizationLabel: 'Iniciales o fecha a grabar (opcional)',
+    variants: [],
+    extraCategories: [],
     intentions: ['proteccion'],
     badges: [],
     tags: ['tetragramatón', 'personalizado', 'material'],

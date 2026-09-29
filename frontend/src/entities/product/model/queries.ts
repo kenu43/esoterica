@@ -2,7 +2,6 @@ import { queryOptions, useQuery } from '@tanstack/react-query'
 import { productRepository } from '../api'
 import type { ProductFilter } from './types'
 
-/** Query key factory: claves tipadas y centralizadas para invalidar caché con precisión. */
 export const productKeys = {
   all: ['products'] as const,
   list: (filter: ProductFilter) => [...productKeys.all, 'list', filter] as const,

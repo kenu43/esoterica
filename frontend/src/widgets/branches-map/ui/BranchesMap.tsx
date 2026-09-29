@@ -3,11 +3,6 @@ import { useEffect, useMemo } from 'react'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import { googleDirectionsUrl, type Branch, type BranchId } from '@/entities/branch'
 
-/**
- * Tiles de OpenStreetMap (sin API key). El modo oscuro se logra con un
- * filtro CSS sobre `.leaflet-tile-pane` (ver globals.css).
- * Para tráfico alto, cambia a un proveedor con key (MapTiler, Stadia, Google).
- */
 const TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
 
 const ACCENT: Record<Branch['accent'], string> = {
@@ -16,12 +11,10 @@ const ACCENT: Record<Branch['accent'], string> = {
   sage: 'var(--sage)',
 }
 
-/** Marcador HTML propio (luna + pulso) en vez del pin azul por defecto. */
 const createIcon = (branch: Branch, active: boolean) =>
   L.divIcon({
     className: '',
     iconSize: [44, 44],
-    // El Sortilegio y La Colonia están a ~7 m: desplazamos La Colonia para que ambos pines se vean
     iconAnchor: [branch.id === 'la-colonia' ? 44 : 22, 44],
     popupAnchor: [0, -40],
     html: `

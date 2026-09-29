@@ -1,10 +1,3 @@
-/**
- * Genera seed/data.ndjson a partir de los datos de ejemplo del frontend
-  * (categorías, productos con sus fotos, glosario y opiniones). Luego `sanity dataset import`
- * sube todo, incluidas las imágenes, en un solo paso.
- *
- * Uso: pnpm seed   (requiere `pnpm sanity login` antes)
- */
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -98,7 +91,6 @@ const products = MOCK_PRODUCTS.map((p) => ({
   }),
 }))
 
-/** Bloques simples del frontend → Portable Text de Sanity. */
 const articles = DEFAULT_ARTICLES.map((a) => ({
   _id: `article-${a.id}`,
   _type: 'article',

@@ -13,11 +13,6 @@ import { NumerologySection } from '@/widgets/numerology-section'
 import { ProductShowcase } from '@/widgets/product-showcase'
 import { Testimonials } from '@/widgets/testimonials'
 
-/**
- * Orden pensado como embudo: confianza (hero + servicios) → catálogo →
- * experiencia personalizada (quiz, luna, tarot) → prueba social → ubicación → encargo.
- */
-// GSAP (~45 kB gzip) solo se descarga cuando se renderiza la rueda zodiacal
 const ZodiacWheel = lazy(() => import('@/widgets/zodiac-wheel').then((m) => ({ default: m.ZodiacWheel })))
 
 export function HomePage() {

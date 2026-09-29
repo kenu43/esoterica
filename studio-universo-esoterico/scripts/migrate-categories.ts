@@ -1,10 +1,3 @@
-/**
- * Convierte la categoría de los productos ya publicados (texto, ej. "velones")
- * en una referencia a la categoría (documento `category-velones`).
- * No borra ni cambia nada más. Se puede ejecutar varias veces sin problema.
- *
- * Uso: pnpm migrate:categories   (antes, `pnpm seed` para que existan las categorías)
- */
 import { getCliClient } from 'sanity/cli'
 
 const client = getCliClient({ apiVersion: '2025-02-19' })

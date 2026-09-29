@@ -1,16 +1,15 @@
-import { DocumentTextIcon } from '@sanity/icons/DocumentText'
 import { defineArrayMember, defineField, defineType } from 'sanity'
+import { emojiIcon } from './emojiIcon'
 
 const TOPICS = ['Limpieza', 'Rituales', 'Plantas y resinas', 'Santos y devociones', 'Suerte y abundancia', 'Tarot', 'Numerología'].map(
   (t) => ({ title: t, value: t }),
 )
 
-/** Artículos de "Aprende y Sanar": responden lo que la gente busca en Google. */
 export const article = defineType({
   name: 'article',
   title: 'Artículo (Aprende y Sanar)',
   type: 'document',
-  icon: DocumentTextIcon,
+  icon: emojiIcon('📝'),
   fields: [
     defineField({
       name: 'title',

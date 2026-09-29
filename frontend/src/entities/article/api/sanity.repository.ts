@@ -33,7 +33,6 @@ const toInline = (spans: PortableSpan[] = []): Inline[] =>
     .filter((s) => s.text)
     .map((s) => ({ text: s.text!, strong: s.marks?.includes('strong'), em: s.marks?.includes('em') }))
 
-/** Portable Text de Sanity → bloques simples que la UI sabe pintar. */
 function toBlocks(body: PortableBlock[] = []): ArticleBlock[] {
   return body.flatMap<ArticleBlock>((b) => {
     if (b._type === 'image' && b.asset)

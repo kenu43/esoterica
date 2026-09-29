@@ -2,13 +2,6 @@ import type { TarotCard } from './types'
 
 type MajorSeed = Omit<TarotCard, 'id' | 'arcana' | 'image'>
 
-/**
- * Arcanos mayores del mazo Rider-Waite-Smith (A. E. Waite y Pamela Colman Smith, 1909-1911).
- * Cada carta describe la escena clásica del mazo y su significado tradicional (derecho,
- * invertido, amor y trabajo). Es redacción propia siguiendo esa tradición, no una cita
- * textual de "The Pictorial Key to the Tarot": si necesitas una verificación formal,
- * pide a un tarotista de confianza que revise este archivo contra la obra original.
- */
 const seeds: MajorSeed[] = [
   {
     name: 'El Loco',
@@ -78,9 +71,9 @@ const seeds: MajorSeed[] = [
   {
     name: 'El Hierofante',
     numeral: 'V',
-    keywords: ['tradición', 'fe', 'consejo', 'compromiso'],
+    keywords: ['tradición', 'devoción', 'consejo', 'compromiso'],
     upright:
-      'El Sumo Sacerdote bendice a dos discípulos. Representa la fe, las instituciones, los rituales y los consejos de alguien con experiencia. Puede anunciar una boda religiosa, un sacramento o la ayuda de un guía espiritual.',
+      'El Sumo Sacerdote bendice a dos discípulos. Representa la devoción, las instituciones, los rituales y los consejos de alguien con experiencia. Puede anunciar una boda religiosa, un sacramento o la ayuda de un guía espiritual.',
     reversed: 'Romper con las normas, rebeldía o desconfiar de consejos. Buscar tu propia forma de creer.',
     love: 'Compromiso formal, matrimonio o una relación bendecida por la familia.',
     career: 'Trabajo en instituciones, estudios o seguir los procedimientos al pie de la letra.',
@@ -234,10 +227,10 @@ const seeds: MajorSeed[] = [
   {
     name: 'La Estrella',
     numeral: 'XVII',
-    keywords: ['esperanza', 'fe', 'sanación', 'inspiración'],
+    keywords: ['esperanza', 'confianza', 'sanación', 'inspiración'],
     upright:
-      'Una mujer vierte agua bajo un cielo con ocho estrellas. Es la calma después de la tormenta: esperanza, fe renovada y sanación. Tus deseos tienen buenas posibilidades de cumplirse.',
-    reversed: 'Desánimo, falta de fe o expectativas poco realistas.',
+      'Una mujer vierte agua bajo un cielo con ocho estrellas. Es la calma después de la tormenta: esperanza, confianza renovada y sanación. Tus deseos tienen buenas posibilidades de cumplirse.',
+    reversed: 'Desánimo, falta de confianza o expectativas poco realistas.',
     love: 'Amor sincero, ilusión y relaciones que sanan heridas del pasado.',
     career: 'Reconocimiento, inspiración creativa y proyectos con buen futuro.',
     advice: 'Confía: las estrellas brillan más en la oscuridad.',

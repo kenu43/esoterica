@@ -1,6 +1,7 @@
 import { Button } from '@heroui/react'
 import { SearchX } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
+import { useEffect, useRef } from 'react'
 import { ProductCard, ProductCardSkeleton, useProducts } from '@/entities/product'
 import { ProductFilters, useProductFilters } from '@/features/product-filters'
 import { AddToInquiryButton } from '@/features/whatsapp-inquiry'
@@ -16,6 +17,16 @@ export function ProductsPage() {
   })
   const { filter, reset } = useProductFilters()
   const { data = [], isPending, isFetching } = useProducts(filter)
+  const isFirstRender = useRef(true)
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter.category, filter.branch, filter.sort, filter.onlyNew])
 
   return (
     <>
@@ -27,7 +38,7 @@ export function ProductsPage() {
       />
 
       <Container className="space-y-8">
-        <div className="sticky top-20 z-30 -mx-2 rounded-2xl border border-border bg-surface p-4 shadow-lg shadow-black/5 sm:mx-0 sm:p-5">
+        <div className="sticky top-[88px] z-40 rounded-2xl border border-border bg-surface p-4 shadow-lg shadow-black/5 sm:p-5">
           <ProductFilters />
         </div>
 

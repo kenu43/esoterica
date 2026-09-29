@@ -1,13 +1,12 @@
-import { BookIcon } from '@sanity/icons/Book'
 import { defineField, defineType } from 'sanity'
 import { GLOSSARY_GROUPS } from './constants'
+import { emojiIcon } from './emojiIcon'
 
-/** Términos del glosario místico (santos, amuletos, plantas, rituales). */
 export const glossaryTerm = defineType({
   name: 'glossaryTerm',
   title: 'Término del glosario',
   type: 'document',
-  icon: BookIcon,
+  icon: emojiIcon('📖'),
   fields: [
     defineField({
       name: 'term',

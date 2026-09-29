@@ -1,4 +1,4 @@
-import { Breadcrumbs, Button, Chip, Skeleton } from '@heroui/react'
+import { Breadcrumbs, Button, Chip, ListBox, Select, Skeleton } from '@heroui/react'
 import { Check, ChevronLeft, ChevronRight, Clock, MapPin, MessageCircle, Moon, ScrollText, Truck } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
@@ -32,6 +32,7 @@ export function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null)
+  const [selectedVariant, setSelectedVariant] = useState<string | null>(null)
   const [customText, setCustomText] = useState('')
   const [quantity, setQuantity] = useState(1)
 
@@ -78,7 +79,8 @@ export function ProductDetailPage() {
   const main = branches[0]
   const sizePrice = product.sizes.find((s) => s.name === selectedSize)?.price
   const materialPrice = product.materials.find((m) => m.name === selectedMaterial)?.price
-  const variantPrice = sizePrice ?? materialPrice
+  const optionPrice = product.variants.find((v) => v.name === selectedVariant)?.price
+  const variantPrice = sizePrice ?? materialPrice ?? optionPrice
   const displayPrice = variantPrice ?? product.price
   const whatsappUrl = buildWhatsAppUrl(
     main?.whatsapp ?? SITE.whatsapp,
@@ -86,6 +88,7 @@ export function ProductDetailPage() {
       color: selectedColor ?? undefined,
       size: selectedSize ?? undefined,
       material: selectedMaterial ?? undefined,
+      variant: selectedVariant ?? undefined,
       customText: customText.trim() || undefined,
       price: variantPrice,
     }),
@@ -143,7 +146,6 @@ export function ProductDetailPage() {
                   dragElastic={0.2}
                   dragConstraints={{ left: 0, right: 0 }}
                   onDragEnd={(_, info) => {
-                    // Deslizar con el dedo en celular: umbral de 60 px o un gesto rápido
                     if (info.offset.x < -60 || info.velocity.x < -400) goTo(1)
                     else if (info.offset.x > 60 || info.velocity.x > 400) goTo(-1)
                   }}
@@ -284,6 +286,62 @@ export function ProductDetailPage() {
               </div>
             )}
 
+            {product.variants.length > 0 && (
+              <div>
+                <p className="mb-2 text-sm font-medium">
+                  {product.variantLabel ?? 'Opción'}
+                  {selectedVariant ? `: ${selectedVariant}` : ' (opcional)'}
+                </p>
+                {product.variants.length > 8 ? (
+                  <Select
+                    aria-label={product.variantLabel ?? 'Opción'}
+                    value={selectedVariant ?? undefined}
+                    onChange={(key) => setSelectedVariant((key as string) ?? null)}
+                    className="max-w-xs"
+                  >
+                    <Select.Trigger>
+                      <Select.Value />
+                      <Select.Indicator />
+                    </Select.Trigger>
+                    <Select.Popover>
+                      <ListBox>
+                        {product.variants.map((v) => (
+                          <ListBox.Item key={v.name} id={v.name} textValue={v.name}>
+                            {v.name}
+                            {v.price != null && <span className="text-xs text-muted">{formatPrice(v.price)}</span>}
+                            <ListBox.ItemIndicator />
+                          </ListBox.Item>
+                        ))}
+                      </ListBox>
+                    </Select.Popover>
+                  </Select>
+                ) : (
+                  <div role="radiogroup" aria-label={product.variantLabel ?? 'Opción'} className="flex flex-wrap gap-2">
+                    {product.variants.map((v) => {
+                      const active = selectedVariant === v.name
+                      return (
+                        <button
+                          key={v.name}
+                          type="button"
+                          role="radio"
+                          aria-checked={active}
+                          onClick={() => setSelectedVariant(active ? null : v.name)}
+                          className={cn(
+                            'flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors',
+                            active ? 'border-gold bg-gold-soft shadow-[0_0_0_1px_var(--gold)]' : 'border-border bg-surface hover:border-gold/40',
+                          )}
+                        >
+                          {v.name}
+                          {v.price != null && <span className="text-xs text-muted">{formatPrice(v.price)}</span>}
+                          {active && <Check className="size-3.5 text-gold" strokeWidth={3} aria-hidden />}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
             {product.customizationLabel && (
               <label className="block space-y-2">
                 <span className="text-sm font-medium">{product.customizationLabel}</span>
@@ -358,6 +416,7 @@ export function ProductDetailPage() {
                 color={selectedColor ?? undefined}
                 size={selectedSize ?? undefined}
                 material={selectedMaterial ?? undefined}
+                optionValue={selectedVariant ?? undefined}
                 customText={customText.trim() || undefined}
                 quantity={quantity}
               />

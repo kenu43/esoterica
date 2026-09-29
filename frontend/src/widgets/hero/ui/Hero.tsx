@@ -7,7 +7,7 @@ import { getDailyCard, MAJOR_ARCANA } from '@/entities/tarot-card'
 import { ZODIAC } from '@/entities/zodiac'
 import { ROUTES, SITE } from '@/shared/config'
 import { cn } from '@/shared/lib'
-import { AuroraBackground, BlurText, Container, LotusIcon, SakuraBranch, StarField } from '@/shared/ui'
+import { AuroraBackground, BlurText, Container, LotusIcon, NumberTicker, SakuraBranch, StarField } from '@/shared/ui'
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
@@ -40,14 +40,14 @@ export function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-surface/60 px-4 py-1.5 text-sm backdrop-blur"
           >
             <LotusIcon className="size-5 text-gold" />
-            {years} años de tradición familiar en Ibagué
+            <NumberTicker value={years} suffix=" años de tradición familiar en Ibagué" />
           </motion.p>
 
           <BlurText
             as="h1"
             animateOnMount
             delay={0.2}
-            text="Protección, suerte y fe para tu camino"
+            text="Protección, suerte y energía para tu camino"
             highlight={['suerte']}
             className="text-4xl leading-[1.05] sm:text-5xl lg:text-6xl"
           />
@@ -58,8 +58,8 @@ export function Hero() {
             transition={{ delay: 0.7, duration: 0.6 }}
             className="max-w-xl text-lg leading-relaxed text-muted"
           >
-            Productos esotéricos de alta calidad, seleccionados e importados con el cuidado de siempre:
-            figuras, velones, baños, riegos, amuletos y tarot, con envíos a toda Colombia.
+            Productos de calidad, importados y seleccionados con el cuidado de siempre: figuras, velones,
+            baños, riegos, amuletos y tarot, con más de dos décadas de trayectoria y envíos a toda Colombia.
           </motion.p>
 
           <motion.div
@@ -85,12 +85,14 @@ export function Hero() {
           >
             <dl className="grid grid-cols-2 items-start gap-6">
               {[
-                [String(SITE.foundedYear), 'Desde'],
-                ['24 h', 'Respuesta por WhatsApp'],
-              ].map(([n, l]) => (
-                <div key={l} className="flex flex-col gap-1">
-                  <dd className="order-first font-display text-2xl leading-none text-gold sm:text-3xl">{n}</dd>
-                  <dt className="text-sm text-muted">{l}</dt>
+                { value: 24, suffix: ' h', label: 'Productos de calidad, importados, más de dos décadas de trayectoria' },
+                { value: years, suffix: ' años', label: 'De tradición familiar' },
+              ].map((s) => (
+                <div key={s.label} className="flex flex-col gap-1">
+                  <dd className="order-first font-display text-2xl leading-none text-gold sm:text-3xl">
+                    <NumberTicker value={s.value} suffix={s.suffix} />
+                  </dd>
+                  <dt className="text-sm text-muted">{s.label}</dt>
                 </div>
               ))}
             </dl>
@@ -100,7 +102,6 @@ export function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Baraja: al pasar el cursor, cada carta sube suavemente como si la sacaras del mazo */}
         <motion.div style={{ y: yDeck }} className="relative mx-auto aspect-square w-full max-w-[540px]">
           <div aria-hidden className="absolute inset-[4%] rounded-full border border-gold/20 animate-spin-slow">
             {ZODIAC.map((z, i) => {
@@ -131,7 +132,6 @@ export function Hero() {
                     className="pointer-events-none absolute inset-0"
                     style={{ zIndex: i }}
                   >
-                    {/* El contenedor exterior (con la rotación) nunca se mueve: así el cursor no "salta" entre cartas */}
                     <div
                       className="group pointer-events-auto size-full origin-bottom"
                       style={{ transform: `translateX(${offset * 42}%) rotate(${offset * 9}deg)` }}

@@ -1,7 +1,7 @@
 import { Button } from '@heroui/react'
 import { ArrowLeft, MessageCircle, RotateCcw } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { getBranch } from '@/entities/branch'
 import { useProducts, type Product } from '@/entities/product'
@@ -10,7 +10,6 @@ import { buildWhatsAppUrl, cn, formatPrice } from '@/shared/lib'
 import { LotusIcon } from '@/shared/ui'
 import { computeResult, QUESTIONS, type QuizOption } from '../model/quiz'
 
-/** Elige hasta 3 productos: el mejor de cada categoría del perfil, priorizando los más pedidos. */
 function pickProducts(products: Product[], categories: string[]) {
   const ranked = [...products].sort(
     (a, b) => Number(b.badges.includes('destacado')) - Number(a.badges.includes('destacado')),
@@ -35,6 +34,11 @@ export function EnergyQuiz() {
   const done = step === QUESTIONS.length
   const result = useMemo(() => (done ? computeResult(answers) : null), [done, answers])
   const picks = useMemo(() => (result ? pickProducts(products, result.categories) : []), [result, products])
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (done) containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [done])
 
   const branch = result ? getBranch(result.store) : undefined
   const whatsapp =
@@ -46,7 +50,12 @@ export function EnergyQuiz() {
       : ''
 
   return (
-    <motion.div layout transition={{ layout: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }} className="relative mx-auto w-full max-w-2xl">
+    <motion.div
+      ref={containerRef}
+      layout
+      transition={{ layout: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}
+      className="relative mx-auto w-full max-w-2xl scroll-mt-24"
+    >
       {!done &&
         [2, 1].map((i) =>
           step + i <= QUESTIONS.length ? (

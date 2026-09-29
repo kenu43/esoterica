@@ -8,10 +8,6 @@ export interface Testimonial {
   rating: number
 }
 
-/**
- * Opiniones de ejemplo, escritas como las dejan los clientes en WhatsApp o Google.
- * Reemplázalas por reales desde el panel de Sanity ("Opiniones de clientes").
- */
 export const MOCK_TESTIMONIALS: Testimonial[] = [
   { name: 'Luz Marina R.', city: 'Ibagué', store: 'el-sortilegio', rating: 5, text: 'Compré mi Santa Muerte hace como 3 años acá y la señora me explicó todo, cómo curarla y qué ofrendas ponerle. Muy queridas.' },
   { name: 'Jhon Fredy M.', city: 'Espinal', store: 'la-colonia', rating: 5, text: 'Me mandaron el kit tumba trabajos hasta el Espinal, llegó al otro día bien empacado. Gracias por la paciencia con tanta pregunta jaja' },

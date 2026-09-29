@@ -6,7 +6,6 @@ interface SeoOptions {
   title?: string
   description?: string
   image?: string
-  /** Datos estructurados schema.org específicos de la página. */
   jsonLd?: Record<string, unknown>
 }
 
@@ -32,7 +31,7 @@ export function useSeo({ title, description, image, jsonLd }: SeoOptions = {}) {
     const fullTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · Tienda esotérica en Ibagué`
     const desc = description ?? SITE.description
     const url = `${SITE.url}${pathname === '/' ? '/' : pathname}`
-    const img = image?.startsWith('http') ? image : `${SITE.url}${image ?? '/images/products/figuras-tienda.webp'}`
+    const img = image?.startsWith('http') ? image : `${SITE.url}${image ?? '/og-image.jpg'}`
 
     document.title = fullTitle
     setMeta('name', 'description', desc)
@@ -40,6 +39,8 @@ export function useSeo({ title, description, image, jsonLd }: SeoOptions = {}) {
     setMeta('property', 'og:description', desc)
     setMeta('property', 'og:url', url)
     setMeta('property', 'og:image', img)
+    setMeta('name', 'twitter:title', fullTitle)
+    setMeta('name', 'twitter:image', img)
 
     let canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]')
     if (!canonical) {

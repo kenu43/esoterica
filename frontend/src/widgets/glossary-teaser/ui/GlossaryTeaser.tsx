@@ -12,7 +12,6 @@ const FEATURED = ['santa-muerte', 'tetragramaton', 'bano-de-despojo', 'ruda', 'd
 export function GlossaryTeaser() {
   const glossary = useGlossary()
   const featured = FEATURED.map((id) => glossary.find((t) => t.id === id)).filter((t) => !!t)
-  // Si el editor borró alguno de los destacados, se completa con los primeros del glosario
   const terms = featured.length >= 3 ? featured : glossary.slice(0, 6)
   return (
     <section className="py-24">

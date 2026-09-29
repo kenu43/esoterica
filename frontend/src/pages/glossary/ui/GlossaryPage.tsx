@@ -37,7 +37,6 @@ export function GlossaryPage() {
     },
   })
 
-  // Si llegan desde un enlace con #término, lo enfocamos y resaltamos
   useEffect(() => {
     if (!hash) return
     const t = setTimeout(() => document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 400)

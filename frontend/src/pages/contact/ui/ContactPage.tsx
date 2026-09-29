@@ -81,7 +81,6 @@ export function ContactPage() {
       />
 
       <Container className="grid items-stretch gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
-        {/* Columna de canales: se estira a la altura del formulario y reparte el espacio por igual */}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 lg:grid-rows-4">
           {CHANNELS.map((c, i) => (
             <Reveal key={c.label} delay={i * 0.05} className="h-full">

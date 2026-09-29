@@ -46,7 +46,6 @@ export function CustomOrderForm() {
     setStep(next)
   }
 
-  /** Al tocar una sugerencia se agrega al texto para que el cliente solo complete detalles. */
   const toggleSuggestion = (value: string, label: string, selected: boolean) => {
     const current = getValues('suggestions')
     setValue('suggestions', selected ? current.filter((v) => v !== value) : [...current, value])
@@ -260,7 +259,6 @@ export function CustomOrderForm() {
                 name="consent"
                 render={({ field, fieldState }) => (
                   <div>
-                    {/* Control y texto dentro de Checkbox.Content: toda la fila es clicable */}
                     <Checkbox isSelected={Boolean(field.value)} onChange={field.onChange} isInvalid={fieldState.invalid}>
                       <Checkbox.Content className="flex-row items-center gap-3">
                         <Checkbox.Control>

@@ -16,10 +16,6 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 
-/**
- * Íconos que se pueden elegir desde el Studio. Las mismas claves están en
- * `studio-universo-esoterico/schemaTypes/constants.ts` (CATEGORY_ICONS).
- */
 export const CATEGORY_ICONS: Record<string, LucideIcon> = {
   church: Church,
   flame: Flame,

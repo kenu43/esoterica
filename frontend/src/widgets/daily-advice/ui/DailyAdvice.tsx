@@ -2,7 +2,7 @@ import { buttonVariants } from '@heroui/react'
 import { ArrowRight, Flame, Gem, Moon, Quote } from 'lucide-react'
 import { motion } from 'motion/react'
 import { Link } from 'react-router'
-import { getDailyAdvice } from '@/entities/advice'
+import { getDailyAdvice, getDailyTips } from '@/entities/advice'
 import { getBranch } from '@/entities/branch'
 import { getMoonPhase, MoonVisual } from '@/entities/moon'
 import { ROUTES } from '@/shared/config'
@@ -12,6 +12,7 @@ import { Container, NumberTicker, Reveal, SectionHeading } from '@/shared/ui'
 /** "Energía de hoy": fase lunar en tiempo real + consejo del día. */
 export function DailyAdvice() {
   const advice = getDailyAdvice()
+  const tips = getDailyTips()
   const moon = getMoonPhase()
   const store = getBranch(moon.store)
 
@@ -26,7 +27,6 @@ export function DailyAdvice() {
         />
 
         <div className="grid gap-5 lg:grid-cols-[1fr_1.4fr]">
-          {/* Fase lunar */}
           <Reveal>
             <article className="relative flex h-full flex-col items-center overflow-hidden rounded-2xl border border-border bg-[oklch(0.16_0.04_285)] p-8 text-center text-white">
               <p className="flex items-center gap-2 text-sm text-white/70">
@@ -64,7 +64,6 @@ export function DailyAdvice() {
             </article>
           </Reveal>
 
-          {/* Consejo del día */}
           <Reveal delay={0.1}>
             <article className="flex h-full flex-col justify-between gap-8 rounded-2xl border border-border bg-surface p-8">
               <div>
@@ -93,6 +92,15 @@ export function DailyAdvice() {
               </div>
 
               <p className="border-t border-separator pt-6 text-center text-lg italic text-muted">“{advice.affirmation}”</p>
+
+              <div className="grid gap-3 border-t border-separator pt-6 sm:grid-cols-2">
+                {tips.map((tip) => (
+                  <div key={tip.text} className="flex items-start gap-3 rounded-xl bg-surface-secondary p-4">
+                    <span className="text-xl leading-none" aria-hidden>{tip.icon}</span>
+                    <p className="text-sm leading-relaxed text-muted">{tip.text}</p>
+                  </div>
+                ))}
+              </div>
             </article>
           </Reveal>
         </div>

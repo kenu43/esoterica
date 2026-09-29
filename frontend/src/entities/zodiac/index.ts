@@ -8,7 +8,6 @@ export interface ZodiacSign {
   element: Element
   ruler: string
   crystal: string
-  /** slug de producto recomendado del catálogo */
   productSlug: string
   trait: string
 }
@@ -28,7 +27,6 @@ const SIGNS: ZodiacSign[] = [
   { id: 'piscis', name: 'Piscis', symbol: '♓', dates: '19 feb – 20 mar', element: 'agua', ruler: 'Neptuno', crystal: 'Amatista', productSlug: 'agua-florida', trait: 'Soñador, empático y espiritual.' },
 ]
 
-/** U+FE0E fuerza la presentación como texto (evita que Windows lo pinte como emoji). */
 export const ZODIAC: ZodiacSign[] = SIGNS.map((s) => ({ ...s, symbol: `${s.symbol}\uFE0E` }))
 
 /** Índice del signo solar según la fecha (útil para resaltar el signo actual). */

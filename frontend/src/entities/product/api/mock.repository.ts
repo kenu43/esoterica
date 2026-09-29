@@ -1,7 +1,6 @@
 import { applyFilter, type ProductRepository } from './product.repository'
 import { MOCK_PRODUCTS } from './mockData'
 
-/** Implementación en memoria con mockData.ts: sin red, ideal para desarrollo y respaldo. */
 export const mockProductRepository: ProductRepository = {
   async list(filter) {
     return applyFilter([...MOCK_PRODUCTS], filter)

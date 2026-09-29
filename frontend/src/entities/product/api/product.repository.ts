@@ -1,10 +1,5 @@
 import type { Product, ProductFilter } from '../model/types'
 
-/**
- * Contrato del repositorio de productos (patrón Repository).
- * La UI depende solo de esta interfaz; la implementación concreta
- * (datos locales, Firestore o una API REST futura) se decide en `index.ts`.
- */
 export interface ProductRepository {
   list(filter?: ProductFilter): Promise<Product[]>
   getBySlug(slug: string): Promise<Product | null>
@@ -18,7 +13,7 @@ export function applyFilter(products: Product[], filter: ProductFilter = {}): Pr
   const term = search?.trim().toLowerCase()
 
   const result = products.filter((p) => {
-    if (category !== 'all' && p.category !== category) return false
+    if (category !== 'all' && p.category !== category && !p.extraCategories.includes(category)) return false
     if (branch !== 'all' && !p.branches.includes(branch)) return false
     if (onlyNew && !p.badges.includes('nuevo')) return false
     if (term) {

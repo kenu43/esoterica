@@ -1,4 +1,4 @@
-import { NumerologyCalculator } from '@/features/numerology'
+import { LuckyNumbers } from '@/features/numerology'
 import { Container, SectionHeading } from '@/shared/ui'
 
 export function NumerologySection() {
@@ -6,12 +6,12 @@ export function NumerologySection() {
     <section className="relative py-24">
       <Container className="space-y-12">
         <SectionHeading
-          eyebrow="Numerología"
-          title="Descubre tu número de vida"
-          highlight={['número']}
-          description="Con tu fecha de nacimiento calculamos tu número, lo que dice de ti y el cristal o amuleto que te acompaña."
+          eyebrow="Números de la suerte"
+          title="Tu número de la suerte de hoy"
+          highlight={['suerte']}
+          description="Los números se mezclan, se barajan y salen los tuyos. Cambian cada día y son distintos para cada persona."
         />
-        <NumerologyCalculator />
+        <LuckyNumbers />
       </Container>
     </section>
   )

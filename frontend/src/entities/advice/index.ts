@@ -3,13 +3,11 @@ import { pickDaily } from '@/shared/lib'
 export interface DailyAdvice {
   message: string
   ritual: string
-  /** Aliado del día: planta, amuleto, vela o figura. */
   crystal: string
   color: { name: string; value: string }
   affirmation: string
 }
 
-/** Consejos rotativos (uno por día, igual para todos los visitantes). */
 export const ADVICES: DailyAdvice[] = [
   {
     message: 'Si sientes la casa pesada, no esperes: la mala energía se acumula en los rincones y detrás de las puertas.',
@@ -40,7 +38,7 @@ export const ADVICES: DailyAdvice[] = [
     affirmation: 'Suelto lo que me frena y me abro a lo nuevo.',
   },
   {
-    message: 'Pídele con fe y constancia. Las causas difíciles se trabajan con paciencia, no con afán.',
+    message: 'Pídele con devoción y constancia. Las causas difíciles se trabajan con paciencia, no con afán.',
     ritual: 'Enciende una veladora verde a San Judas Tadeo y reza su oración siete días.',
     crystal: 'San Judas Tadeo',
     color: { name: 'Verde esmeralda', value: 'oklch(0.55 0.13 160)' },
@@ -112,3 +110,4 @@ export const ADVICES: DailyAdvice[] = [
 ]
 
 export const getDailyAdvice = (date = new Date()) => pickDaily(ADVICES, ':advice', date)
+export { getDailyTips, type EsotericTip } from './tips.data'

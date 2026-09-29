@@ -23,7 +23,6 @@ export interface MessageLine {
  * (con ícono). Las líneas sin valor se omiten.
  */
 export function buildFormMessage(lines: MessageLine[], intro = '¡Hola! Vengo de la página web.') {
-  // String(...) por seguridad: si algo pasa un número o algo distinto de texto, no debe romper el mensaje.
   const body = lines
     .map((l) => ({ ...l, value: l.value == null ? '' : String(l.value).trim() }))
     .filter((l) => l.value)

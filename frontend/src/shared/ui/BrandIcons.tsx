@@ -1,6 +1,5 @@
 import type { SVGProps } from 'react'
 
-/** Iconos de marca (lucide ya no incluye logotipos de terceros). */
 type IconProps = SVGProps<SVGSVGElement>
 
 export function InstagramIcon(props: IconProps) {

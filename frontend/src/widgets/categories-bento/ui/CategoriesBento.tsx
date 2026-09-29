@@ -9,10 +9,6 @@ import { Container, SectionHeading } from '@/shared/ui'
 
 const LG_SPAN = { 1: '', 2: 'lg:col-span-2', 3: 'lg:col-span-3', 4: 'lg:col-span-4' } as const
 
-/**
- * Bento para cualquier cantidad de categorías (se administran en Sanity): la primera ocupa 2x2
- * y la última se estira lo necesario para que la grilla quede completa, sin huecos.
- */
 function tileClass(i: number, total: number) {
   if (i === 0) return 'col-span-2 lg:row-span-2'
   if (i !== total - 1) return ''

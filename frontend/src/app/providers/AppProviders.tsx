@@ -9,7 +9,7 @@ function createQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 5 * 60 * 1000, // el catálogo cambia poco: 5 min de caché "fresca"
+        staleTime: 5 * 60 * 1000,
         gcTime: 30 * 60 * 1000,
         refetchOnWindowFocus: false,
         retry: 1,
@@ -22,7 +22,6 @@ function createQueryClient() {
 export function AppProviders({ children }: { children: ReactNode }) {
   const [queryClient] = useState(createQueryClient)
   const theme = useThemeStore((s) => s.theme)
-  // En celular los toasts van arriba: abajo quedan tapados por el teclado y por el FAB de WhatsApp
   const [toastPlacement, setToastPlacement] = useState<'top' | 'bottom'>('bottom')
 
   useEffect(() => applyTheme(theme), [theme])
@@ -40,7 +39,6 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* reducedMotion="user" respeta la preferencia del sistema operativo */}
       <MotionConfig reducedMotion="user">
         {children}
         <Toast.Provider placement={toastPlacement} />

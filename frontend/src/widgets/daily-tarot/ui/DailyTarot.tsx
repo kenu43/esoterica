@@ -3,14 +3,18 @@ import { ArrowRight, RotateCcw } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { FlipTarotCard, getDailyCard } from '@/entities/tarot-card'
+import { FlipTarotCard, getPersonalDailyCard } from '@/entities/tarot-card'
+import { seekerSeed, useSeekerStore } from '@/features/seeker'
 import { ROUTES } from '@/shared/config'
 import { cn, formatLongDate } from '@/shared/lib'
 import { Container, Meteors, SectionHeading, TiltCard } from '@/shared/ui'
 
-/** La carta del día: el visitante la voltea y se revela su mensaje. */
+/** Tu carta de hoy: distinta para cada visitante (y para cada día); se voltea y se revela su mensaje. */
 export function DailyTarot() {
-  const { card, reversed } = getDailyCard()
+  const visitorId = useSeekerStore((s) => s.visitorId)
+  const name = useSeekerStore((s) => s.name)
+  const birth = useSeekerStore((s) => s.birth)
+  const { card, reversed } = getPersonalDailyCard(seekerSeed({ visitorId, name, birth }, 'daily'))
   const [flipped, setFlipped] = useState(false)
 
   return (
@@ -20,10 +24,10 @@ export function DailyTarot() {
         <div className="order-2 space-y-6 lg:order-1">
           <SectionHeading
             align="left"
-            eyebrow={`Carta del día · ${formatLongDate(new Date())}`}
-            title="¿Qué te dicen las cartas hoy?"
-            highlight={['cartas']}
-            description="Respira profundo, formula una pregunta en silencio y toca la carta para revelarla."
+            eyebrow={`Tu lectura de hoy · ${formatLongDate(new Date())}`}
+            title={name ? `${name}, esta es tu carta de hoy` : 'Tu carta de hoy'}
+            highlight={['carta']}
+            description="La baraja eligió una carta solo para ti. Respira profundo, piensa en cómo te sientes hoy y tócala para revelarla."
           />
 
           <motion.div layout transition={{ layout: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}>

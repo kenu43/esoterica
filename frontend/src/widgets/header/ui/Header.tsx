@@ -2,7 +2,8 @@ import { Button } from '@heroui/react'
 import { Menu, Star, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router'
+import { Link, NavLink, useLocation } from 'react-router'
+import { MusicToggle } from '@/features/background-music'
 import { ThemeToggle } from '@/features/theme-toggle'
 import { InquiryTrigger } from '@/features/whatsapp-inquiry'
 import { isPreviewMode } from '@/shared/api'
@@ -10,18 +11,15 @@ import { NAV_ITEMS, ROUTES } from '@/shared/config'
 import { cn } from '@/shared/lib'
 import { Logo } from '@/shared/ui'
 
-const IDLE_MS = 500
-
 export function Header() {
+  const location = useLocation()
+  const isProducts = location.pathname.startsWith('/productos')
   const [scrolled, setScrolled] = useState(false)
-  const [hidden, setHidden] = useState(false)
   const [open, setOpen] = useState(false)
   const [hovered, setHovered] = useState<string | null>(null)
 
   useEffect(() => {
-    let lastY = window.scrollY
     let ticking = false
-    let idleTimer: ReturnType<typeof setTimeout>
 
     const onScroll = () => {
       if (ticking) return
@@ -29,26 +27,16 @@ export function Header() {
       requestAnimationFrame(() => {
         ticking = false
         const y = window.scrollY
-        const delta = y - lastY
-        lastY = y
 
         setScrolled((was) => (was ? y > 8 : y > 40))
-        if (open || y < 120) setHidden(false)
-        else if (delta > 4) setHidden(true)
-        else if (delta < -4) setHidden(false)
-
-        // Reaparece por sí solo si el usuario deja de mover la página, aunque no suba.
-        clearTimeout(idleTimer)
-        idleTimer = setTimeout(() => setHidden(false), IDLE_MS)
       })
     }
 
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => {
       window.removeEventListener('scroll', onScroll)
-      clearTimeout(idleTimer)
     }
-  }, [open])
+  }, [])
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -56,9 +44,7 @@ export function Header() {
 
   return (
     <>
-      <motion.header
-        animate={{ y: hidden ? '-130%' : '0%' }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      <header
         className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-6"
       >
         {isPreviewMode() && (
@@ -69,11 +55,15 @@ export function Header() {
         <nav
           aria-label="Principal"
           className={cn(
-            'mx-auto flex max-w-7xl items-center justify-between gap-2 rounded-2xl px-3 transition-[height,background-color,box-shadow] duration-300 sm:gap-4 sm:px-4',
-            scrolled ? 'glass h-16 shadow-lg shadow-black/5' : 'h-20 bg-transparent',
+            'mx-auto flex max-w-7xl items-center justify-between gap-2 rounded-2xl px-3 transition-[background-color,box-shadow] duration-300 sm:gap-4 sm:px-4',
+            isProducts
+              ? 'h-16 glass shadow-lg shadow-black/5'
+              : scrolled
+                ? 'glass h-16 shadow-lg shadow-black/5'
+                : 'h-20 bg-transparent',
           )}
         >
-          <Link to={ROUTES.home} aria-label="Inicio" className="min-w-0 shrink">
+          <Link to={ROUTES.home} aria-label="Inicio" className="shrink-0">
             <Logo />
           </Link>
 
@@ -85,7 +75,7 @@ export function Header() {
                   end={item.to === ROUTES.home}
                   className={({ isActive }) =>
                     cn(
-                      'relative z-10 block whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors 2xl:px-4',
+                      'relative z-10 block whitespace-nowrap px-2 py-2 text-sm font-medium transition-colors 2xl:px-4',
                       isActive ? 'text-gold' : 'text-foreground/80 hover:text-foreground',
                     )
                   }
@@ -119,6 +109,9 @@ export function Header() {
           </ul>
 
           <div className="flex shrink-0 items-center sm:gap-1">
+            <span className="hidden min-[420px]:block">
+              <MusicToggle />
+            </span>
             <ThemeToggle />
             <InquiryTrigger />
             <Button
@@ -133,9 +126,8 @@ export function Header() {
             </Button>
           </div>
         </nav>
-      </motion.header>
+      </header>
 
-      {/* Menú móvil a pantalla completa */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -173,7 +165,7 @@ export function Header() {
                 </motion.li>
               ))}
             </motion.ul>
-            <p className="mt-auto text-center text-sm text-muted">Universo Esotérico · Ibagué desde 1981</p>
+            <p className="mt-auto text-center text-sm text-muted">Universo Esotérico · Ibagué, Tolima</p>
           </motion.div>
         )}
       </AnimatePresence>

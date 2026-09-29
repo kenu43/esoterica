@@ -1,32 +1,20 @@
-import { BookIcon } from '@sanity/icons/Book'
-import { DocumentTextIcon } from '@sanity/icons/DocumentText'
-import { CalendarIcon } from '@sanity/icons/Calendar'
-import { CommentIcon } from '@sanity/icons/Comment'
-import { HomeIcon } from '@sanity/icons/Home'
-import { SparkleIcon } from '@sanity/icons/Sparkle'
-import { TagIcon } from '@sanity/icons/Tag'
-import { ThListIcon } from '@sanity/icons/ThList'
-import { WarningOutlineIcon } from '@sanity/icons/WarningOutline'
 import type { StructureResolver } from 'sanity/structure'
+import { emojiIcon } from './schemaTypes/emojiIcon'
 import { STORES } from './schemaTypes/constants'
 
-/**
- * Menú lateral del panel: productos agrupados por tienda y por categoría,
- * más atajos a agotados, categorías, glosario y opiniones. Así tu hermano encuentra todo en 2 clics.
- */
 export const structure: StructureResolver = (S) =>
   S.list()
-    .title('Universo Esotérico')
+    .title('Panel de catálogo')
     .items([
       S.listItem()
         .title('Todos los productos')
-        .icon(TagIcon)
+        .icon(emojiIcon('🛍️'))
         .child(S.documentTypeList('product').title('Todos los productos')),
       S.divider(),
       ...STORES.map((store) =>
         S.listItem()
           .title(store.title)
-          .icon(HomeIcon)
+          .icon(emojiIcon('🏪'))
           .child(
             S.documentList()
               .title(store.title)
@@ -39,7 +27,7 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
       S.listItem()
         .title('Productos por categoría')
-        .icon(TagIcon)
+        .icon(emojiIcon('🗂️'))
         .child(
           S.documentTypeList('category')
             .title('Elige una categoría')
@@ -53,7 +41,7 @@ export const structure: StructureResolver = (S) =>
         ),
       S.listItem()
         .title('Agotados')
-        .icon(WarningOutlineIcon)
+        .icon(emojiIcon('⚠️'))
         .child(
           S.documentList()
             .title('Agotados')
@@ -63,26 +51,26 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
       S.listItem()
         .title('Categorías (crear y editar)')
-        .icon(ThListIcon)
+        .icon(emojiIcon('🗂️'))
         .child(S.documentTypeList('category').title('Categorías')),
       S.listItem()
         .title('Temporadas (Navidad, etc.)')
-        .icon(CalendarIcon)
+        .icon(emojiIcon('🎉'))
         .child(S.documentTypeList('season').title('Temporadas')),
       S.listItem()
         .title('Intenciones (amor, protección…)')
-        .icon(SparkleIcon)
+        .icon(emojiIcon('✨'))
         .child(S.documentTypeList('intention').title('Intenciones')),
       S.listItem()
         .title('Aprende y Sanar (artículos)')
-        .icon(DocumentTextIcon)
+        .icon(emojiIcon('📝'))
         .child(S.documentTypeList('article').title('Artículos')),
       S.listItem()
         .title('Glosario místico')
-        .icon(BookIcon)
+        .icon(emojiIcon('📖'))
         .child(S.documentTypeList('glossaryTerm').title('Glosario místico')),
       S.listItem()
         .title('Opiniones de clientes')
-        .icon(CommentIcon)
+        .icon(emojiIcon('💬'))
         .child(S.documentTypeList('testimonial').title('Opiniones de clientes')),
     ])

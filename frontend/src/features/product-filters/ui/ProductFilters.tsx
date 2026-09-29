@@ -15,7 +15,6 @@ const SORTS: { value: ProductSort; label: string }[] = [
   { value: 'price-desc', label: 'Precio: mayor a menor' },
 ]
 
-/** Detecta si la fila de categorías tiene más contenido a cada lado para mostrar las flechas. */
 function useScrollHints() {
   const ref = useRef<HTMLDivElement>(null)
   const [hints, setHints] = useState({ left: false, right: false })
@@ -46,7 +45,6 @@ export function ProductFilters() {
   const { filter, update, reset, activeCount } = useProductFilters()
   const [search, setSearch] = useState(filter.search ?? '')
 
-  // Debounce: la URL (y el filtrado) solo se actualiza 250 ms después de dejar de escribir
   useEffect(() => {
     const t = setTimeout(() => {
       if (search !== filter.search) update({ search })
@@ -58,7 +56,6 @@ export function ProductFilters() {
 
   return (
     <div className="space-y-4">
-      {/* Categorías con indicador animado compartido (layoutId) */}
       <div className="relative">
         {hints.left && (
           <button
@@ -113,84 +110,88 @@ export function ProductFilters() {
       </div>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-[1fr_200px_210px_auto] md:items-center">
-        <SearchField value={search} onChange={setSearch} aria-label="Buscar productos" fullWidth>
-          <SearchField.Group>
-            <SearchField.SearchIcon />
-            <SearchField.Input placeholder="Buscar: Santa Muerte, velón, ruda, duende…" />
-            <SearchField.ClearButton />
-          </SearchField.Group>
-        </SearchField>
+      <div className="flex flex-col gap-3 md:grid md:grid-cols-[1fr_200px_210px_auto] md:items-center md:gap-3">
+        <div className="flex gap-2">
+          <SearchField value={search} onChange={setSearch} aria-label="Buscar productos" fullWidth>
+            <SearchField.Group>
+              <SearchField.SearchIcon />
+              <SearchField.Input placeholder="Buscar: Santa Muerte, velón, ruda, duende…" />
+              <SearchField.ClearButton />
+            </SearchField.Group>
+          </SearchField>
 
-        <Select
-          aria-label="Tienda"
-          value={filter.branch ?? 'all'}
-          onChange={(key) => update({ branch: (key as typeof filter.branch) ?? 'all' })}
-        >
-          <Select.Trigger>
-            <Select.Value />
-            <Select.Indicator />
-          </Select.Trigger>
-          <Select.Popover>
-            <ListBox>
-              <ListBox.Item id="all" textValue="Todas las tiendas">
-                Todas las tiendas
-                <ListBox.ItemIndicator />
-              </ListBox.Item>
-              {BRANCHES.map((b) => (
-                <ListBox.Item key={b.id} id={b.id} textValue={b.name}>
-                  {b.name}
+          <Select
+            aria-label="Ordenar"
+            value={filter.sort ?? 'relevance'}
+            onChange={(key) => update({ sort: (key as ProductSort) ?? 'relevance' })}
+            className="w-32 shrink-0 md:w-auto"
+          >
+            <Select.Trigger>
+              <Select.Value />
+              <Select.Indicator />
+            </Select.Trigger>
+            <Select.Popover>
+              <ListBox>
+                {SORTS.map((s) => (
+                  <ListBox.Item key={s.value} id={s.value} textValue={s.label}>
+                    {s.label}
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                ))}
+              </ListBox>
+            </Select.Popover>
+          </Select>
+        </div>
+
+        <div className="hidden md:contents">
+          <Select
+            aria-label="Tienda"
+            value={filter.branch ?? 'all'}
+            onChange={(key) => update({ branch: (key as typeof filter.branch) ?? 'all' })}
+          >
+            <Select.Trigger>
+              <Select.Value />
+              <Select.Indicator />
+            </Select.Trigger>
+            <Select.Popover>
+              <ListBox>
+                <ListBox.Item id="all" textValue="Todas las tiendas">
+                  Todas las tiendas
                   <ListBox.ItemIndicator />
                 </ListBox.Item>
-              ))}
-            </ListBox>
-          </Select.Popover>
-        </Select>
+                {BRANCHES.map((b) => (
+                  <ListBox.Item key={b.id} id={b.id} textValue={b.name}>
+                    {b.name}
+                    <ListBox.ItemIndicator />
+                  </ListBox.Item>
+                ))}
+              </ListBox>
+            </Select.Popover>
+          </Select>
 
-        <Select
-          aria-label="Ordenar"
-          value={filter.sort ?? 'relevance'}
-          onChange={(key) => update({ sort: (key as ProductSort) ?? 'relevance' })}
-        >
-          <Select.Trigger>
-            <Select.Value />
-            <Select.Indicator />
-          </Select.Trigger>
-          <Select.Popover>
-            <ListBox>
-              {SORTS.map((s) => (
-                <ListBox.Item key={s.value} id={s.value} textValue={s.label}>
-                  {s.label}
-                  <ListBox.ItemIndicator />
-                </ListBox.Item>
-              ))}
-            </ListBox>
-          </Select.Popover>
-        </Select>
-
-        <div className="flex items-center gap-2">
-          {/* El control y el texto van dentro de Switch.Content: toda la fila es clicable */}
-          <Switch isSelected={Boolean(filter.onlyNew)} onChange={(v) => update({ onlyNew: v })}>
-            <Switch.Content className="flex-row items-center gap-2">
-              <Switch.Control>
-                <Switch.Thumb />
-              </Switch.Control>
-              <Label className="cursor-pointer whitespace-nowrap text-sm">Solo novedades</Label>
-            </Switch.Content>
-          </Switch>
-          {activeCount > 0 && (
-            <Button
-              isIconOnly
-              variant="ghost"
-              aria-label="Limpiar filtros"
-              onPress={() => {
-                setSearch('')
-                reset()
-              }}
-            >
-              <RotateCcw className="size-4" />
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <Switch isSelected={Boolean(filter.onlyNew)} onChange={(v) => update({ onlyNew: v })}>
+              <Switch.Content className="flex-row items-center gap-2">
+                <Switch.Control>
+                  <Switch.Thumb />
+                </Switch.Control>
+                <Label className="cursor-pointer whitespace-nowrap text-sm">Solo novedades</Label>
+              </Switch.Content>
+            </Switch>
+            {activeCount > 0 && (
+              <Button
+                isIconOnly
+                variant="ghost"
+                aria-label="Limpiar filtros"
+                onPress={() => {
+                  setSearch('')
+                  reset()
+                }}
+              >
+                <RotateCcw className="size-4" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

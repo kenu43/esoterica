@@ -1,7 +1,3 @@
-/**
- * Ciudades de Colombia para los formularios (capitales, ciudades principales
- * y municipios del Tolima, que es donde está la mayoría de clientes).
- */
 const TOLIMA = [
   'Ibagué', 'Espinal', 'Melgar', 'Honda', 'Chaparral', 'Líbano', 'Mariquita', 'Flandes', 'Guamo',
   'Purificación', 'Fresno', 'Lérida', 'Armero-Guayabal', 'Venadillo', 'Cajamarca', 'Rovira',

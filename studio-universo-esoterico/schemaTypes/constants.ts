@@ -1,8 +1,3 @@
-/**
- * Opciones compartidas con el frontend.
- * Deben coincidir con `frontend/src/entities/branch` y `frontend/src/entities/product/model/taxonomy.ts`.
- * (Categorías, temporadas e intenciones ya no están aquí: se crean desde el panel.)
- */
 export const STORES = [
   { title: 'El Sortilegio', value: 'el-sortilegio' },
   { title: 'La Colonia', value: 'la-colonia' },
@@ -23,7 +18,6 @@ export const MOON_PHASES = [
   { title: 'Luna menguante', value: 'menguante' },
 ]
 
-/** Íconos para las categorías. Las claves deben existir en `frontend/src/entities/category/model/icons.ts`. */
 export const CATEGORY_ICONS = [
   { title: 'Iglesia (santos y figuras)', value: 'church' },
   { title: 'Llama (velones)', value: 'flame' },

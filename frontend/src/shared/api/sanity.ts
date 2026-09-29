@@ -7,11 +7,6 @@ const config = {
   dataset: env.VITE_SANITY_DATASET,
 }
 
-/**
- * Vista previa: la abre el Studio (herramienta "Presentation") con `?preview=1` en la URL.
- * Mientras está activa, la web muestra los borradores sin publicar, no el catálogo público.
- * Requiere `VITE_SANITY_PREVIEW_TOKEN` (token "Viewer", de solo lectura) en el build.
- */
 export const isPreviewMode = () =>
   typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('preview') === '1' && !!env.VITE_SANITY_PREVIEW_TOKEN
 
@@ -29,7 +24,6 @@ export function getSanityClient() {
   return clientPromise
 }
 
-/** Cliente de vista previa: lee también los borradores. La CDN no los sirve, por eso `useCdn: false`. */
 function getPreviewSanityClient() {
   previewClientPromise ??= import('@sanity/client').then(({ createClient }) =>
     createClient({
@@ -43,11 +37,6 @@ function getPreviewSanityClient() {
   return previewClientPromise
 }
 
-/**
- * Circuit breaker: si Sanity falla (sin red, CORS sin configurar…), las siguientes
- * consultas durante 60 s fallan al instante y la app usa sus datos de respaldo
- * sin llenar la consola de peticiones fallidas.
- */
 let circuitOpenUntil = 0
 
 /** Atajo para consultas GROQ. */
@@ -64,6 +53,5 @@ export async function sanityFetch<T>(query: string, params: Record<string, unkno
 
 const builder = createImageUrlBuilder(config)
 
-/** URL optimizada (WebP/AVIF automático, recorte al punto central elegido en el Studio). */
 export const sanityImage = (source: SanityImageSource, width = 800, height = width) =>
   builder.image(source).width(width).height(height).fit('crop').auto('format').quality(78).url()

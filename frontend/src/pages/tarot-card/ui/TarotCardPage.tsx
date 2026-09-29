@@ -40,7 +40,6 @@ export function TarotCardPage() {
         <div className="grid items-start gap-14 lg:grid-cols-[minmax(0,380px)_1fr]">
           <div className="mx-auto w-full max-w-[340px] lg:sticky lg:top-28">
             <TiltCard max={10} className="rounded-2xl">
-              {/* key: al cambiar de carta se reinicia el estado y vuelve a voltearse */}
               <AutoFlipCard key={card.id} card={card} />
             </TiltCard>
           </div>
@@ -125,7 +124,6 @@ export function TarotCardPage() {
   )
 }
 
-/** Carta que se voltea sola poco después de montarse. */
 function AutoFlipCard({ card }: { card: TarotCard }) {
   const [flipped, setFlipped] = useState(false)
   useEffect(() => {

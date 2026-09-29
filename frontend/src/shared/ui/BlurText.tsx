@@ -6,7 +6,6 @@ interface BlurTextProps {
   text: string
   as?: ElementType
   className?: string
-  /** Palabras que se pintan con el degradado dorado. */
   highlight?: string[]
   delay?: number
   stagger?: number

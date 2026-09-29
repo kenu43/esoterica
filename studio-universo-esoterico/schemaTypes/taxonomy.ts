@@ -1,13 +1,11 @@
-import { CalendarIcon } from '@sanity/icons/Calendar'
-import { SparkleIcon } from '@sanity/icons/Sparkle'
 import { defineField, defineType } from 'sanity'
+import { emojiIcon } from './emojiIcon'
 
-/** Temporadas (Navidad, Amor y Amistad…): se crean y editan desde el panel. */
 export const season = defineType({
   name: 'season',
   title: 'Temporada',
   type: 'document',
-  icon: CalendarIcon,
+  icon: emojiIcon('🎉'),
   fields: [
     defineField({
       name: 'name',
@@ -28,12 +26,11 @@ export const season = defineType({
   preview: { select: { title: 'name' } },
 })
 
-/** Intenciones (Amor, Protección, Abundancia…): también editables. */
 export const intention = defineType({
   name: 'intention',
   title: 'Intención',
   type: 'document',
-  icon: SparkleIcon,
+  icon: emojiIcon('✨'),
   fields: [
     defineField({
       name: 'name',

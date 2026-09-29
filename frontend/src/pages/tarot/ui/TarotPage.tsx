@@ -29,7 +29,6 @@ export function TarotPage() {
   })
   const [group, setGroup] = useState<Group>('major')
   const [search, setSearch] = useState('')
-  // Debounce: el filtrado de 78 cartas (con animaciones) espera a que termines de escribir
   const query = useDebouncedValue(search, 250)
 
   const cards = useMemo(() => {

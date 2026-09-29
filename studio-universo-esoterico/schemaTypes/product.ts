@@ -1,18 +1,17 @@
-import { TagIcon } from '@sanity/icons/Tag'
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { BADGES, MOON_PHASES, STORES } from './constants'
+import { emojiIcon } from './emojiIcon'
 
 const formatCOP = (value?: number) =>
   typeof value === 'number'
     ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value)
     : 'Sin precio'
 
-/** Producto del catálogo. Pensado para editarse sin conocimientos técnicos. */
 export const product = defineType({
   name: 'product',
   title: 'Producto',
   type: 'document',
-  icon: TagIcon,
+  icon: emojiIcon('🛍️'),
   groups: [
     { name: 'basico', title: 'Lo básico', default: true },
     { name: 'detalle', title: 'Descripción y uso' },
@@ -38,13 +37,17 @@ export const product = defineType({
     defineField({
       name: 'image',
       title: 'Foto',
-      description: 'Foto cuadrada o vertical, buena luz. Toca la foto para elegir el punto central.',
+      description: 'Foto cuadrada o vertical, buena luz. Toca la foto para elegir el punto central. Es opcional: sin foto, la web muestra una imagen genérica hasta que la agregues.',
       type: 'image',
       group: 'basico',
       options: { hotspot: true },
-      validation: (r) => r.required(),
       fields: [
-        defineField({ name: 'alt', title: 'Texto alternativo (qué se ve en la foto)', type: 'string' }),
+        defineField({
+          name: 'alt',
+          title: 'Texto alternativo (qué se ve en la foto)',
+          description: 'Ej.: "Figura de la Santa Muerte con capa negra". Ayuda a que la foto aparezca en Google y a personas con problemas de visión.',
+          type: 'string',
+        }),
       ],
     }),
     defineField({
@@ -64,11 +67,12 @@ export const product = defineType({
     }),
     defineField({
       name: 'price',
-      title: 'Precio (COP)',
-      description: 'Solo números, sin puntos. Ej.: 45000',
+      title: 'Precio (COP) (opcional)',
+      description:
+        'Solo números, sin puntos. Ej.: 45000. Si el precio varía o no se puede fijar uno, déjalo vacío: en la web aparecerá "Precio a consultar" y el cliente pregunta por WhatsApp.',
       type: 'number',
       group: 'basico',
-      validation: (r) => r.required().min(0).integer(),
+      validation: (r) => r.min(0).integer(),
     }),
     defineField({
       name: 'compareAtPrice',
@@ -109,12 +113,21 @@ export const product = defineType({
     }),
     defineField({
       name: 'category',
-      title: 'Categoría',
-      description: '¿No está la categoría? Créala en el menú "Categorías" y vuelve aquí.',
+      title: 'Categoría principal',
+      description: 'La categoría más importante: define en qué sección aparece el producto y su enlace. ¿No está? Créala en el menú "Categorías" y vuelve aquí.',
       type: 'reference',
       group: 'basico',
       to: [{ type: 'category' }],
       validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'extraCategories',
+      title: 'Categorías adicionales (opcional)',
+      description: 'Si el producto también aplica a otras categorías (ej. un cuarzo que es "Piedras" y también "Amuletos"), agrégalas aquí. Aparecerá al buscar en cualquiera de ellas.',
+      type: 'array',
+      group: 'basico',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'category' }] })],
+      validation: (r) => r.max(4).unique(),
     }),
     defineField({
       name: 'inStock',
@@ -141,8 +154,8 @@ export const product = defineType({
     }),
     defineField({
       name: 'benefits',
-      title: 'Puntos clave',
-      description: 'Frases cortas, ej.: "Pintada a mano", "Incluye oración".',
+      title: 'Puntos clave (ingredientes o características)',
+      description: 'Frases cortas: ingredientes, materiales o características. Ej.: "Pintada a mano", "Incluye oración", "Con ruda y canela".',
       type: 'array',
       group: 'detalle',
       of: [defineArrayMember({ type: 'string' })],
@@ -151,16 +164,54 @@ export const product = defineType({
     defineField({
       name: 'usageGuide',
       title: 'Cómo se usa (ritual)',
-      description: 'Instrucciones paso a paso. Aparece en el producto como "Cómo se usa".',
+      description: 'Instrucciones paso a paso: para qué sirve y cómo se aplica o se prende. Aparece en el producto como "Cómo se usa". Ej.: "1. Limpia el velón... 2. Enciéndelo... 3. Reza tu petición..."',
       type: 'text',
       rows: 5,
       group: 'detalle',
     }),
     defineField({
-      name: 'sizes',
-      title: 'Tamaños o presentaciones',
+      name: 'variantLabel',
+      title: '¿Cómo se llama la opción? (opcional)',
       description:
-        'Si el producto viene en varios tamaños (ej.: 15 cm, 30 cm, 60 cm) y el cliente debe elegir uno. Si tiene un solo tamaño, usa mejor "Presentación" y deja esto vacío.',
+        'Solo si abajo llenas "Opciones disponibles". Escribe cómo se llama lo que el cliente elige: "Aroma", "Piedra", "Hierba", "Tamaño"... Si lo dejas vacío se muestra como "Opción".',
+      type: 'string',
+      group: 'detalle',
+      validation: (r) => r.max(24),
+    }),
+    defineField({
+      name: 'variants',
+      title: 'Opciones disponibles',
+      description:
+        'Para cuando el mismo producto viene en muchas variantes que el cliente debe elegir: aromas de una esencia, tipos de piedra, hierbas, tamaños, etc. Escribe arriba en "¿Cómo se llama la opción?" qué son (ej. "Aroma"), y aquí agrega cada una (ej. "Canela", "Chicle", "Suerte rápida"...). Con más de 8 opciones, en la web aparecen en una lista desplegable en vez de botones.',
+      type: 'array',
+      group: 'detalle',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          name: 'productVariant',
+          fields: [
+            defineField({ name: 'name', title: 'Nombre de la opción', description: 'Ej.: "Canela", "Cuarzo rosa", "15 cm".', type: 'string', validation: (r) => r.required().max(40) }),
+            defineField({
+              name: 'price',
+              title: 'Precio de esta opción (opcional)',
+              description: 'Si lo dejas vacío, usa el "Precio (COP)" de arriba para esta opción.',
+              type: 'number',
+              validation: (r) => r.min(0).integer(),
+            }),
+          ],
+          preview: {
+            select: { title: 'name', price: 'price' },
+            prepare: ({ title, price }) => ({ title, subtitle: price ? formatCOP(price) : undefined }),
+          },
+        }),
+      ],
+      validation: (r) => r.max(150),
+    }),
+    defineField({
+      name: 'sizes',
+      title: 'Tamaños o presentaciones (antiguo)',
+      description:
+        'Campo anterior a "Opciones disponibles". Los productos que ya lo usan lo siguen mostrando igual, pero para productos nuevos usa mejor "Opciones disponibles" de arriba (sirve también para tamaños).',
       type: 'array',
       group: 'detalle',
       of: [

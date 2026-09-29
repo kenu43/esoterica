@@ -1,4 +1,3 @@
-// Genera public/sitemap.xml en cada build (rutas estáticas + las 78 cartas del tarot).
 import { writeFileSync } from 'node:fs'
 
 const SITE = process.env.VITE_SITE_URL ?? 'https://esoterica-app.web.app'
@@ -10,7 +9,6 @@ const tarot = [
   ...['wands', 'cups', 'swords', 'pents'].flatMap((s) => Array.from({ length: 14 }, (_, i) => `${s}-${pad(i + 1)}`)),
 ]
 
-// Artículos de respaldo; los escritos en Sanity se agregan aquí al publicarlos
 const articles = [
   'como-limpiar-las-energias-de-una-casa-con-sahumerios',
   'diferencia-entre-riego-bano-de-despojo-y-velacion',
@@ -26,6 +24,7 @@ const routes = [
   ['/aprende', '0.8', 'weekly'],
   ...articles.map((slug) => [`/aprende/${slug}`, '0.7', 'monthly']),
   ['/tarot', '0.8', 'daily'],
+  ['/duendes-abundancia', '0.7', 'weekly'],
   ['/nosotros', '0.6', 'yearly'],
   ['/contacto', '0.6', 'yearly'],
   ...tarot.map((id) => [`/tarot/${id}`, '0.5', 'yearly']),

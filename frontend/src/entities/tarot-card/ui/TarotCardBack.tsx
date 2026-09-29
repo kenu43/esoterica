@@ -1,5 +1,6 @@
 import { useId } from 'react'
 import { cn } from '@/shared/lib'
+import { LogoMark } from '@/shared/ui'
 
 /** Reverso de carta diseñado en SVG: sol, luna y estrellas en oro sobre índigo. */
 export function TarotCardBack({ className }: { className?: string }) {
@@ -43,8 +44,6 @@ export function TarotCardBack({ className }: { className?: string }) {
               transform={`rotate(${i * 22.5})`}
             />
           ))}
-          <path d="M8-26a26 26 0 1 0 0 52 21 21 0 1 1 0-52Z" fill={`url(#${id}-g)`} stroke="none" />
-          <path d="m-14-6 2.4 6 6 2.4-6 2.4-2.4 6-2.4-6-6-2.4 6-2.4Z" fill={`url(#${id}-g)`} stroke="none" />
         </g>
         {[
           [40, 52],
@@ -71,6 +70,7 @@ export function TarotCardBack({ className }: { className?: string }) {
           UNIVERSO
         </text>
       </svg>
+      <LogoMark className="absolute left-1/2 top-1/2 size-[42%] -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_0_14px_rgba(232,196,110,0.55)]" />
     </div>
   )
 }

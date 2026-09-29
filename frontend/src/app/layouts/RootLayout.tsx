@@ -20,7 +20,6 @@ export function RootLayout() {
   const outlet = useOutlet()
 
   return (
-    // Conecta los links de HeroUI/React Aria (Breadcrumbs, Link…) con React Router
     <AriaRouterProvider navigate={(to, opts) => navigate(to, opts)} useHref={useHref}>
       <a
         href="#contenido"

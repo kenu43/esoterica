@@ -14,7 +14,6 @@ const renderInline = (inline: Inline[]) =>
     return s.em ? <em key={i}>{text}</em> : <Fragment key={i}>{text}</Fragment>
   })
 
-/** Agrupa los ítems de lista consecutivos para pintar un solo <ul>/<ol>. */
 function Body({ blocks }: { blocks: ArticleBlock[] }) {
   const out: React.ReactNode[] = []
   for (let i = 0; i < blocks.length; i++) {

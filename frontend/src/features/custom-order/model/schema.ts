@@ -2,7 +2,6 @@ import { BookOpen, Boxes, Church, Droplets, Flame, Shield, Sparkles, type Lucide
 import { z } from 'zod'
 import { BRANCH_CHOICES, DEFAULT_BRANCH_ID } from '@/entities/branch'
 
-/** Encargos sugeridos: lo que más piden los clientes y hay que conseguir o preparar. */
 export const SUGGESTIONS: { value: string; label: string; icon: LucideIcon }[] = [
   { value: 'tarot-santa-muerte', label: 'Tarot de la Santa Muerte', icon: Sparkles },
   { value: 'figura-especial', label: 'Figura o santo en tamaño especial', icon: Church },
@@ -33,19 +32,16 @@ const phoneRegex = /^[+\d\s()-]{7,20}$/
 
 export const customOrderSchema = z
   .object({
-    // Paso 1 · ¿Qué necesitas?
     suggestions: z.array(z.string()),
     request: z.string().trim().min(10, 'Cuéntanos con un poco más de detalle (mín. 10 caracteres)').max(1500),
     quantity: z.string().trim().max(40).optional(),
     store: z.string().min(1, 'Elige una opción'),
     budget: z.string().min(1, 'Elige una opción'),
-    // Paso 2 · Tus datos
     name: z.string().trim().min(3, 'Escribe tu nombre completo'),
     phone: z.string().trim().regex(phoneRegex, 'Número no válido'),
     city: z.string().min(1, 'Elige tu ciudad'),
     delivery: z.string().min(1, 'Elige cómo quieres recibirlo'),
     address: z.string().optional(),
-    // Paso 3 · Confirmar
     notes: z.string().max(1000).optional(),
     consent: z.literal(true, 'Debes aceptar para enviar el encargo'),
   })
@@ -56,7 +52,6 @@ export const customOrderSchema = z
 
 export type CustomOrderValues = z.input<typeof customOrderSchema>
 
-/** Campos a validar antes de avanzar en cada paso del asistente. */
 export const STEP_FIELDS: (keyof CustomOrderValues)[][] = [
   ['suggestions', 'request', 'quantity', 'store', 'budget'],
   ['name', 'phone', 'city', 'delivery', 'address'],
