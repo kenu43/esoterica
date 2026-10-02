@@ -1,5 +1,5 @@
 import { Breadcrumbs, Button, Chip, ListBox, Select, Skeleton } from '@heroui/react'
-import { Check, ChevronLeft, ChevronRight, Clock, MapPin, MessageCircle, Moon, ScrollText, Truck } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Clock, MapPin, MessageCircle, Moon, Play, ScrollText, Truck, TriangleAlert } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router'
@@ -10,17 +10,18 @@ import {
   ProductBadges,
   ProductCard,
   ProductImage,
-  ProductVideo,
+  ProductVideoPlayer,
   resolveColor,
   useTaxonomyLabels,
   useProduct,
   useProducts,
 } from '@/entities/product'
+import { ShareButton } from '@/features/share-product'
 import { AddToInquiryButton, buildSingleProductMessage } from '@/features/whatsapp-inquiry'
 import { ROUTES, SITE } from '@/shared/config'
 import { useSeo } from '@/shared/hooks'
 import { buildWhatsAppUrl, cn, formatPrice } from '@/shared/lib'
-import { Container, Reveal, SectionHeading } from '@/shared/ui'
+import { AnimatedNumber, AnimatedPrice, Container, Reveal, SectionHeading } from '@/shared/ui'
 import { NotFoundPage } from '@/pages/not-found'
 
 export function ProductDetailPage() {
@@ -97,12 +98,17 @@ export function ProductDetailPage() {
   )
   const hasDiscount = !variantPrice && !!product.compareAtPrice && product.compareAtPrice > product.price
   const discount = hasDiscount ? Math.round((1 - product.price / product.compareAtPrice!) * 100) : 0
-  const photos = [product.image, ...product.gallery].filter(Boolean)
-  const activePhoto = selectedImage && photos.includes(selectedImage) ? selectedImage : (photos[0] ?? '')
-  const activeIndex = photos.indexOf(activePhoto)
+  // Fotos y videos comparten el mismo carrusel: se recorren con las flechas, el deslizamiento o las miniaturas.
+  const photos: { src: string; kind: 'image' | 'file' | 'embed' }[] = [
+    ...[product.image, ...product.gallery].filter(Boolean).map((src) => ({ src, kind: 'image' as const })),
+    ...(product.videos ?? []),
+  ]
+  const active = photos.find((m) => m.src === selectedImage) ?? photos[0]
+  const activePhoto = active?.src ?? ''
+  const activeIndex = Math.max(0, photos.indexOf(active))
   const goTo = (step: number) => {
     setDirection(step > 0 ? 1 : -1)
-    setSelectedImage(photos[(activeIndex + step + photos.length) % photos.length])
+    setSelectedImage(photos[(activeIndex + step + photos.length) % photos.length].src)
   }
 
   return (
@@ -133,27 +139,37 @@ export function ProductDetailPage() {
             >
               {!activePhoto && <ProductImage product={product} alt={product.name} className="absolute inset-0 size-full" />}
               <AnimatePresence initial={false} custom={direction} mode="popLayout">
-                {activePhoto && (
-                <motion.img
+                {active && (
+                <motion.div
                   key={activePhoto}
-                  src={activePhoto}
-                  alt={product.name}
-                  width={800}
-                  height={800}
                   custom={direction}
                   initial={{ x: `${direction * 60}%`, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: `${direction * -60}%`, opacity: 0 }}
                   transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="absolute inset-0 aspect-square w-full touch-pan-y object-cover"
-                  drag={photos.length > 1 ? 'x' : false}
+                  className="absolute inset-0 aspect-square w-full touch-pan-y"
+                  drag={photos.length > 1 && active.kind === 'image' ? 'x' : false}
                   dragElastic={0.2}
                   dragConstraints={{ left: 0, right: 0 }}
                   onDragEnd={(_, info) => {
                     if (info.offset.x < -60 || info.velocity.x < -400) goTo(1)
                     else if (info.offset.x > 60 || info.velocity.x > 400) goTo(-1)
                   }}
-                />
+                >
+                  {active.kind === 'image' ? (
+                    <img src={active.src} alt={product.name} width={800} height={800} className="size-full object-cover" draggable={false} />
+                  ) : active.kind === 'file' ? (
+                    <ProductVideoPlayer src={active.src} poster={product.image} name={product.name} />
+                  ) : (
+                    <iframe
+                      src={active.src}
+                      title={`Video de ${product.name}`}
+                      allow="accelerometer; encrypted-media; gyroscope; fullscreen"
+                      allowFullScreen
+                      className="size-full bg-black"
+                    />
+                  )}
+                </motion.div>
                 )}
               </AnimatePresence>
               <div aria-hidden className="invisible aspect-square w-full" />
@@ -176,7 +192,7 @@ export function ProductDetailPage() {
                   >
                     <ChevronRight className="size-5" />
                   </button>
-                  <span className="absolute bottom-3 right-3 rounded-full bg-black/55 px-2.5 py-1 text-xs text-white">
+                  <span className="absolute right-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-xs text-white">
                     {activeIndex + 1} / {photos.length}
                   </span>
                 </>
@@ -189,25 +205,33 @@ export function ProductDetailPage() {
             </div>
             {photos.length > 1 && (
               <ul className="grid grid-cols-5 gap-2" aria-label="Más fotos">
-                {photos.map((src, i) => (
-                  <li key={src}>
+                {photos.map((m, i) => (
+                  <li key={m.src}>
                     <button
                       type="button"
-                      onClick={() => setSelectedImage(src)}
-                      aria-label={`Ver foto ${i + 1}`}
-                      aria-pressed={src === activePhoto}
+                      onClick={() => {
+                        setDirection(i >= activeIndex ? 1 : -1)
+                        setSelectedImage(m.src)
+                      }}
+                      aria-label={m.kind === 'image' ? `Ver foto ${i + 1}` : 'Ver video'}
+                      aria-pressed={m.src === activePhoto}
                       className={cn(
-                        'block w-full overflow-hidden rounded-xl border-2 transition-colors',
-                        src === activePhoto ? 'border-gold' : 'border-transparent hover:border-gold/40',
+                        'relative block w-full overflow-hidden rounded-xl border-2 transition-colors',
+                        m.src === activePhoto ? 'border-gold' : 'border-transparent hover:border-gold/40',
                       )}
                     >
-                      <img src={src} alt="" loading="lazy" className="aspect-square w-full object-cover" />
+                      {m.kind === 'image' ? (
+                        <img src={m.src} alt="" loading="lazy" className="aspect-square w-full object-cover" />
+                      ) : (
+                        <span className="grid aspect-square w-full place-items-center bg-[radial-gradient(circle_at_30%_20%,oklch(0.42_0.1_300),oklch(0.2_0.06_295))] text-gold">
+                          <Play className="size-6 fill-current" aria-hidden />
+                        </span>
+                      )}
                     </button>
                   </li>
                 ))}
               </ul>
             )}
-            <ProductVideo product={product} />
           </motion.div>
 
           <motion.div
@@ -225,7 +249,7 @@ export function ProductDetailPage() {
             </div>
 
             <div className="flex flex-wrap items-end gap-3">
-              <span className="text-3xl font-bold">{formatPrice(displayPrice)}</span>
+              <AnimatedPrice value={displayPrice} className="text-3xl font-bold" />
               {hasDiscount && (
                 <span className="pb-1 text-lg text-muted line-through">{formatPrice(product.compareAtPrice!)}</span>
               )}
@@ -403,7 +427,7 @@ export function ProductDetailPage() {
                 >
                   −
                 </button>
-                <span className="w-8 text-center text-sm font-semibold tabular-nums">{quantity}</span>
+                <span className="w-8 text-center text-sm font-semibold tabular-nums"><AnimatedNumber value={quantity} /></span>
                 <button
                   type="button"
                   aria-label="Agregar una unidad"
@@ -434,6 +458,11 @@ export function ProductDetailPage() {
               >
                 <MessageCircle className="size-4" /> {product.inStock ? 'Preguntar ahora' : 'Preguntar cuándo llega'}
               </Button>
+              <ShareButton
+                path={ROUTES.product(product.slug)}
+                title={product.name}
+                text={`Mira esto en Universo Esotérico: ${product.name}${product.price > 0 ? ` (${formatPrice(product.price)})` : ''}`}
+              />
             </div>
 
             <ul className="grid gap-2 rounded-xl border border-border bg-surface p-4 text-sm sm:grid-cols-2">
@@ -474,6 +503,24 @@ export function ProductDetailPage() {
                 </p>
                 <p className="whitespace-pre-line text-sm leading-relaxed text-muted">{product.usageGuide}</p>
               </div>
+            )}
+
+            {product.specs && product.specs.length > 0 && (
+              <dl className="grid gap-px overflow-hidden rounded-xl border border-border bg-border text-sm sm:grid-cols-2">
+                {product.specs.map((s) => (
+                  <div key={s.label} className="flex items-baseline justify-between gap-3 bg-surface px-4 py-2.5">
+                    <dt className="text-muted">{s.label}</dt>
+                    <dd className="text-right font-medium">{s.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+
+            {product.warning && (
+              <p className="flex gap-2.5 rounded-xl border border-warning/40 bg-warning/10 p-3.5 text-sm leading-relaxed">
+                <TriangleAlert className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden />
+                <span>{product.warning}</span>
+              </p>
             )}
 
             {product.benefits.length > 0 && (

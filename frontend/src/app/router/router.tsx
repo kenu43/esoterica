@@ -59,6 +59,14 @@ export const router = createBrowserRouter([
         path: ROUTES.contact,
         lazy: async () => ({ Component: (await import('@/pages/contact')).ContactPage }),
       },
+      {
+        path: ROUTES.legal,
+        lazy: async () => ({ Component: (await import('@/pages/legal')).LegalPage }),
+      },
+      {
+        path: `${ROUTES.legal}/:slug`,
+        lazy: async () => ({ Component: (await import('@/pages/legal')).LegalPage }),
+      },
       { path: '/puntos-fisicos', element: <Navigate to={ROUTES.stores} replace /> },
       { path: '/pedido-especial', element: <Navigate to={ROUTES.customOrder} replace /> },
       { path: '*', element: <NotFoundPage /> },

@@ -5,7 +5,7 @@ import { useCategories } from '@/entities/category'
 import { useCategoryCounts } from '@/entities/product'
 import { ROUTES } from '@/shared/config'
 import { cn } from '@/shared/lib'
-import { Container, SectionHeading } from '@/shared/ui'
+import { AnimatedNumber, Container, SectionHeading } from '@/shared/ui'
 
 const LG_SPAN = { 1: '', 2: 'lg:col-span-2', 3: 'lg:col-span-3', 4: 'lg:col-span-4' } as const
 
@@ -64,7 +64,7 @@ export function CategoriesBento() {
                   <p className={cn('mt-1 text-sm text-white/75', i === 0 ? 'block max-w-sm' : 'hidden sm:line-clamp-2')}>
                     {cat.description}
                   </p>
-                  {count > 0 && <span className="mt-2 text-xs text-white/70">{count} productos</span>}
+                  {count > 0 && <span className="mt-2 text-xs text-white/70"><AnimatedNumber value={count} /> productos</span>}
                 </Link>
               </motion.div>
             )

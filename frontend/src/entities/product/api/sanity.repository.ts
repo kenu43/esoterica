@@ -27,6 +27,8 @@ interface SanityProduct {
   intention?: string[]
   moonPhase?: string
   usageGuide?: string
+  specs?: { label?: string; value?: string }[]
+  warning?: string
   gallery?: ({ asset?: unknown } & SanityImageSource)[]
   season?: string
   colors?: ProductColor[]
@@ -48,7 +50,7 @@ const PRODUCT_PROJECTION = `{
   "extraCategories": extraCategories[]->slug.current,
   "inStock": coalesce(inStock, true),
   "createdAt": coalesce(releaseDate, _createdAt),
-  image, moonPhase, usageGuide, colors, sizes, materials, variants, variantLabel, customizationLabel, gallery,
+  image, moonPhase, usageGuide, specs, warning, colors, sizes, materials, variants, variantLabel, customizationLabel, gallery,
   "intention": intention[]->slug.current,
   "season": season->slug.current,
   "videoFiles": videos[].asset->url, videoUrls
@@ -67,6 +69,8 @@ function toVideos(doc: SanityProduct): Product['videos'] {
     const url = raw?.trim() ?? ''
     const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/)
     if (yt) return [{ kind: 'embed' as const, src: `https://www.youtube-nocookie.com/embed/${yt[1]}?rel=0&modestbranding=1&playsinline=1` }]
+    const tt = url.match(/tiktok\.com\/@[\w.-]+\/video\/(\d+)/)
+    if (tt) return [{ kind: 'embed' as const, src: `https://www.tiktok.com/embed/v2/${tt[1]}` }]
     const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/)
     if (vm) return [{ kind: 'embed' as const, src: `https://player.vimeo.com/video/${vm[1]}?title=0&byline=0&portrait=0` }]
     return []
@@ -94,6 +98,8 @@ const toProduct = (doc: SanityProduct): Product => ({
   intentions: (doc.intention ?? []).filter((v): v is string => !!v),
   moonPhase: doc.moonPhase || undefined,
   usageGuide: doc.usageGuide?.trim() || undefined,
+  specs: (doc.specs ?? []).filter((s): s is { label: string; value: string } => !!s?.label && !!s?.value),
+  warning: doc.warning?.trim() || undefined,
   gallery: (doc.gallery ?? []).filter((g) => !!g?.asset).map((g) => sanityImage(g, 800)),
   season: doc.season || undefined,
   colors: (doc.colors ?? []).filter((c) => c?.name?.trim()),

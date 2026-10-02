@@ -101,7 +101,8 @@ for (const row of rows) {
   put('description', cell(row, 'Descripción completa'))
   put('usageGuide', cell(row, 'Cómo se usa'))
   put('unit', cell(row, 'Presentación'))
-  put('videoUrl', cell(row, 'Enlace de video (YouTube o Vimeo)'))
+  const videoUrls = list(cell(row, 'Enlaces de video (YouTube o Vimeo, separados por ;)'))
+  if (videoUrls.length) extra.videoUrls = videoUrls
   const benefits = list(cell(row, 'Puntos clave (separados por ;)'))
   if (benefits.length) extra.benefits = benefits.slice(0, 6)
   const tags = list(cell(row, 'Palabras de búsqueda (separadas por ;)'))

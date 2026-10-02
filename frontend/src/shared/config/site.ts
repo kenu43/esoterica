@@ -17,6 +17,8 @@ export const SITE = {
   facebookName: 'Conexión de Magia y Esoterismo',
   tiktok: 'https://www.tiktok.com/@conexiondemagia',
   foundedYear: 1981,
+  /** Datos del titular para las páginas legales. Se muestran solo si se llenan. */
+  legal: { owner: '', nit: '' } as { owner: string; nit: string },
 } as const
 
 export interface NavItem {

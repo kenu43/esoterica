@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
-import { cn } from '@/shared/lib'
+import { useEffect, useRef } from 'react'
+import { cn, playCardFlip } from '@/shared/lib'
 import type { TarotCard } from '../model/types'
 import { TarotCardBack } from './TarotCardBack'
 
@@ -8,6 +9,9 @@ interface FlipTarotCardProps {
   flipped: boolean
   reversed?: boolean
   onFlip?: () => void
+  /** Posición en la secuencia de sonidos (0, 1, 2) y si es la última de la tirada. */
+  soundOrder?: number
+  soundFinale?: boolean
   className?: string
 }
 
@@ -19,8 +23,16 @@ const SPARKS = [
 ]
 
 /** Carta con giro 3D. Sin voltear, brilla con un haz dorado y destellos para invitar al toque; al revelarse suelta un destello de luz. */
-export function FlipTarotCard({ card, flipped, reversed, onFlip, className }: FlipTarotCardProps) {
+export function FlipTarotCard({ card, flipped, reversed, onFlip, soundOrder = 0, soundFinale = false, className }: FlipTarotCardProps) {
   const invite = !flipped && Boolean(onFlip)
+  const wasFlipped = useRef(flipped)
+
+  // Suena cuando la carta pasa de oculta a revelada (no al montar una carta ya abierta).
+  useEffect(() => {
+    if (flipped && !wasFlipped.current) playCardFlip(soundOrder, soundFinale)
+    wasFlipped.current = flipped
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flipped])
 
   return (
     <button

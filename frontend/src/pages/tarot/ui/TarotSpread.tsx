@@ -8,10 +8,11 @@ import { isAssistantEnabled, useAssistantStore } from '@/features/ai-assistant'
 import { SeekerForm, seededRandom, seekerSeed, useSeekerStore } from '@/features/seeker'
 import { ROUTES } from '@/shared/config'
 import { useCountdownToMidnight } from '@/shared/hooks'
-import { dayKey } from '@/shared/lib'
+import { dayKey, playCardDeal, playShuffle } from '@/shared/lib'
 import { SpotlightCard } from '@/shared/ui'
 
 const POSITIONS = ['Pasado', 'Presente', 'Futuro']
+const SHUFFLE_MS = 1600
 
 type Draw = { card: TarotCard; reversed: boolean }[]
 
@@ -29,12 +30,15 @@ export function TarotSpread() {
   const shuffle = () => {
     setShuffling(true)
     setRevealed([false, false, false])
+    playShuffle(SHUFFLE_MS)
     const rng = seededRandom(seekerSeed(seeker, 'spread'))
     setTimeout(() => {
       setDraw(drawCards(3, undefined, rng))
       setShuffling(false)
       seeker.markDone('spread')
-    }, 1100)
+      // Las cartas "caen" una a una con su sonido.
+      ;[0, 1, 2].forEach((i) => setTimeout(() => playCardDeal(i), 120 + i * 140))
+    }, SHUFFLE_MS)
   }
 
   const askForReading = () => {
@@ -107,15 +111,24 @@ export function TarotSpread() {
                       }
                     : { x: 0, y: 0, rotate: 0, scale: 1 }
                 }
-                transition={{ duration: 1.1, ease: 'easeInOut', times: [0, 0.3, 0.55, 0.8, 1] }}
+                transition={{ duration: SHUFFLE_MS / 1000, ease: [0.45, 0, 0.25, 1], times: [0, 0.3, 0.55, 0.8, 1] }}
               >
                 {item ? (
+                  <motion.div
+                    key={`${item.card.id}-${draw?.length}`}
+                    initial={{ opacity: 0, y: -28, scale: 0.82, rotate: (i - 1) * -7 }}
+                    animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                    transition={{ type: 'spring', stiffness: 170, damping: 15, delay: 0.12 + i * 0.14 }}
+                  >
                   <FlipTarotCard
                     card={item.card}
                     reversed={item.reversed}
                     flipped={revealed[i]}
+                    soundOrder={Math.max(0, revealed.filter(Boolean).length - 1)}
+                    soundFinale={revealed.every(Boolean)}
                     onFlip={() => setRevealed((r) => r.map((v, j) => (j === i ? true : v)))}
                   />
+                  </motion.div>
                 ) : (
                   <div className="grid aspect-[7/12] w-full place-items-center rounded-2xl border-2 border-dashed border-border text-muted">
                     <Sparkles className="size-6" />

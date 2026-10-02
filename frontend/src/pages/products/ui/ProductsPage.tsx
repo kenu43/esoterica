@@ -6,7 +6,7 @@ import { ProductCard, ProductCardSkeleton, useProductFeed } from '@/entities/pro
 import { ProductFilters, useProductFilters } from '@/features/product-filters'
 import { AddToInquiryButton } from '@/features/whatsapp-inquiry'
 import { useSeo } from '@/shared/hooks'
-import { Container, MagicLoader } from '@/shared/ui'
+import { AnimatedNumber, Container, MagicLoader } from '@/shared/ui'
 import { CustomOrderCta } from '@/widgets/custom-order-cta'
 import { PageHeader } from '@/widgets/page-header'
 
@@ -58,7 +58,9 @@ export function ProductsPage() {
         </div>
 
         <p className="text-sm text-muted" aria-live="polite">
-          {isPending ? 'Cargando productos…' : `${total.toLocaleString('es-CO')} producto${total === 1 ? '' : 's'} encontrado${total === 1 ? '' : 's'}`}
+          {isPending ? 'Cargando productos…' : <>
+              <AnimatedNumber value={total} /> producto{total === 1 ? '' : 's'} encontrado{total === 1 ? '' : 's'}
+            </>}
         </p>
 
         {isPending ? (

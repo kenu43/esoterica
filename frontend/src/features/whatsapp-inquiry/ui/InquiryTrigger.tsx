@@ -1,3 +1,4 @@
+import { AnimatedNumber } from '@/shared/ui'
 import { Button } from '@heroui/react'
 import { ScrollText } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -27,7 +28,7 @@ export function InquiryTrigger() {
             transition={{ type: 'spring', stiffness: 500, damping: 18 }}
             className="absolute right-0 top-0.5 grid min-w-[18px] place-items-center rounded-full bg-gold px-1 text-[10px] leading-[18px] font-bold text-[oklch(0.18_0.04_290)]"
           >
-            {count}
+            <AnimatedNumber value={count} />
           </motion.span>
         )}
       </AnimatePresence>

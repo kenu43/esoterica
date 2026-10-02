@@ -6,7 +6,7 @@ import { Link } from 'react-router'
 import { ProductImage, type Product } from '@/entities/product'
 import { useInquiryStore } from '@/features/whatsapp-inquiry'
 import { ROUTES, SITE } from '@/shared/config'
-import { buildWhatsAppUrl, cn, formatPrice } from '@/shared/lib'
+import { buildWhatsAppUrl, cn, formatPrice, playMerlinReply } from '@/shared/lib'
 import merlinIcon from '@/shared/ui/merlin-icon.png'
 import { useAssistantStore } from '../model/assistant.store'
 import { askAssistant, isAssistantEnabled, type ChatMessage } from '../model/chat'
@@ -62,6 +62,7 @@ export function AssistantChat() {
       const { reply, productSlugs, products } = await askAssistant(next.slice(1))
       setShown((prev) => ({ ...prev, ...Object.fromEntries(products.map((p) => [p.slug, p])) }))
       setMessages([...next, { role: 'assistant', text: reply, productSlugs }])
+      playMerlinReply()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Merlín tiene interferencias mágicas justo ahora. Intenta de nuevo.')
     } finally {
@@ -236,10 +237,54 @@ export function AssistantChat() {
         transition={{ delay: 1.4, type: 'spring', stiffness: 260, damping: 18 }}
         whileTap={{ scale: 0.92 }}
         aria-label={open ? 'Cerrar Merlín' : 'Hablar con Merlín'}
-        className="fixed bottom-[6rem] right-5 z-40 grid size-14 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-[oklch(0.42_0.2_300)] to-[oklch(0.3_0.16_290)] shadow-lg shadow-[oklch(0.42_0.2_300)]/40 ring-1 ring-gold/50 sm:bottom-[7rem] sm:right-8"
+        className="group fixed bottom-[6rem] right-5 z-40 grid size-14 place-items-center rounded-full sm:bottom-[7rem] sm:right-8"
       >
-        <span className="absolute inset-0 animate-pulse-glow rounded-full bg-gold/20" aria-hidden />
-        <img src={merlinIcon} alt="" className="relative size-9" />
+        {/* Aura: halo cónico violeta/dorado que gira lento, resplandor que respira y bruma que se expande. */}
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute -inset-2.5 rounded-full bg-[conic-gradient(from_0deg,oklch(0.55_0.22_300),oklch(0.85_0.14_85),oklch(0.45_0.2_285),oklch(0.8_0.12_190),oklch(0.55_0.22_300))] opacity-70 blur-md"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
+        />
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute -inset-5 rounded-full bg-[radial-gradient(circle,oklch(0.7_0.2_300/0.45),transparent_68%)]"
+          animate={{ scale: [0.9, 1.12, 0.9], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-full border border-gold/50"
+          initial={{ scale: 1, opacity: 0 }}
+          animate={{ scale: [1, 1.9], opacity: [0.55, 0] }}
+          transition={{ duration: 2.6, repeat: Infinity, repeatDelay: 3.4, ease: 'easeOut' }}
+        />
+        {/* Chispas que orbitan alrededor del mago. */}
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            aria-hidden
+            className="pointer-events-none absolute inset-[-14px]"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 7 + i * 2.5, repeat: Infinity, ease: 'linear', delay: -i * 2 }}
+          >
+            <span
+              className="absolute left-1/2 top-0 block -translate-x-1/2 text-[10px] leading-none text-[#fff3b0] drop-shadow-[0_0_5px_rgba(255,225,130,0.95)]"
+              style={{ transform: `translateX(-50%) scale(${1 - i * 0.18})` }}
+            >
+              ✦
+            </span>
+          </motion.span>
+        ))}
+        <span className="relative grid size-full place-items-center overflow-hidden rounded-full bg-[radial-gradient(circle_at_35%_25%,oklch(0.5_0.2_300),oklch(0.22_0.1_290)_75%)] ring-1 ring-gold/60 shadow-[inset_0_0_14px_oklch(0.8_0.14_85/0.35)]">
+          <motion.img
+            src={merlinIcon}
+            alt=""
+            className="relative size-9"
+            animate={{ y: [0, -2.5, 0], rotate: [-2, 2, -2] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        </span>
       </motion.button>
     </>
   )

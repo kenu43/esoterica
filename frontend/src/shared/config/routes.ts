@@ -12,4 +12,6 @@ export const ROUTES = {
   customOrder: '/encargos',
   about: '/nosotros',
   contact: '/contacto',
+  legal: '/legal',
+  legalDoc: (slug: string) => `/legal/${slug}`,
 } as const

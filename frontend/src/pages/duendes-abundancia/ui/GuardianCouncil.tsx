@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { GUARDIAN_AFFIRMATIONS, type GuardianAffirmation } from '@/entities/elemental'
-import { useProducts, type Product } from '@/entities/product'
+import { ProductImage, useProducts, type Product } from '@/entities/product'
 import { ROUTES, SITE } from '@/shared/config'
 import { buildWhatsAppUrl, formatPrice, pick } from '@/shared/lib'
 import { LotusIcon, SectionHeading } from '@/shared/ui'
@@ -83,7 +83,7 @@ export function GuardianCouncil() {
               {result.product ? (
                 <>
                   <Link to={ROUTES.product(result.product.slug)} className="flex items-center gap-3 rounded-xl border border-border bg-surface-secondary p-3 text-left transition-colors hover:border-gold/40">
-                    <img src={result.product.image} alt="" className="size-14 shrink-0 rounded-lg object-cover" />
+                    <ProductImage product={result.product} className="size-14 shrink-0 rounded-lg object-cover" />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-medium">{result.product.name}</span>
                       <span className="text-sm text-muted">{formatPrice(result.product.price)}</span>

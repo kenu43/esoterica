@@ -7,7 +7,7 @@ export const DEFAULT_CATEGORIES: CategorySeed[] = [
   { id: 'velas', name: 'Velas y veladoras', description: 'Velones preparados, de figura y de colores para cada petición.', icon: 'flame', image: '/images/products/velones.webp' },
   { id: 'riegos', name: 'Riegos y sales', description: 'Despojos, abre caminos, sales y riegos para el negocio.', icon: 'droplets', image: '/images/products/despojo.webp' },
   { id: 'inciensos', name: 'Inciensos y sahumerios', description: 'Copal, salvia, palo santo e inciensos para limpiar espacios.', icon: 'wind', image: '/images/products/incienso-varitas.webp' },
-  { id: 'bisuteria', name: 'Bisutería y accesorios', description: 'Manillas, rosarios, dijes y pulseras para llevar contigo.', icon: 'link', image: '/images/products/pulsera.webp' },
+  { id: 'bisuteria', name: 'Bisutería y accesorios', description: 'Manillas, rosarios, dijes y pulseras para llevar contigo.', icon: 'medal', image: '/images/products/pulsera.webp' },
   { id: 'suerte', name: 'Suerte y Feng Shui', description: 'Pirámides, elefantes y Feng Shui para atraer el dinero.', icon: 'clover', image: '/images/products/elefante.webp' },
   { id: 'duendes', name: 'Duendes', description: 'Duendes guardianes para la prosperidad del hogar y el negocio.', icon: 'sprout', image: '/images/products/duende.webp' },
   { id: 'piedras', name: 'Piedras y cuarzos', description: 'Cuarzos y piedras naturales para energizar y proteger.', icon: 'gem', image: '/images/products/obsidiana.webp' },

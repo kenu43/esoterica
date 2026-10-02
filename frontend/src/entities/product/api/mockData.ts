@@ -1,8 +1,8 @@
 import type { BranchId } from '@/entities/branch'
 import type { Product } from '../model/types'
 
-type MockProduct = Omit<Product, 'branches' | 'intentions' | 'gallery' | 'colors' | 'sizes' | 'materials' | 'variants' | 'extraCategories'> &
-  Partial<Pick<Product, 'intentions' | 'gallery' | 'colors' | 'sizes' | 'materials' | 'variants' | 'extraCategories'>>
+type MockProduct = Omit<Product, 'branches' | 'intentions' | 'gallery' | 'colors' | 'sizes' | 'materials' | 'variants' | 'extraCategories' | 'videos'> &
+  Partial<Pick<Product, 'intentions' | 'gallery' | 'colors' | 'sizes' | 'materials' | 'variants' | 'extraCategories' | 'videos'>>
 
 export const mockProductsByStore: Record<BranchId, MockProduct[]> = {
   'el-sortilegio': [
@@ -629,7 +629,7 @@ export const mockProductsByStore: Record<BranchId, MockProduct[]> = {
 
 export const MOCK_PRODUCTS: Product[] = (Object.entries(mockProductsByStore) as [BranchId, MockProduct[]][]).flatMap(
   ([store, products]) =>
-    products.map((p) => ({ intentions: [], gallery: [], colors: [], sizes: [], materials: [], variants: [], extraCategories: [], ...p, branches: [store] })),
+    products.map((p) => ({ intentions: [], gallery: [], videos: [], colors: [], sizes: [], materials: [], variants: [], extraCategories: [], ...p, branches: [store] })),
 )
 
 const DEMO_PRODUCTS: Product[] = [

@@ -17,7 +17,7 @@ export interface Product {
   benefits: string[]
   image: string
   /** Videos del producto: archivos subidos a Sanity o enlaces de YouTube/Vimeo, en el orden del panel. */
-  videos: ProductVideoItem[]
+  videos?: ProductVideoItem[]
   branches: BranchId[]
   badges: ProductBadge[]
   tags: string[]
@@ -26,6 +26,10 @@ export interface Product {
   intentions: string[]
   moonPhase?: string
   usageGuide?: string
+  /** Ficha técnica: pares dato/valor (duración, altura, aroma…). */
+  specs?: { label: string; value: string }[]
+  /** Advertencia o precaución de uso. */
+  warning?: string
   gallery: string[]
   season?: string
   colors: ProductColor[]

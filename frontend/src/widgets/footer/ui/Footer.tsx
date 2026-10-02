@@ -1,7 +1,7 @@
 import { MapPin, MessageCircle, Phone } from 'lucide-react'
 import { Link } from 'react-router'
 import { BRANCHES } from '@/entities/branch'
-import { NAV_ITEMS, SITE } from '@/shared/config'
+import { NAV_ITEMS, ROUTES, SITE } from '@/shared/config'
 import { buildWhatsAppUrl } from '@/shared/lib'
 import { Container, FacebookIcon, InstagramIcon, Logo, LotusDivider, SakuraBranch, TikTokIcon } from '@/shared/ui'
 
@@ -9,6 +9,15 @@ const SOCIALS = [
   { href: SITE.instagram, label: `Instagram ${SITE.instagramHandle}`, Icon: InstagramIcon },
   { href: SITE.tiktok, label: `TikTok ${SITE.instagramHandle}`, Icon: TikTokIcon },
   { href: SITE.facebook, label: `Facebook ${SITE.facebookName}`, Icon: FacebookIcon },
+]
+
+const LEGAL_LINKS = [
+  { label: 'Términos y condiciones', to: ROUTES.legalDoc('terminos-y-condiciones') },
+  { label: 'Privacidad y datos', to: ROUTES.legalDoc('politica-de-privacidad') },
+  { label: 'Envíos', to: ROUTES.legalDoc('politica-de-envios') },
+  { label: 'Cambios y garantía', to: ROUTES.legalDoc('cambios-devoluciones-y-garantia') },
+  { label: 'PQR', to: ROUTES.legalDoc('pqr') },
+  { label: 'Cookies', to: ROUTES.legalDoc('politica-de-cookies') },
 ]
 
 export function Footer() {
@@ -89,6 +98,13 @@ export function Footer() {
         <p>
           © {year} {SITE.name} · Ibagué, Tolima · Envíos a toda Colombia
         </p>
+        <nav aria-label="Políticas" className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+          {LEGAL_LINKS.map((l) => (
+            <Link key={l.to} to={l.to} className="transition-colors hover:text-gold">
+              {l.label}
+            </Link>
+          ))}
+        </nav>
       </Container>
     </footer>
   )

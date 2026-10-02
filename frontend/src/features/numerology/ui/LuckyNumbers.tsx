@@ -7,7 +7,7 @@ import { useCategory } from '@/entities/category'
 import { SeekerForm, seededRandom, seekerSeed, useSeekerStore } from '@/features/seeker'
 import { ROUTES, SITE } from '@/shared/config'
 import { useCountdownToMidnight } from '@/shared/hooks'
-import { buildWhatsAppUrl, cn, dayKey } from '@/shared/lib'
+import { buildWhatsAppUrl, cn, dayKey, playReelStop, playReveal, playSpinStart, playSpinTick } from '@/shared/lib'
 import { Confetti } from '@/shared/ui'
 import { lifePathNumber, PROFILES } from '../model/numerology'
 
@@ -18,16 +18,26 @@ const STAGGER_S = 0.9
 
 function RouletteReel({ final, index, spin, instant }: { final: number; index: number; spin: number; instant: boolean }) {
   const end = `-${((30 + final) / STRIP) * 100}%`
-  const running = spin > 0 || instant
+  // El giro es una transición CSS (no una animación de JS): sigue corriendo aunque la pantalla se vuelva a pintar
+  // y no se reinicia con cada render, que era lo que hacía parpadear los números en el celular.
+  const [startedSpin, setStartedSpin] = useState(0)
+  useEffect(() => {
+    if (spin === 0) return
+    const t = setTimeout(() => setStartedSpin(spin), 60)
+    return () => clearTimeout(t)
+  }, [spin])
+  const go = spin > 0 && startedSpin === spin
+  const dur = SPIN_S + index * STAGGER_S
+
   return (
     <div className="relative h-20 w-14 overflow-hidden rounded-xl border-2 border-gold bg-[oklch(0.15_0.03_285)] shadow-[inset_0_0_18px_rgba(0,0,0,0.7),0_0_18px_var(--gold-soft)] sm:h-24 sm:w-[4.25rem]">
-      <motion.div
-        key={spin}
-        initial={{ y: '0%' }}
-        animate={{ y: running ? end : '0%' }}
-        transition={instant && spin === 0 ? { duration: 0 } : { duration: SPIN_S + index * STAGGER_S, ease: [0.1, 0.75, 0.2, 1] }}
-        className="flex flex-col"
-        style={{ height: `${STRIP * 100}%` }}
+      <div
+        className="flex flex-col will-change-transform"
+        style={{
+          height: `${STRIP * 100}%`,
+          transform: `translateY(${go || (instant && spin === 0) ? end : '0%'})`,
+          transition: go ? `transform ${dur}s cubic-bezier(0.1, 0.75, 0.2, 1)` : 'none',
+        }}
       >
         {Array.from({ length: STRIP }, (_, i) => (
           <div
@@ -37,7 +47,7 @@ function RouletteReel({ final, index, spin, instant }: { final: number; index: n
             {i % 10}
           </div>
         ))}
-      </motion.div>
+      </div>
       <span aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/70" />
       <span aria-hidden className="pointer-events-none absolute inset-x-0 top-1/2 h-px bg-gold/50" />
     </div>
@@ -74,12 +84,22 @@ export function LuckyNumbers() {
   useEffect(() => {
     if (spin === 0) return
     const total = (SPIN_S + (DIGITS - 1) * STAGGER_S) * 1000 + 300
-    const t = setTimeout(() => setFinished(spin), total)
-    return () => clearTimeout(t)
+    const timers: ReturnType<typeof setTimeout>[] = [setTimeout(() => setFinished(spin), total)]
+    // Sonido: soplo inicial, clics que se van espaciando como una ruleta que frena y una campanita por cada carril que se detiene.
+    playSpinStart()
+    for (let t = 120; t < total - 400; t += 70 + 330 * (t / total) ** 2) {
+      const at = t
+      timers.push(setTimeout(() => playSpinTick(at / total), at))
+    }
+    for (let i = 0; i < DIGITS; i++) timers.push(setTimeout(() => playReelStop(i), (SPIN_S + i * STAGGER_S) * 1000 + 150))
+    return () => timers.forEach(clearTimeout)
   }, [spin])
 
   useEffect(() => {
-    if (justDone) seeker.markDone('lucky')
+    if (justDone) {
+      playReveal()
+      seeker.markDone('lucky')
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [justDone])
 

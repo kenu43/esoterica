@@ -6,8 +6,8 @@ import { Link } from 'react-router'
 import { ANY_BRANCH_ID, BRANCH_CHOICES, resolveBranch } from '@/entities/branch'
 import { ProductImage, useProducts } from '@/entities/product'
 import { ROUTES } from '@/shared/config'
-import { cn, formatPrice, openWhatsApp } from '@/shared/lib'
-import { LotusIcon } from '@/shared/ui'
+import { cn, openWhatsApp } from '@/shared/lib'
+import { AnimatedNumber, AnimatedPrice, LotusIcon } from '@/shared/ui'
 import { buildInquiryMessage, SHIPPING_OPTIONS, type ShippingId } from '../lib/build-message'
 import { useInquiryStore } from '../model/inquiry.store'
 
@@ -129,7 +129,7 @@ export function InquiryDrawer() {
                                 >
                                   <Minus className="size-3.5" />
                                 </Button>
-                                <span className="w-6 text-center text-sm font-semibold tabular-nums">{quantity}</span>
+                                <span className="w-6 text-center text-sm font-semibold tabular-nums"><AnimatedNumber value={quantity} /></span>
                                 <Button
                                   isIconOnly
                                   size="sm"
@@ -140,7 +140,7 @@ export function InquiryDrawer() {
                                   <Plus className="size-3.5" />
                                 </Button>
                               </div>
-                              <span className="text-sm font-bold">{formatPrice(price * quantity)}</span>
+                              <AnimatedPrice value={price * quantity} className="text-sm font-bold" />
                             </div>
                           </div>
                           <Button
@@ -229,7 +229,7 @@ export function InquiryDrawer() {
               <Drawer.Footer className="flex-col gap-3 border-t border-separator pt-4">
                 <div className="flex w-full items-center justify-between">
                   <span className="text-sm text-muted">Total estimado</span>
-                  <span className="text-2xl font-bold">{formatPrice(total)}</span>
+                  <AnimatedPrice value={total} className="text-2xl font-bold" />
                 </div>
                 {lines.some((l) => unitPrice(l) <= 0) && (
                   <p className="-mt-2 text-xs text-muted">Incluye productos con precio a consultar, no sumado arriba.</p>

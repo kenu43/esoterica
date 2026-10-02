@@ -1,3 +1,4 @@
+import { AnimatedNumber } from '@/shared/ui'
 import { motion } from 'motion/react'
 import { SITE } from '@/shared/config'
 import { buildWhatsAppUrl } from '@/shared/lib'
@@ -40,11 +41,18 @@ export function WhatsAppFab() {
       aria-label={count > 0 ? 'Abrir mi lista de consulta' : 'Escribir por WhatsApp'}
       className="fixed bottom-5 right-5 z-40 grid size-14 place-items-center rounded-full bg-[#25D366] text-white shadow-lg shadow-[#25D366]/40 sm:bottom-8 sm:right-8"
     >
-      <span className="absolute inset-0 animate-ping rounded-full bg-[#25D366] opacity-25" aria-hidden />
+      {/* Un destello suave cada pocos segundos, no un parpadeo constante. */}
+      <motion.span
+        className="absolute inset-0 rounded-full bg-[#25D366]"
+        aria-hidden
+        initial={{ scale: 1, opacity: 0 }}
+        animate={{ scale: [1, 1.5], opacity: [0.35, 0] }}
+        transition={{ duration: 1.8, ease: 'easeOut', repeat: Infinity, repeatDelay: 7 }}
+      />
       <WhatsAppIcon className="relative size-7" />
       {count > 0 && (
         <span className="absolute -right-1 -top-1 grid min-w-6 place-items-center rounded-full bg-gold px-1.5 text-xs font-bold text-[oklch(0.18_0.04_290)] ring-2 ring-background">
-          {count}
+          <AnimatedNumber value={count} />
         </span>
       )}
     </motion.button>

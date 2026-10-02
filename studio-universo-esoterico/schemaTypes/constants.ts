@@ -34,7 +34,7 @@ export const CATEGORY_ICONS = [
   { title: 'Sol', value: 'sun' },
   { title: 'Estrella', value: 'star' },
   { title: 'Calavera (Santa Muerte)', value: 'skull' },
-  { title: 'Eslabón (bisutería y accesorios)', value: 'link' },
+  { title: 'Medalla (bisutería y accesorios)', value: 'medal' },
   { title: 'Brote (duendes)', value: 'sprout' },
   { title: 'Corona (San Diego)', value: 'crown' },
   { title: 'Varita (rituales)', value: 'wand' },
@@ -48,7 +48,7 @@ export const CATEGORY_ICONS = [
 /** Emoji de cada ícono: se ve en las listas del panel para reconocer la categoría de un vistazo. */
 export const CATEGORY_EMOJIS: Record<string, string> = {
   church: '⛪', flame: '🕯️', droplets: '💧', wind: '🌬️', shield: '🛡️', clover: '🍀', flower: '🪷', sparkles: '✨', gem: '💎',
-  heart: '❤️', leaf: '🌿', moon: '🌙', sun: '☀️', star: '⭐', skull: '💀', link: '📿', sprout: '🌱', crown: '👑',
+  heart: '❤️', leaf: '🌿', moon: '🌙', sun: '☀️', star: '⭐', skull: '💀', medal: '📿', sprout: '🌱', crown: '👑',
   wand: '🪄', 'spray-can': '🧴', bath: '🛁', book: '📖', flask: '⚗️', 'test-tube': '🧪',
 }
 

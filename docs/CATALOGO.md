@@ -60,7 +60,7 @@ pnpm --dir studio-universo-esoterico sync:referencias "C:\ruta\Archivo.xlsx" --r
 
 ## Plantilla con columnas completas
 
-`export/plantilla-productos-universo-esoterico.xlsx` trae los 1.959 productos actuales y estas columnas (con listas desplegables que salen de Sanity): Categoría, Frase corta, Descripción completa, Puntos clave, Cómo se usa, Intención 1-3, Temporada, Fase lunar, las tres tiendas (Sí/No), Disponible, Mostrar en la página, Etiqueta, Precio antes, Descuento %, Presentación, Colores, Enlace de video, Palabras de búsqueda.
+`export/plantilla-productos-universo-esoterico.xlsx` trae los 1.959 productos actuales y estas columnas (con listas desplegables que salen de Sanity): Categoría, Frase corta, Descripción completa, Puntos clave, Cómo se usa, Intención 1-3, Temporada, Fase lunar, las tres tiendas (Sí/No), Disponible, Mostrar en la página, Etiqueta, Precio antes, Descuento %, Presentación, Colores, Enlaces de video (varios, separados por ;), Palabras de búsqueda.
 
 Se importa con el mismo comando de arriba (sin flags). Reglas: celda vacía = no cambia nada; las listas solo aceptan valores existentes en Sanity (hoja "Listas"). **Si se crea una categoría, intención o temporada nueva en Sanity, hay que regenerar la plantilla** (o añadir el valor en la hoja "Listas").
 
@@ -75,7 +75,7 @@ Fotos y videos **no** se cargan por Excel (se suben en el panel); el enlace de Y
 ## Fotos y videos
 
 - Sin foto, la web muestra un fondo morado con loto y el ícono de la categoría (`ProductImage`).
-- Videos: en el producto, campo **Video** (archivo MP4, ideal < 50 MB, corto y vertical) o **Enlace de video** (YouTube/Vimeo, mejor para videos largos). El archivo tiene prioridad. Se muestra bajo la galería del detalle (`ProductVideo`).
+- Videos: en el producto, campo **Videos** (hasta 6 archivos MP4, ideal < 50 MB, cortos y verticales) y/o **Enlaces de video** (hasta 6 de YouTube/Vimeo, mejor para videos largos). Se pueden combinar. Salen en el mismo carrusel que las fotos (archivos primero, luego enlaces), con reproductor propio sin botón de descargar (`ProductVideoPlayer`). Nada impide descargar de verdad el archivo a quien sepa mirar el código; para contenido que no deba copiarse, usar YouTube/Vimeo.
 
 ## Rendimiento del listado
 
