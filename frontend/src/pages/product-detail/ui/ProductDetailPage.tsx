@@ -9,6 +9,8 @@ import {
   moonPhaseLabel,
   ProductBadges,
   ProductCard,
+  ProductImage,
+  ProductVideo,
   resolveColor,
   useTaxonomyLabels,
   useProduct,
@@ -24,7 +26,7 @@ import { NotFoundPage } from '@/pages/not-found'
 export function ProductDetailPage() {
   const { slug = '' } = useParams()
   const { data: product, isPending } = useProduct(slug)
-  const { data: related = [] } = useProducts({ category: product?.category })
+  const { data: related = [] } = useProducts({ category: product?.category, limit: 6 })
   const category = useCategory(product?.category)
   const labels = useTaxonomyLabels()
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
@@ -39,14 +41,14 @@ export function ProductDetailPage() {
   useSeo({
     title: product ? `${product.name} en Ibagué` : undefined,
     description: product ? `${product.shortDescription} ${formatPrice(product.price)}. Envíos a toda Colombia.` : undefined,
-    image: product?.image,
+    image: product?.image || undefined,
     jsonLd: product
       ? {
           '@context': 'https://schema.org',
           '@type': 'Product',
           name: product.name,
           description: product.description,
-          image: product.image.startsWith('http') ? product.image : `${SITE.url}${product.image}`,
+          ...(product.image && { image: product.image.startsWith('http') ? product.image : `${SITE.url}${product.image}` }),
           category: category.name,
           brand: { '@type': 'Brand', name: SITE.name },
           offers: {
@@ -95,8 +97,8 @@ export function ProductDetailPage() {
   )
   const hasDiscount = !variantPrice && !!product.compareAtPrice && product.compareAtPrice > product.price
   const discount = hasDiscount ? Math.round((1 - product.price / product.compareAtPrice!) * 100) : 0
-  const photos = [product.image, ...product.gallery]
-  const activePhoto = selectedImage && photos.includes(selectedImage) ? selectedImage : product.image
+  const photos = [product.image, ...product.gallery].filter(Boolean)
+  const activePhoto = selectedImage && photos.includes(selectedImage) ? selectedImage : (photos[0] ?? '')
   const activeIndex = photos.indexOf(activePhoto)
   const goTo = (step: number) => {
     setDirection(step > 0 ? 1 : -1)
@@ -129,7 +131,9 @@ export function ProductDetailPage() {
                 if (e.key === 'ArrowRight') goTo(1)
               }}
             >
+              {!activePhoto && <ProductImage product={product} alt={product.name} className="absolute inset-0 size-full" />}
               <AnimatePresence initial={false} custom={direction} mode="popLayout">
+                {activePhoto && (
                 <motion.img
                   key={activePhoto}
                   src={activePhoto}
@@ -150,8 +154,9 @@ export function ProductDetailPage() {
                     else if (info.offset.x > 60 || info.velocity.x > 400) goTo(-1)
                   }}
                 />
+                )}
               </AnimatePresence>
-              <img src={activePhoto} alt="" aria-hidden className="invisible aspect-square w-full object-cover" />
+              <div aria-hidden className="invisible aspect-square w-full" />
               <ProductBadges badges={product.badges} discount={discount} className="absolute left-4 top-4 right-4" />
               {photos.length > 1 && (
                 <>
@@ -202,6 +207,7 @@ export function ProductDetailPage() {
                 ))}
               </ul>
             )}
+            <ProductVideo product={product} />
           </motion.div>
 
           <motion.div

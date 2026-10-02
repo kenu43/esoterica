@@ -1,0 +1,122 @@
+/**
+ * Conocimiento de nicho: qué es y para qué se pide cada devoción, color o línea de producto.
+ * Se busca por palabras del nombre (sin tildes, en minúscula). Tono cercano, sin prometer resultados.
+ */
+export interface Topic {
+  re: RegExp
+  /** Frase corta para la tarjeta (≤ 110 letras). */
+  short: string
+  /** Frase para la descripción completa. */
+  long: string
+}
+
+/** Devociones, santos, líneas y símbolos. El primero que coincida manda. */
+export const TOPICS: Topic[] = [
+  { re: /santa muerte|santisima|nina blanca|nina negra|nina roja/, short: 'Devoción a la Santa Muerte para protección, justicia y respaldo.', long: 'La Santa Muerte es una de las devociones más fuertes del momento: se le pide protección, justicia, amor, dinero y que abra caminos.' },
+  { re: /san judas|tadeo/, short: 'San Judas Tadeo, patrono de las causas difíciles.', long: 'San Judas Tadeo es el patrono de las causas difíciles: se le encomiendan el trabajo, los casos que parecen sin salida y los favores urgentes.' },
+  { re: /san miguel|miguel arcangel/, short: 'San Miguel Arcángel, el gran protector contra el mal.', long: 'San Miguel Arcángel es el protector por excelencia: se invoca para alejar envidias, malas energías y personas que no te convienen.' },
+  { re: /san benito/, short: 'San Benito, protección contra envidias y maleficios.', long: 'San Benito se lleva y se tiene en casa como protección contra el mal de ojo, las envidias y los trabajos que te hagan.' },
+  { re: /san cipriano/, short: 'San Cipriano, muy invocado para protección y trabajos fuertes.', long: 'San Cipriano es muy invocado por quienes buscan protección y respaldo en trabajos espirituales fuertes.' },
+  { re: /gregorio|hernandez/, short: 'José Gregorio Hernández, el médico de los pobres.', long: 'El Dr. José Gregorio Hernández es el santo popular de los enfermos: se le piden salud, sanación y alivio para la familia.' },
+  { re: /san antonio/, short: 'San Antonio, para el amor y encontrar lo perdido.', long: 'San Antonio es el santo de los noviazgos y de las cosas perdidas: se le pide pareja, reconciliación y que aparezca lo que se extravió.' },
+  { re: /marta|dominadora/, short: 'Santa Marta la Dominadora, para dominar situaciones y el amor.', long: 'Santa Marta la Dominadora se invoca para dominar situaciones difíciles, calmar a las personas bravas y atraer o retener a la pareja.' },
+  { re: /san alejo/, short: 'San Alejo, para alejar enemigos y personas que estorban.', long: 'San Alejo se pide para alejar enemigos, rivales y personas que le hacen daño a tu hogar o a tu relación.' },
+  { re: /san ramon/, short: 'San Ramón Nonato, para callar chismes y envidias.', long: 'San Ramón Nonato se invoca para silenciar chismes, calumnias y malas lenguas.' },
+  { re: /santa rita/, short: 'Santa Rita, abogada de los imposibles.', long: 'Santa Rita es la abogada de los imposibles: se le encomiendan las situaciones que parecen perdidas.' },
+  { re: /virgen del carmen|carmen/, short: 'Virgen del Carmen, protectora de los viajeros y conductores.', long: 'La Virgen del Carmen es la protectora de conductores y viajeros, y madre amorosa de la familia.' },
+  { re: /guadalupe/, short: 'Virgen de Guadalupe, madre protectora.', long: 'La Virgen de Guadalupe es una de las advocaciones más queridas: protección, amparo y consuelo para toda la familia.' },
+  { re: /virgen/, short: 'Imagen de la Virgen para el altar o el hogar.', long: 'La Virgen acompaña el hogar con amparo, paz y consuelo; es la devoción de la madre que cuida a los suyos.' },
+  { re: /san jorge/, short: 'San Jorge, protección contra enemigos.', long: 'San Jorge es el santo guerrero que vence al mal: se le piden protección y fuerza ante enemigos y peligros.' },
+  { re: /san jose/, short: 'San José, protector del hogar y del trabajo.', long: 'San José es el protector del hogar, de la familia y del trabajo honrado.' },
+  { re: /san juan/, short: 'San Juan, suerte, amor y limpieza.', long: 'San Juan es muy pedido para el amor, la suerte y la limpieza, sobre todo cerca de su fecha.' },
+  { re: /san lazaro|lazaro/, short: 'San Lázaro, devoción de salud y misericordia.', long: 'San Lázaro es el santo de los enfermos y de los necesitados; se le pide salud y compasión.' },
+  { re: /san martin/, short: 'San Martín de Porres, humildad y trabajo.', long: 'San Martín de Porres es el santo humilde que ayuda con el trabajo, la salud y la prosperidad del hogar.' },
+  { re: /san pancracio/, short: 'San Pancracio, para trabajo, dinero y salud.', long: 'San Pancracio es muy popular para pedir trabajo, dinero y salud; tradicionalmente se le pone perejil o una moneda.' },
+  { re: /san diego/, short: 'Línea San Diego para el negocio y la prosperidad.', long: 'La línea de San Diego es muy buscada por los comerciantes para atraer clientes, ventas y movimiento al negocio.' },
+  { re: /arcangel.*chamuel|chamuel/, short: 'Arcángel Chamuel, el ángel del amor y las relaciones.', long: 'El arcángel Chamuel acompaña el amor, las relaciones y la reconciliación.' },
+  { re: /gabriel/, short: 'Arcángel Gabriel, el mensajero.', long: 'El arcángel Gabriel es el mensajero: se invoca para claridad, buenas noticias y comunicación.' },
+  { re: /rafael/, short: 'Arcángel Rafael, el ángel de la sanación.', long: 'El arcángel Rafael es el ángel de la sanación: se le piden salud y bienestar para ti y los tuyos.' },
+  { re: /uriel/, short: 'Arcángel Uriel, luz y sabiduría.', long: 'El arcángel Uriel trae luz y sabiduría para tomar buenas decisiones y entender los momentos difíciles.' },
+  { re: /jofiel/, short: 'Arcángel Jofiel, sabiduría y belleza.', long: 'El arcángel Jofiel acompaña la sabiduría, la creatividad y los pensamientos positivos.' },
+  { re: /zadquiel/, short: 'Arcángel Zadquiel, transformación y perdón.', long: 'El arcángel Zadquiel se invoca para soltar cargas, perdonar y transformar lo negativo.' },
+  { re: /metatron/, short: 'Arcángel Metatrón, guía y protección espiritual.', long: 'El arcángel Metatrón es guía y protección espiritual, muy asociado a la geometría sagrada.' },
+  { re: /arcangel/, short: 'Arcángel protector para tu casa o altar.', long: 'Los arcángeles son mensajeros y protectores: cada uno acompaña una necesidad distinta.' },
+  { re: /elegua|eleggua/, short: 'Elegguá, el dueño de los caminos.', long: 'Elegguá es el orisha de los caminos: abre y cierra puertas, y por eso siempre se le atiende primero.' },
+  { re: /lionza/, short: 'María Lionza, reina espiritual de Venezuela.', long: 'María Lionza es la reina espiritual venezolana: se le piden amor, salud y protección.' },
+  { re: /malverde/, short: 'Jesús Malverde, santo popular mexicano.', long: 'Jesús Malverde es un santo popular mexicano al que sus devotos le piden trabajo, dinero y protección.' },
+  { re: /nino de atocha|atocha/, short: 'Niño de Atocha, protector de los caminos.', long: 'El Niño de Atocha es el protector de los caminantes, de los niños y de quienes necesitan ayuda urgente.' },
+  { re: /cruz de caravaca|caravaca/, short: 'Cruz de Caravaca, protección contra maleficios.', long: 'La Cruz de Caravaca es un amuleto clásico de protección contra maleficios y mal de ojo.' },
+  { re: /ojo turco|ojo de turco/, short: 'Ojo turco, protege del mal de ojo.', long: 'El ojo turco es el amuleto contra el mal de ojo y las envidias; absorbe las malas miradas.' },
+  { re: /mano de fatima|fatima/, short: 'Mano de Fátima, amuleto de protección.', long: 'La mano de Fátima es un amuleto de protección y buena suerte muy antiguo.' },
+  { re: /tetragramaton/, short: 'Tetragramatón, amuleto de protección.', long: 'El tetragramatón es un amuleto clásico de protección que se lleva sobre el cuerpo.' },
+  { re: /azabache/, short: 'Azabache, protección contra el mal de ojo.', long: 'El azabache es la piedra tradicional para proteger a los niños y a los adultos del mal de ojo y las envidias.' },
+  { re: /herradura/, short: 'Herradura, símbolo de buena suerte.', long: 'La herradura es símbolo de suerte y protección para la casa o el negocio.' },
+  { re: /ganesha/, short: 'Ganesha, quita obstáculos y trae prosperidad.', long: 'Ganesha es el dios hindú que quita obstáculos y abre caminos al comienzo de cada proyecto.' },
+  { re: /buda/, short: 'Buda, para la paz y la abundancia.', long: 'El Buda acompaña la paz interior, la abundancia y la buena fortuna del hogar.' },
+  { re: /elefante/, short: 'Elefante, símbolo de fuerza y buena fortuna.', long: 'El elefante es símbolo de fuerza, protección y buena fortuna; con la trompa hacia arriba atrae la suerte.' },
+  { re: /gato/, short: 'Gato de la fortuna, atrae el dinero.', long: 'El gato de la fortuna es el amuleto de los negocios: con su patica en movimiento llama clientes y dinero.' },
+  { re: /duende/, short: 'Duende guardián de la prosperidad.', long: 'El duende es el guardián de la prosperidad del hogar y del negocio; se atiende con cariño y una ofrenda sencilla.' },
+  { re: /piramide/, short: 'Pirámide para concentrar y mover energía.', long: 'La pirámide concentra y mueve la energía del lugar donde la pongas; muy usada con cuarzos.' },
+  { re: /cuarzo rosa/, short: 'Cuarzo rosa, la piedra del amor.', long: 'El cuarzo rosa es la piedra del amor propio y de pareja: suaviza y atrae relaciones sanas.' },
+  { re: /citrino/, short: 'Citrino, piedra del dinero y la alegría.', long: 'El citrino se asocia con la prosperidad, el dinero y la alegría; muchos lo tienen cerca de la caja.' },
+  { re: /amatista/, short: 'Amatista, calma y espiritualidad.', long: 'La amatista calma la mente, ayuda a dormir mejor y refuerza la conexión espiritual.' },
+  { re: /obsidiana/, short: 'Obsidiana, piedra de protección.', long: 'La obsidiana es piedra de protección: absorbe las energías pesadas y refleja lo negativo.' },
+  { re: /ojo de tigre/, short: 'Ojo de tigre, protección y valentía.', long: 'El ojo de tigre se lleva para protección, confianza y valentía en el trabajo.' },
+  { re: /pirita/, short: 'Pirita, la piedra del dinero.', long: 'La pirita es la piedra de la abundancia: se pone cerca de la caja o el lugar de trabajo.' },
+  { re: /cuarzo/, short: 'Cuarzo natural para energizar y proteger.', long: 'El cuarzo es el cristal de todo propósito: limpia, energiza y amplifica tus intenciones.' },
+  { re: /tumba trabajo|tumba|rompe|desatanudos/, short: 'Para romper y devolver trabajos y malas energías.', long: 'Es de la línea de romper y quitar trabajos o malas energías que alguien haya puesto en tu camino.' },
+  { re: /dominio|domin/, short: 'De la línea de dominio, para amansar situaciones o personas.', long: 'La línea de dominio se pide para amansar situaciones difíciles y poner las cosas a tu favor.' },
+  { re: /desespero/, short: 'Línea del desespero, para que esa persona te busque.', long: 'La línea del desespero es de las más pedidas en amarres de amor: busca que la persona no te saque de la cabeza.' },
+  { re: /amantes|amarre|amor|pareja|atrae hombre|atrae mujer|enamor/, short: 'Para el amor, la pareja y las relaciones.', long: 'Esta línea se usa en temas de amor: atraer pareja, unir, reconciliar o fortalecer una relación.' },
+  { re: /feromonas/, short: 'Aroma con feromonas para atracción.', long: 'Las feromonas se usan en perfumería para reforzar la atracción personal.' },
+  { re: /clientes|ventas|negocio|dolar|dinero|lluvia|prosper|abundan/, short: 'Para atraer clientes, ventas y dinero al negocio.', long: 'Es de la línea de dinero y negocios: se usa para llamar clientes, mover las ventas y atraer prosperidad.' },
+  { re: /abre camino|caminos/, short: 'Para abrir caminos y quitar bloqueos.', long: 'Se usa para abrir caminos cuando sientes que todo está cerrado: trabajo, plata, amor o salud.' },
+  { re: /malandro/, short: 'Línea del malandro, protección y camino en la calle.', long: 'La línea del malandro se pide para protección y buena fortuna en la calle y en los negocios.' },
+  { re: /despojo|limpieza|limpia/, short: 'Para despojar y limpiar malas energías.', long: 'Sirve para despojar y limpiar el cuerpo, la casa o el negocio de cargas y malas energías.' },
+  { re: /vudu|muneco/, short: 'Muñeco ritual para trabajos de intención.', long: 'Los muñecos rituales se usan para personalizar trabajos de amor, protección o justicia.' },
+  { re: /pendulo/, short: 'Péndulo para consultas y radiestesia.', long: 'El péndulo se usa para consultar respuestas de sí o no y para equilibrar energías.' },
+  { re: /tarot|baraja|oraculo/, short: 'Cartas y baraja para tus lecturas.', long: 'Mazo para lecturas de tarot y consulta de oráculo, tanto para principiantes como para quienes ya leen.' },
+  { re: /novena/, short: 'Novena para rezar durante nueve días.', long: 'La novena se reza durante nueve días seguidos con fe, encendiendo una vela cada día.' },
+  { re: /camandula|rosario/, short: 'Rosario o camándula para la oración.', long: 'Para rezar y acompañar tu devoción; también se lleva como protección.' },
+  { re: /miel/, short: 'Miel para endulzar y atraer.', long: 'La miel se usa en rituales de endulzamiento, para suavizar a una persona o atraer lo bueno.' },
+  { re: /tabaco/, short: 'Tabaco para ofrenda a los santos.', long: 'El tabaco se ofrece a las entidades y santos como ofrenda en rituales.' },
+  { re: /trono/, short: 'Trono para el altar.', long: 'El trono eleva la imagen en el altar y le da el lugar de respeto que merece.' },
+  { re: /candelabro/, short: 'Candelabro para tus velas rituales.', long: 'Sostiene con seguridad tus velas y le da presencia al altar.' },
+  { re: /ataud|craneo|calavera/, short: 'Pieza decorativa y ritual de la muerte.', long: 'Pieza ligada a la devoción a la muerte y al mundo ritual; también se usa como decoración de altar.' },
+  { re: /pene|falo|sexual|potencia|macho|vigor|sex max|vitafer|shilajit/, short: 'Producto natural para el vigor y la pareja.', long: 'Producto de venta discreta pensado para el vigor y la intimidad de la pareja.' },
+]
+
+/** Colores de velas y de imágenes de la Santa Muerte, con lo que se pide con cada uno. */
+export const COLORS: { re: RegExp; label: string; meaning: string }[] = [
+  { re: /\b7 colores|siete colores\b/, label: '7 colores', meaning: 'reúne varias intenciones a la vez: amor, dinero, salud, protección y más' },
+  { re: /\bblanc[oa]s?\b/, label: 'blanco', meaning: 'es el color de la paz, la limpieza y la protección; sirve para casi cualquier petición' },
+  { re: /\bnegr[oa]s?\b/, label: 'negro', meaning: 'es el color de la protección fuerte: absorbe y devuelve lo negativo' },
+  { re: /\broj[oa]s?\b/, label: 'rojo', meaning: 'es el color del amor, la pasión y la fuerza' },
+  { re: /\bverdes?\b/, label: 'verde', meaning: 'es el color del dinero, la salud y la esperanza' },
+  { re: /\bazul(es)?\b/, label: 'azul', meaning: 'es el color de la tranquilidad, la estabilidad y el trabajo' },
+  { re: /\bamarill[oa]s?\b/, label: 'amarillo', meaning: 'es el color de la abundancia, el éxito y la alegría' },
+  { re: /\bnaranjas?\b/, label: 'naranja', meaning: 'es el color del éxito, la energía y la atracción' },
+  { re: /\bmorad[oa]s?\b|\bvioleta\b/, label: 'morado', meaning: 'es el color de la espiritualidad, la transformación y el poder' },
+  { re: /\brosad[oa]s?\b|\brosa\b/, label: 'rosado', meaning: 'es el color del amor tierno, la amistad y la armonía' },
+  { re: /\bdorad[oa]s?\b/, label: 'dorado', meaning: 'es el color de la prosperidad y el éxito' },
+  { re: /\bplatead[oa]s?\b/, label: 'plateado', meaning: 'es el color de la intuición y la protección de la luna' },
+]
+
+/** Formatos de producto: qué son y cómo se aprovechan. */
+export const FORMATS: { re: RegExp; short: string; long: string }[] = [
+  { re: /velon/, short: 'Velón preparado para encender con tu petición.', long: 'El velón es la vela grande de las peticiones: se enciende con la intención clara y se deja consumir completa.' },
+  { re: /\bvela\b|\bvelas\b|veladora/, short: 'Vela para tus peticiones y rituales.', long: 'La vela lleva tu petición: se enciende con intención clara y se deja consumir completa.' },
+  { re: /jabon/, short: 'Jabón de baño con intención.', long: 'El jabón se usa en el baño como se usa uno normal, pero pensando en lo que quieres limpiar o atraer.' },
+  { re: /\bbano\b/, short: 'Baño espiritual para limpiar y atraer.', long: 'Los baños espirituales se echan en el agua del baño, de los hombros hacia abajo, y se usan después del aseo normal.' },
+  { re: /\bsal\b|salmarina|sal marina/, short: 'Sal para limpiar y proteger.', long: 'La sal marina limpia y protege: se riega en las esquinas o se disuelve en el trapeado.' },
+  { re: /\bsprays?\b/, short: 'Spray de limpieza y protección.', long: 'El spray es la forma más rápida de limpiar un espacio o ponerte protección antes de salir.' },
+  { re: /\briego\b/, short: 'Riego para casa o negocio.', long: 'Los riegos se echan en la puerta, las esquinas o el piso del negocio para limpiar o atraer según su línea.' },
+  { re: /locion|perfume|colonia|agua florida|agua de/, short: 'Loción con intención para tu cuerpo y tu ropa.', long: 'Se aplica en el cuerpo o la ropa y también se puede echar al agua del baño.' },
+  { re: /aceite/, short: 'Aceite para ungir velas y amuletos.', long: 'El aceite se usa para ungir velas y amuletos antes de encenderlos o estrenarlos.' },
+  { re: /sahumerio|incienso|copal|palo santo|salvia|resina/, short: 'Humo sagrado para limpiar espacios.', long: 'El humo limpia el ambiente y eleva las peticiones; se pasa por la casa de adentro hacia la puerta.' },
+  { re: /\bdije\b|medalla|anillo|pulsera|manilla|collar|cadena|aretes?\b|argolla|llavero/, short: 'Accesorio con símbolo de protección.', long: 'Es un accesorio para llevar contigo todos los días con el símbolo que te acompaña.' },
+  { re: /\bkit\b/, short: 'Kit armado para un trabajo completo.', long: 'El kit reúne lo necesario para hacer el trabajo completo, sin que tengas que armar nada por tu lado.' },
+  { re: /truco/, short: 'Truco para el negocio o la suerte.', long: 'Los trucos son preparados listos para usar; pregúntanos cómo se aplican para que te funcione.' },
+  { re: /libro|novena|oraciones/, short: 'Libro de oraciones y devoción.', long: 'Para leer con calma y mantenerte constante en tu devoción.' },
+  { re: /figura|resina|yeso|pasta|estatua|imagen/, short: 'Figura para tu altar o tu hogar.', long: 'Figura para darle lugar de respeto a tu devoción en el altar o en un rincón especial.' },
+]

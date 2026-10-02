@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
 import { getBranch } from '@/entities/branch'
-import { useProducts, type Product } from '@/entities/product'
+import { ProductImage, useProducts, type Product } from '@/entities/product'
 import { ROUTES } from '@/shared/config'
 import { buildWhatsAppUrl, cn, formatPrice } from '@/shared/lib'
 import { LotusIcon } from '@/shared/ui'
@@ -29,10 +29,10 @@ function pickProducts(products: Product[], categories: string[]) {
  */
 export function EnergyQuiz() {
   const [answers, setAnswers] = useState<QuizOption[]>([])
-  const { data: products = [] } = useProducts()
   const step = answers.length
   const done = step === QUESTIONS.length
   const result = useMemo(() => (done ? computeResult(answers) : null), [done, answers])
+  const { data: products = [] } = useProducts({ categories: result?.categories ?? ['__none__'], limit: 60 })
   const picks = useMemo(() => (result ? pickProducts(products, result.categories) : []), [result, products])
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -146,7 +146,7 @@ export function EnergyQuiz() {
                       to={ROUTES.product(p.slug)}
                       className="group block overflow-hidden rounded-xl border border-border transition-colors hover:border-gold/50"
                     >
-                      <img src={p.image} alt={p.name} loading="lazy" className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <ProductImage product={p} alt={p.name} className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                       <div className="p-3">
                         <p className="line-clamp-1 text-sm font-medium">{p.name}</p>
                         <p className="text-sm text-muted">{formatPrice(p.price)}</p>

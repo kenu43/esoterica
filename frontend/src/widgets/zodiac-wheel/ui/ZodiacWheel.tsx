@@ -6,7 +6,7 @@ import { ArrowRight, Droplets, Flame, Mountain, Wind } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { useProducts } from '@/entities/product'
+import { ProductImage, useProduct } from '@/entities/product'
 import { getCurrentSignIndex, ZODIAC } from '@/entities/zodiac'
 import { ROUTES } from '@/shared/config'
 import { cn } from '@/shared/lib'
@@ -29,8 +29,7 @@ export function ZodiacWheel() {
   const scope = useRef<HTMLDivElement>(null)
   const [selected, setSelected] = useState(getCurrentSignIndex)
   const sign = ZODIAC[selected]
-  const { data: products = [] } = useProducts()
-  const product = products.find((p) => p.slug === sign.productSlug)
+  const { data: product } = useProduct(sign.productSlug)
   const element = ELEMENT_STYLE[sign.element]
 
   useGSAP(
@@ -193,7 +192,7 @@ export function ZodiacWheel() {
                   to={ROUTES.product(product.slug)}
                   className="group flex items-center gap-4 rounded-2xl border border-border bg-surface p-3 transition-colors hover:border-gold/50"
                 >
-                  <img src={product.image} alt="" className="size-16 rounded-xl object-cover" />
+                  <ProductImage product={product} className="size-16 shrink-0 rounded-xl object-cover" />
                   <div className="flex-1">
                     <p className="text-xs text-muted">Recomendado para {sign.name}</p>
                     <p className="font-semibold">{product.name}</p>

@@ -14,6 +14,9 @@ cierra por WhatsApp: lista de consulta, encargos y contacto abren un chat con el
 `pnpm dev` · `pnpm build` · `pnpm lint` · `pnpm --dir frontend exec tsc -b` · `pnpm studio` ·
 `pnpm --dir studio-universo-esoterico build`
 
+## Catálogo
+Reglas de carga/actualización/eliminación por Excel, categorías, visibilidad y videos: ver [docs/CATALOGO.md](docs/CATALOGO.md). Comando: `pnpm --dir studio-universo-esoterico sync:referencias <archivo.xlsx> [--dry|--remove|--replace]`.
+
 ## Arquitectura frontend (Feature-Sliced Design)
 `app → pages → widgets → features → entities → shared`. Solo se importa hacia capas inferiores y por el
 `index.ts` de cada slice. Alias `@/` = `frontend/src`.

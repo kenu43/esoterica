@@ -48,6 +48,15 @@ export const structure: StructureResolver = (S) =>
             .schemaType('product')
             .filter('_type == "product" && inStock == false'),
         ),
+      S.listItem()
+        .title('Ocultos en la web')
+        .icon(emojiIcon('🙈'))
+        .child(
+          S.documentList()
+            .title('Ocultos en la web')
+            .schemaType('product')
+            .filter('_type == "product" && visible == false'),
+        ),
       S.divider(),
       S.listItem()
         .title('Categorías (crear y editar)')

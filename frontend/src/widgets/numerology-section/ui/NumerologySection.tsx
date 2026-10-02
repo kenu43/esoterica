@@ -6,10 +6,10 @@ export function NumerologySection() {
     <section className="relative py-24">
       <Container className="space-y-12">
         <SectionHeading
-          eyebrow="Números de la suerte"
-          title="Tu número de la suerte de hoy"
-          highlight={['suerte']}
-          description="Los números se mezclan, se barajan y salen los tuyos. Cambian cada día y son distintos para cada persona."
+          eyebrow="Suerte y chance"
+          title="Tus números de la suerte y del chance de hoy"
+          highlight={['suerte', 'chance']}
+          description="Los números se mezclan, se barajan y salen los tuyos. Cambian cada día y son distintos para cada persona. Sirven para tu suerte del día y también para jugar tu chance."
         />
         <LuckyNumbers />
       </Container>

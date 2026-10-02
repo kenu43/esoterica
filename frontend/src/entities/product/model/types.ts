@@ -16,6 +16,8 @@ export interface Product {
   description: string
   benefits: string[]
   image: string
+  /** Videos del producto: archivos subidos a Sanity o enlaces de YouTube/Vimeo, en el orden del panel. */
+  videos: ProductVideoItem[]
   branches: BranchId[]
   badges: ProductBadge[]
   tags: string[]
@@ -54,6 +56,11 @@ export interface ProductVariant {
   price?: number
 }
 
+export interface ProductVideoItem {
+  kind: 'file' | 'embed'
+  src: string
+}
+
 export type ProductSort = 'relevance' | 'price-asc' | 'price-desc' | 'newest'
 
 export interface ProductFilter {
@@ -62,4 +69,15 @@ export interface ProductFilter {
   branch?: BranchId | 'all'
   sort?: ProductSort
   onlyNew?: boolean
+  /** Solo estas categorías (quiz, recomendaciones). */
+  categories?: CategoryId[]
+  /** Solo estos productos por id (lista de consulta). */
+  ids?: string[]
+  /** Máximo de resultados cuando no se pagina. */
+  limit?: number
+}
+
+export interface ProductPage {
+  items: Product[]
+  total: number
 }

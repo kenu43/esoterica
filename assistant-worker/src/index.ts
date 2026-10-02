@@ -23,7 +23,7 @@ interface ChatRequest {
 
 const MAX_MESSAGES = 12
 const MAX_TEXT = 500
-const MAX_CATALOG = 80
+const MAX_CATALOG = 25
 const WINDOW_MS = 10 * 60_000
 const MAX_PER_WINDOW = 20
 
@@ -164,10 +164,12 @@ export default {
       })
 
     let res!: Response
-    for (const [i, model] of [primary, fallback, primary].entries()) {
+    // Si un modelo está limitado o caído, prueba el siguiente; respeta Retry-After (máx. 2 s).
+    for (const [i, model] of [primary, fallback, 'llama-3.1-8b-instant'].entries()) {
       res = await call(model)
-      if (res.ok || ![404, 429, 500, 502, 503, 504].includes(res.status)) break
-      await new Promise((r) => setTimeout(r, 500 * (i + 1)))
+      if (res.ok || ![404, 413, 429, 500, 502, 503, 504].includes(res.status)) break
+      const wait = Math.min(Number(res.headers.get('retry-after')) || 0.5 * (i + 1), 2)
+      await new Promise((r) => setTimeout(r, wait * 1000))
     }
 
     if (!res.ok) {
@@ -175,7 +177,7 @@ export default {
       console.error('Groq', res.status, detail.slice(0, 500))
       return json(
         { error: 'Merlín tiene interferencias mágicas justo ahora. Escríbenos por WhatsApp mientras se despejan.', detail: `${res.status} ${detail.slice(0, 300)}` },
-        502,
+        res.status === 429 ? 503 : 502,
         headers,
       )
     }

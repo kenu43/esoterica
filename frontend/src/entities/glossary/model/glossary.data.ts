@@ -35,7 +35,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Siete deidades de la tradición afrocaribeña que se invocan juntas.',
     detail:
       'Se asocian a Elegguá, Obatalá, Changó, Oshún, Yemayá, Oggún y Orula. Su velón de siete colores se enciende para pedir que se abran los caminos en todos los aspectos de la vida.',
-    category: 'velones',
+    category: 'velas',
   },
   {
     id: 'tetragramaton',
@@ -44,7 +44,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Amuleto con las cuatro letras hebreas del nombre de Dios dentro de un pentagrama.',
     detail:
       'Es uno de los amuletos de protección más usados: se lleva al cuello o se pone en la entrada para cortar envidias, brujería y energías negativas. Se recomienda consagrarlo antes de usarlo.',
-    category: 'amuletos',
+    category: 'bisuteria',
   },
   {
     id: 'azabache',
@@ -53,7 +53,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Piedra negra de origen fósil usada contra el mal de ojo.',
     detail:
       'Tradicionalmente se pone a los bebés en pulsera o prendedor para protegerlos del "ojo". En adultos se usa en dijes y pulseras con el mismo fin.',
-    category: 'amuletos',
+    category: 'bisuteria',
   },
   {
     id: 'mano-de-fatima',
@@ -62,7 +62,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Mano abierta con un ojo en la palma, amuleto contra la envidia.',
     detail:
       'Presente en culturas árabes y judías. Con los dedos hacia arriba protege; con los dedos hacia abajo atrae la abundancia. Se cuelga en la entrada o se lleva como dije.',
-    category: 'amuletos',
+    category: 'bisuteria',
   },
   {
     id: 'obsidiana',
@@ -71,7 +71,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Vidrio volcánico negro que absorbe las energías negativas.',
     detail:
       'Se lleva en el bolsillo o se pone junto a la puerta. Conviene limpiarla con agua y sal cada cierto tiempo y cargarla a la luz de la luna.',
-    category: 'amuletos',
+    category: 'bisuteria',
   },
   {
     id: 'velon',
@@ -80,7 +80,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Vela grande o en vaso que arde durante varios días para una petición.',
     detail:
       'A diferencia de una vela común, el velón acompaña una intención durante 3, 7 o más días. Se puede "preparar" con aceites, hierbas y oraciones. El color indica la intención: rojo amor, verde dinero, blanco paz, negro protección.',
-    category: 'velones',
+    category: 'velas',
   },
   {
     id: 'bano-de-despojo',
@@ -89,7 +89,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Baño con hierbas para quitarse de encima la mala energía o la "salación".',
     detail:
       'Se prepara con plantas como ruda, altamisa, romero y albahaca. Se echa del cuello hacia abajo después del baño normal, durante 3, 7 o 9 días según la necesidad, sin secarse con toalla.',
-    category: 'banos',
+    category: 'riegos',
   },
   {
     id: 'riego',
@@ -98,7 +98,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Preparado líquido que se esparce en la casa o el negocio.',
     detail:
       'Se usa para trapear o rociar la entrada y los rincones. Hay riegos para abrir caminos, atraer clientes, dinero o para sacar la mala energía del lugar.',
-    category: 'banos',
+    category: 'riegos',
   },
   {
     id: 'tumba-trabajos',
@@ -107,7 +107,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Preparados para deshacer un "trabajo" o brujería que se sospecha.',
     detail:
       'Suele combinar un baño de descruce, un riego para la casa, un velón y un sahumerio. Se acompaña de oración y constancia durante varios días.',
-    category: 'banos',
+    category: 'riegos',
   },
   {
     id: 'sahumerio',
@@ -116,7 +116,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Humo de resinas y hierbas para purificar espacios.',
     detail:
       'Se quema copal, mirra, benjuí, incienso o hierbas sobre carbón encendido y se recorre la casa desde el fondo hacia la puerta, abriendo ventanas al final para que salga lo negativo.',
-    category: 'sahumerios',
+    category: 'inciensos',
   },
   {
     id: 'agua-florida',
@@ -125,7 +125,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Colonia tradicional usada en limpias, baños y ofrendas.',
     detail:
       'Se frota en las manos y la nuca para cortar pesadez, se agrega a baños y se ofrece en altares. Es un básico de cualquier botiquín espiritual.',
-    category: 'banos',
+    category: 'riegos',
   },
   {
     id: 'duende-de-la-suerte',
@@ -161,7 +161,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Figura asociada a la paz, la calma y la iluminación.',
     detail:
       'El Buda meditando trae serenidad; el Buda sonriente (Hotei) se asocia con la abundancia. Según el feng shui se ubica frente a la entrada y nunca en el suelo.',
-    category: 'oriental',
+    category: 'piedras',
   },
   {
     id: 'ganesha',
@@ -170,7 +170,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Deidad hindú con cabeza de elefante, el que remueve obstáculos.',
     detail:
       'Se invoca antes de empezar un negocio, un viaje o un proyecto para que todo fluya. Se ubica en la entrada, mirando hacia afuera.',
-    category: 'oriental',
+    category: 'piedras',
   },
   {
     id: 'cuenco-tibetano',
@@ -179,7 +179,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Cuenco metálico que vibra al frotarlo o golpearlo con una baqueta.',
     detail:
       'Su sonido se usa para meditar, limpiar espacios después de discusiones y relajar el cuerpo. Se frota el borde con la baqueta de forma lenta y constante.',
-    category: 'oriental',
+    category: 'piedras',
   },
   {
     id: 'chakras',
@@ -188,7 +188,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Siete centros de energía del cuerpo según la tradición hindú.',
     detail:
       'Van desde la base de la columna (raíz, rojo) hasta la coronilla (corona, violeta). Las pulseras de siete piedras se usan como recordatorio de equilibrio.',
-    category: 'amuletos',
+    category: 'bisuteria',
   },
   {
     id: 'atrapasuenos',
@@ -197,7 +197,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Aro tejido con plumas de origen nativo norteamericano.',
     detail:
       'Se cuelga cerca de la cama: la red "atrapa" los malos sueños y deja pasar los buenos por las plumas.',
-    category: 'oriental',
+    category: 'piedras',
   },
   {
     id: 'ruda',
@@ -206,7 +206,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Planta de olor fuerte, la protectora por excelencia.',
     detail:
       'Se tiene en la entrada de la casa contra la envidia, se usa en baños de despojo y riegos. Si se seca de repente, se dice que absorbió una mala energía.',
-    category: 'banos',
+    category: 'riegos',
   },
   {
     id: 'copal',
@@ -215,7 +215,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Resina sagrada de origen mesoamericano para sahumerios.',
     detail:
       'Su humo blanco y abundante limpia espacios y se ofrece en altares. Se quema sobre carbón encendido.',
-    category: 'sahumerios',
+    category: 'inciensos',
   },
   {
     id: 'palo-santo',
@@ -224,7 +224,7 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Madera aromática sudamericana que armoniza los ambientes.',
     detail:
       'Se enciende la punta, se deja arder unos segundos y se apaga para que suelte humo. Aleja la mala energía y deja un aroma dulce.',
-    category: 'sahumerios',
+    category: 'inciensos',
   },
   {
     id: 'salvia-blanca',
@@ -233,6 +233,6 @@ export const DEFAULT_GLOSSARY: GlossaryTerm[] = [
     summary: 'Planta usada en atados para limpiezas profundas.',
     detail:
       'Se usa para limpiar una casa nueva, después de una mudanza o de visitas pesadas. Se recorre cada rincón y al final se abren puertas y ventanas.',
-    category: 'sahumerios',
+    category: 'inciensos',
   },
 ]

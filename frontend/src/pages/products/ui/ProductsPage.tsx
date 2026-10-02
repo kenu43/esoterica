@@ -1,12 +1,12 @@
 import { Button } from '@heroui/react'
 import { SearchX } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useRef } from 'react'
-import { ProductCard, ProductCardSkeleton, useProducts } from '@/entities/product'
+import { useEffect, useMemo, useRef } from 'react'
+import { ProductCard, ProductCardSkeleton, useProductFeed } from '@/entities/product'
 import { ProductFilters, useProductFilters } from '@/features/product-filters'
 import { AddToInquiryButton } from '@/features/whatsapp-inquiry'
 import { useSeo } from '@/shared/hooks'
-import { Container } from '@/shared/ui'
+import { Container, MagicLoader } from '@/shared/ui'
 import { CustomOrderCta } from '@/widgets/custom-order-cta'
 import { PageHeader } from '@/widgets/page-header'
 
@@ -16,7 +16,22 @@ export function ProductsPage() {
     description: 'Catálogo de figuras de santos, Santa Muerte, velones, baños de despojo, riegos, sahumerios, amuletos y artículos de la suerte. Precios en COP y envíos a toda Colombia.',
   })
   const { filter, reset } = useProductFilters()
-  const { data = [], isPending, isFetching } = useProducts(filter)
+  const { data: feed, isPending, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage } = useProductFeed(filter)
+  const data = useMemo(() => feed?.pages.flatMap((p) => p.items) ?? [], [feed])
+  const total = feed?.pages[0]?.total ?? 0
+  const sentinel = useRef<HTMLDivElement>(null)
+
+  // Carga automática al acercarse al final; el botón queda como alternativa.
+  useEffect(() => {
+    const el = sentinel.current
+    if (!el || !hasNextPage) return
+    const io = new IntersectionObserver(
+      ([entry]) => entry.isIntersecting && !isFetchingNextPage && fetchNextPage(),
+      { rootMargin: '600px' },
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, data.length])
   const isFirstRender = useRef(true)
 
   useEffect(() => {
@@ -43,14 +58,17 @@ export function ProductsPage() {
         </div>
 
         <p className="text-sm text-muted" aria-live="polite">
-          {isPending ? 'Cargando productos…' : `${data.length} producto${data.length === 1 ? '' : 's'} encontrado${data.length === 1 ? '' : 's'}`}
+          {isPending ? 'Cargando productos…' : `${total.toLocaleString('es-CO')} producto${total === 1 ? '' : 's'} encontrado${total === 1 ? '' : 's'}`}
         </p>
 
         {isPending ? (
-          <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="space-y-6">
+            <MagicLoader />
+            <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 8 }, (_, i) => (
               <ProductCardSkeleton key={i} />
             ))}
+            </div>
           </div>
         ) : data.length === 0 ? (
           <motion.div
@@ -79,6 +97,18 @@ export function ProductsPage() {
               ))}
             </AnimatePresence>
           </motion.div>
+        )}
+
+        {hasNextPage && (
+          <div ref={sentinel} className="flex flex-col items-center gap-3 pb-4">
+            {isFetchingNextPage ? (
+              <MagicLoader label="Trayendo más productos…" className="py-4" />
+            ) : (
+              <Button variant="secondary" onPress={() => fetchNextPage()}>
+                Cargar más ({(total - data.length).toLocaleString('es-CO')} restantes)
+              </Button>
+            )}
+          </div>
         )}
       </Container>
 

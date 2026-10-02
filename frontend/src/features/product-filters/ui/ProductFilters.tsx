@@ -48,7 +48,7 @@ export function ProductFilters() {
   useEffect(() => {
     const t = setTimeout(() => {
       if (search !== filter.search) update({ search })
-    }, 250)
+    }, 400)
     return () => clearTimeout(t)
   }, [search, filter.search, update])
 

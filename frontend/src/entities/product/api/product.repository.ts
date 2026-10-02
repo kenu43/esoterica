@@ -1,7 +1,11 @@
-import type { Product, ProductFilter } from '../model/types'
+import type { Product, ProductFilter, ProductPage } from '../model/types'
 
 export interface ProductRepository {
   list(filter?: ProductFilter): Promise<Product[]>
+  /** Página del catálogo: filtro, orden y corte se resuelven en el servidor. */
+  page(filter: ProductFilter, offset: number, limit: number): Promise<ProductPage>
+  /** Cantidad de productos por categoría (id = slug). */
+  categoryCounts(): Promise<Record<string, number>>
   getBySlug(slug: string): Promise<Product | null>
   getFeatured(limit?: number): Promise<Product[]>
   getNewArrivals(limit?: number): Promise<Product[]>
@@ -14,6 +18,8 @@ export function applyFilter(products: Product[], filter: ProductFilter = {}): Pr
 
   const result = products.filter((p) => {
     if (category !== 'all' && p.category !== category && !p.extraCategories.includes(category)) return false
+    if (filter.categories?.length && !filter.categories.includes(p.category)) return false
+    if (filter.ids && !filter.ids.includes(p.id)) return false
     if (branch !== 'all' && !p.branches.includes(branch)) return false
     if (onlyNew && !p.badges.includes('nuevo')) return false
     if (term) {
@@ -25,6 +31,11 @@ export function applyFilter(products: Product[], filter: ProductFilter = {}): Pr
     return true
   })
 
+  const sorted = sortProducts(result, sort)
+  return filter.limit ? sorted.slice(0, filter.limit) : sorted
+}
+
+function sortProducts(result: Product[], sort: ProductFilter['sort']) {
   switch (sort) {
     case 'price-asc':
       return result.sort((a, b) => a.price - b.price)

@@ -138,6 +138,30 @@ export const product = defineType({
       initialValue: true,
     }),
     defineField({
+      name: 'visible',
+      title: 'Mostrar en la página',
+      description: 'Apágalo para ocultar el producto de la web sin borrarlo (descontinuado, en revisión…). Es distinto de "Disponible", que lo deja visible como "Agotado por ahora".',
+      type: 'boolean',
+      group: 'basico',
+      initialValue: true,
+    }),
+    defineField({
+      name: 'video',
+      title: 'Video (opcional)',
+      description: 'Sube un video corto (MP4, máximo ~50 MB, mejor vertical y de menos de 1 minuto). Se muestra en la página del producto. Si el video está en YouTube o Vimeo, usa mejor el campo de enlace de abajo.',
+      type: 'file',
+      group: 'basico',
+      options: { accept: 'video/*' },
+    }),
+    defineField({
+      name: 'videoUrl',
+      title: 'Enlace de video (YouTube o Vimeo, opcional)',
+      description: 'Pega el enlace completo. Se usa si no subiste un archivo en "Video".',
+      type: 'url',
+      group: 'basico',
+      validation: (r) => r.uri({ scheme: ['https'] }),
+    }),
+    defineField({
       name: 'shortDescription',
       title: 'Frase corta',
       description: 'Aparece en la tarjeta del producto. Máximo 110 letras.',
@@ -340,6 +364,13 @@ export const product = defineType({
       options: { layout: 'tags' },
     }),
     defineField({
+      name: 'barcode',
+      title: 'Código de referencia (opcional)',
+      description: 'Código del inventario. No se muestra en la web.',
+      type: 'string',
+      group: 'extra',
+    }),
+    defineField({
       name: 'releaseDate',
       title: 'Fecha de llegada',
       description: 'Se usa para ordenar las novedades. Si la dejas vacía se usa la fecha de creación.',
@@ -353,14 +384,14 @@ export const product = defineType({
     { title: 'Nombre A-Z', name: 'nameAsc', by: [{ field: 'name', direction: 'asc' }] },
   ],
   preview: {
-    select: { title: 'name', price: 'price', media: 'image', inStock: 'inStock', stores: 'stores' },
-    prepare({ title, price, media, inStock, stores }) {
+    select: { title: 'name', price: 'price', media: 'image', inStock: 'inStock', stores: 'stores', visible: 'visible' },
+    prepare({ title, price, media, inStock, stores, visible }) {
       const store = STORES.filter((s) => (stores as string[] | undefined)?.includes(s.value))
         .map((s) => s.title)
         .join(', ')
       return {
         title,
-        subtitle: `${formatCOP(price)}${inStock === false ? ' · AGOTADO' : ''}${store ? ` · ${store}` : ''}`,
+        subtitle: `${visible === false ? 'OCULTO · ' : ''}${formatCOP(price)}${inStock === false ? ' · AGOTADO' : ''}${store ? ` · ${store}` : ''}`,
         media,
       }
     },

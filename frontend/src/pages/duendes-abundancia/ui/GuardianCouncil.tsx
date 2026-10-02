@@ -11,7 +11,7 @@ import { LotusIcon, SectionHeading } from '@/shared/ui'
 
 /** Bloque D: minijuego "consulta al Guardián" → afirmación + producto real + WhatsApp directo. */
 export function GuardianCouncil() {
-  const { data: products = [] } = useProducts()
+  const { data: products = [] } = useProducts({ category: 'duendes', limit: 60 })
   const [spinning, setSpinning] = useState(false)
   const [result, setResult] = useState<{ affirmation: GuardianAffirmation; product: Product | null } | null>(null)
 

@@ -38,30 +38,30 @@ export const QUESTIONS: QuizQuestion[] = [
     id: 'feeling',
     title: '¿Cómo te has sentido últimamente?',
     options: [
-      { id: 'cargado', label: 'Cargado, como con mala suerte', icon: CloudRain, weights: { banos: 3, sahumerios: 2 } },
-      { id: 'estancado', label: 'Estancado con la plata', icon: Hourglass, weights: { suerte: 3, velones: 1 } },
-      { id: 'miedo', label: 'Con miedo o envidias cerca', icon: ShieldAlert, weights: { amuletos: 3, figuras: 2 } },
-      { id: 'inquieto', label: 'Inquieto, sin paz', icon: Wind, weights: { oriental: 3, sahumerios: 1 } },
+      { id: 'cargado', label: 'Cargado, como con mala suerte', icon: CloudRain, weights: { riegos: 3, inciensos: 2 } },
+      { id: 'estancado', label: 'Estancado con la plata', icon: Hourglass, weights: { suerte: 3, velas: 1 } },
+      { id: 'miedo', label: 'Con miedo o envidias cerca', icon: ShieldAlert, weights: { bisuteria: 3, figuras: 2 } },
+      { id: 'inquieto', label: 'Inquieto, sin paz', icon: Wind, weights: { piedras: 3, inciensos: 1 } },
     ],
   },
   {
     id: 'attract',
     title: '¿Qué quieres atraer a tu vida?',
     options: [
-      { id: 'proteccion', label: 'Protección', icon: Shield, weights: { amuletos: 2, figuras: 2, velones: 1 } },
-      { id: 'dinero', label: 'Dinero y clientes', icon: Coins, weights: { suerte: 3, banos: 1 } },
-      { id: 'caminos', label: 'Que se abran los caminos', icon: KeyRound, weights: { velones: 3, banos: 1 } },
-      { id: 'amor', label: 'Amor y armonía', icon: Heart, weights: { velones: 2, oriental: 1, tarot: 1 } },
+      { id: 'proteccion', label: 'Protección', icon: Shield, weights: { bisuteria: 2, figuras: 2, velas: 1 } },
+      { id: 'dinero', label: 'Dinero y clientes', icon: Coins, weights: { suerte: 3, riegos: 1 } },
+      { id: 'caminos', label: 'Que se abran los caminos', icon: KeyRound, weights: { velas: 3, riegos: 1 } },
+      { id: 'amor', label: 'Amor y armonía', icon: Heart, weights: { velas: 2, piedras: 1, libreria: 1 } },
     ],
   },
   {
     id: 'element',
     title: '¿Qué elemento te llama más?',
     options: [
-      { id: 'fuego', label: 'Fuego', icon: Flame, weights: { velones: 2 } },
-      { id: 'agua', label: 'Agua', icon: Waves, weights: { banos: 2 } },
-      { id: 'tierra', label: 'Tierra', icon: Mountain, weights: { suerte: 1, amuletos: 1 } },
-      { id: 'aire', label: 'Aire', icon: Leaf, weights: { sahumerios: 2, oriental: 1 } },
+      { id: 'fuego', label: 'Fuego', icon: Flame, weights: { velas: 2 } },
+      { id: 'agua', label: 'Agua', icon: Waves, weights: { riegos: 2 } },
+      { id: 'tierra', label: 'Tierra', icon: Mountain, weights: { suerte: 1, bisuteria: 1 } },
+      { id: 'aire', label: 'Aire', icon: Leaf, weights: { inciensos: 2, piedras: 1 } },
     ],
   },
 ]
@@ -75,13 +75,13 @@ export interface QuizResult {
 }
 
 const RESULTS: Partial<Record<CategoryId, Omit<QuizResult, 'categories'>>> = {
-  banos: {
+  riegos: {
     title: 'Necesitas una limpieza',
     message: 'Hay energía acumulada que te está frenando. Un baño de despojo y un buen sahumerio en la casa te van a aliviar.',
     icon: Droplets,
     store: 'la-colonia',
   },
-  sahumerios: {
+  inciensos: {
     title: 'Necesitas purificar tu espacio',
     message: 'Tu casa o tu negocio piden aire nuevo. Sahúma de adentro hacia la puerta y abre ventanas al terminar.',
     icon: Wind,
@@ -93,7 +93,7 @@ const RESULTS: Partial<Record<CategoryId, Omit<QuizResult, 'categories'>>> = {
     icon: Coins,
     store: 'loto-nirvana',
   },
-  amuletos: {
+  bisuteria: {
     title: 'Necesitas protección',
     message: 'Cuídate de envidias y malas intenciones. Lleva contigo un amuleto consagrado y refuerza la entrada de tu casa.',
     icon: Shield,
@@ -105,21 +105,21 @@ const RESULTS: Partial<Record<CategoryId, Omit<QuizResult, 'categories'>>> = {
     icon: Shield,
     store: 'el-sortilegio',
   },
-  velones: {
+  velas: {
     title: 'Energía de apertura',
     message: 'Tus caminos quieren abrirse. Un velón preparado con tu petición concreta es el mejor primer paso.',
     icon: Flame,
     store: 'el-sortilegio',
   },
-  oriental: {
+  piedras: {
     title: 'Energía de paz',
-    message: 'Tu cuerpo te pide calma. El sonido de un cuenco y un rincón con tu Buda te ayudarán a recuperar el centro.',
+    message: 'Tu cuerpo te pide calma. Un cuarzo en tu mesa de noche y un buen sahumerio te ayudan a recuperar el centro.',
     icon: Flower2,
     store: 'loto-nirvana',
   },
-  tarot: {
+  libreria: {
     title: 'Necesitas claridad',
-    message: 'Hay preguntas que merecen respuesta. Una lectura de tarot puede mostrarte el camino.',
+    message: 'Hay preguntas que merecen respuesta. Una novena o una oración constante te devuelven la claridad.',
     icon: Heart,
     store: 'el-sortilegio',
   },
@@ -131,6 +131,6 @@ export function computeResult(answers: QuizOption[]): QuizResult {
   for (const a of answers)
     for (const [cat, w] of Object.entries(a.weights) as [CategoryId, number][]) score[cat] = (score[cat] ?? 0) + w
   const ranked = (Object.entries(score) as [CategoryId, number][]).sort((a, b) => b[1] - a[1]).map(([c]) => c)
-  const top = ranked[0] ?? 'amuletos'
-  return { ...(RESULTS[top] ?? RESULTS.amuletos!), categories: ranked.slice(0, 3) }
+  const top = ranked[0] ?? 'bisuteria'
+  return { ...(RESULTS[top] ?? RESULTS.bisuteria!), categories: ranked.slice(0, 3) }
 }

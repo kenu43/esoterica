@@ -18,6 +18,8 @@ function withFallback(primary: ProductRepository, fallback: ProductRepository): 
     }
   return {
     list: guard((r) => r.list),
+    page: (filter, offset, limit) => primary.page(filter, offset, limit).catch(() => fallback.page(filter, offset, limit)),
+    categoryCounts: () => primary.categoryCounts().catch(() => fallback.categoryCounts()),
     getBySlug: guard((r) => r.getBySlug),
     getFeatured: guard((r) => r.getFeatured),
     getNewArrivals: guard((r) => r.getNewArrivals),

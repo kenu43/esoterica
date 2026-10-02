@@ -33,7 +33,24 @@ export const CATEGORY_ICONS = [
   { title: 'Luna', value: 'moon' },
   { title: 'Sol', value: 'sun' },
   { title: 'Estrella', value: 'star' },
+  { title: 'Calavera (Santa Muerte)', value: 'skull' },
+  { title: 'Eslabón (bisutería y accesorios)', value: 'link' },
+  { title: 'Brote (duendes)', value: 'sprout' },
+  { title: 'Corona (San Diego)', value: 'crown' },
+  { title: 'Varita (rituales)', value: 'wand' },
+  { title: 'Atomizador (perfumería)', value: 'spray-can' },
+  { title: 'Bañera (jabones)', value: 'bath' },
+  { title: 'Libro (librería y novenas)', value: 'book' },
+  { title: 'Frasco (químicos y trucos)', value: 'flask' },
+  { title: 'Probeta (extractos)', value: 'test-tube' },
 ]
+
+/** Emoji de cada ícono: se ve en las listas del panel para reconocer la categoría de un vistazo. */
+export const CATEGORY_EMOJIS: Record<string, string> = {
+  church: '⛪', flame: '🕯️', droplets: '💧', wind: '🌬️', shield: '🛡️', clover: '🍀', flower: '🪷', sparkles: '✨', gem: '💎',
+  heart: '❤️', leaf: '🌿', moon: '🌙', sun: '☀️', star: '⭐', skull: '💀', link: '📿', sprout: '🌱', crown: '👑',
+  wand: '🪄', 'spray-can': '🧴', bath: '🛁', book: '📖', flask: '⚗️', 'test-tube': '🧪',
+}
 
 export const GLOSSARY_GROUPS = [
   'Santos y devociones',

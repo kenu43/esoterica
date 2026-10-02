@@ -39,7 +39,7 @@ const NEW_MOON: Omit<PhaseInfo, 'until'> = {
   energy: 'Siembra de intenciones y nuevos comienzos.',
   advice: 'Momento ideal para encender un velón con una petición nueva. Encuéntralo en El Sortilegio.',
   store: 'el-sortilegio',
-  category: 'velones',
+  category: 'velas',
 }
 
 const PHASES: PhaseInfo[] = [
@@ -50,7 +50,7 @@ const PHASES: PhaseInfo[] = [
     energy: 'Impulso, crecimiento y atracción.',
     advice: 'La energía crece: es tiempo de riegos de abundancia y abre caminos de La Colonia.',
     store: 'la-colonia',
-    category: 'banos',
+    category: 'riegos',
   },
   {
     until: 9.22,
@@ -66,7 +66,7 @@ const PHASES: PhaseInfo[] = [
     energy: 'Paciencia y constancia antes de la cosecha.',
     advice: 'Refuerza tus peticiones con un velón preparado de El Sortilegio.',
     store: 'el-sortilegio',
-    category: 'velones',
+    category: 'velas',
   },
   {
     until: 16.61,
@@ -74,7 +74,7 @@ const PHASES: PhaseInfo[] = [
     energy: 'Máxima energía, gratitud y poder.',
     advice: 'Carga tus amuletos y figuras bajo la luna. Consagra tu tetragramatón en El Sortilegio.',
     store: 'el-sortilegio',
-    category: 'amuletos',
+    category: 'bisuteria',
   },
   {
     until: 20.3,
@@ -82,7 +82,7 @@ const PHASES: PhaseInfo[] = [
     energy: 'Soltar lo que ya no sirve.',
     advice: 'Empieza a limpiar: un sahumerio de copal de La Colonia deja la casa liviana.',
     store: 'la-colonia',
-    category: 'sahumerios',
+    category: 'inciensos',
   },
   {
     until: 23.99,
@@ -90,7 +90,7 @@ const PHASES: PhaseInfo[] = [
     energy: 'Cortar, perdonar y liberar.',
     advice: 'Momento ideal para limpiezas energéticas con los baños de despojo de La Colonia.',
     store: 'la-colonia',
-    category: 'banos',
+    category: 'riegos',
   },
   {
     until: 27.68,
@@ -98,7 +98,7 @@ const PHASES: PhaseInfo[] = [
     energy: 'Descanso, protección y cierre de ciclos.',
     advice: 'Hoy es luna menguante: tiempo de tumbar trabajos y protegerte con los productos de La Colonia.',
     store: 'la-colonia',
-    category: 'banos',
+    category: 'riegos',
   },
   { until: SYNODIC_MONTH + 1, ...NEW_MOON },
 ]

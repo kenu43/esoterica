@@ -9,6 +9,7 @@ import { formatPrice } from '@/shared/lib'
 import { useTaxonomyLabels } from '../model/taxonomy-queries'
 import type { Product } from '../model/types'
 import { ProductBadges } from './ProductBadges'
+import { ProductImage } from './ProductImage'
 
 interface ProductCardProps {
   product: Product
@@ -42,13 +43,11 @@ export function ProductCard({ product, action, index = 0 }: ProductCardProps) {
         className="relative block aspect-[4/5] overflow-hidden bg-surface-secondary"
         aria-label={`Ver ${product.name}`}
       >
-        <img
-          src={product.image}
+        <ProductImage
+          product={product}
           alt={product.name}
           width={400}
           height={500}
-          loading="lazy"
-          decoding="async"
           className="size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
         <ProductBadges badges={product.badges} discount={discount} className="absolute left-3 top-3 right-3" />

@@ -3,7 +3,7 @@ import { Check, MessageCircle, Plus, RotateCw, Send, Sparkles, Trash2, X } from 
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { useProducts, type Product } from '@/entities/product'
+import { ProductImage, type Product } from '@/entities/product'
 import { useInquiryStore } from '@/features/whatsapp-inquiry'
 import { ROUTES, SITE } from '@/shared/config'
 import { buildWhatsAppUrl, cn, formatPrice } from '@/shared/lib'
@@ -31,7 +31,7 @@ export function AssistantChat() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [thinkingPhrase, setThinkingPhrase] = useState(THINKING_PHRASES[0])
-  const { data: products = [] } = useProducts()
+  const [shown, setShown] = useState<Record<string, Product>>({})
   const endRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -59,7 +59,8 @@ export function AssistantChat() {
     setError('')
     setLoading(true)
     try {
-      const { reply, productSlugs } = await askAssistant(next.slice(1), products)
+      const { reply, productSlugs, products } = await askAssistant(next.slice(1))
+      setShown((prev) => ({ ...prev, ...Object.fromEntries(products.map((p) => [p.slug, p])) }))
       setMessages([...next, { role: 'assistant', text: reply, productSlugs }])
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Merlín tiene interferencias mágicas justo ahora. Intenta de nuevo.')
@@ -135,7 +136,7 @@ export function AssistantChat() {
                     {m.text}
                   </p>
                   {m.productSlugs?.map((slug) => {
-                    const p = products.find((x) => x.slug === slug)
+                    const p = shown[slug]
                     return p ? <RecommendedProduct key={slug} product={p} onNavigate={() => setOpen(false)} /> : null
                   })}
                 </div>
@@ -253,7 +254,7 @@ function RecommendedProduct({ product, onNavigate }: { product: Product; onNavig
   return (
     <div className="flex w-full items-center gap-3 rounded-xl border border-border bg-surface p-2">
       <Link to={ROUTES.product(product.slug)} onClick={onNavigate} className="flex min-w-0 flex-1 items-center gap-3">
-        <img src={product.image} alt="" className="size-12 shrink-0 rounded-lg object-cover" />
+        <ProductImage product={product} className="size-12 shrink-0 rounded-lg object-cover" />
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-medium">{product.name}</span>
           <span className="text-xs text-muted">{formatPrice(product.price)}</span>

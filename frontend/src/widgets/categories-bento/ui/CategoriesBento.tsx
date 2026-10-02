@@ -2,7 +2,7 @@ import { ArrowUpRight } from 'lucide-react'
 import { motion } from 'motion/react'
 import { Link } from 'react-router'
 import { useCategories } from '@/entities/category'
-import { useProducts } from '@/entities/product'
+import { useCategoryCounts } from '@/entities/product'
 import { ROUTES } from '@/shared/config'
 import { cn } from '@/shared/lib'
 import { Container, SectionHeading } from '@/shared/ui'
@@ -18,7 +18,7 @@ function tileClass(i: number, total: number) {
 }
 
 export function CategoriesBento() {
-  const { data: products = [] } = useProducts()
+  const { data: counts = {} } = useCategoryCounts()
   const categories = useCategories()
 
   return (
@@ -33,7 +33,7 @@ export function CategoriesBento() {
 
         <div className="grid auto-rows-[190px] grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {categories.map((cat, i) => {
-            const count = products.filter((p) => p.category === cat.id).length
+            const count = counts[cat.id] ?? 0
             return (
               <motion.div
                 key={cat.id}

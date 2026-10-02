@@ -1,5 +1,5 @@
 import { defineField, defineType } from 'sanity'
-import { CATEGORY_ICONS } from './constants'
+import { CATEGORY_EMOJIS, CATEGORY_ICONS } from './constants'
 import { emojiIcon } from './emojiIcon'
 
 export const category = defineType({
@@ -55,6 +55,11 @@ export const category = defineType({
   ],
   orderings: [{ title: 'Orden en la web', name: 'order', by: [{ field: 'order', direction: 'asc' }] }],
   preview: {
-    select: { title: 'name', subtitle: 'description', media: 'image' },
+    select: { title: 'name', subtitle: 'description', media: 'image', icon: 'icon' },
+    prepare: ({ title, subtitle, media, icon }) => ({
+      title,
+      subtitle,
+      media: media ?? (() => <span style={{ fontSize: '1.4em', lineHeight: 1 }}>{CATEGORY_EMOJIS[icon as string] ?? '✨'}</span>),
+    }),
   },
 })

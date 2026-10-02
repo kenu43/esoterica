@@ -26,7 +26,7 @@ export const PROFILES: Record<number, NumberProfile> = {
       'Eres el que arregla y une. Percibes lo que otros no dicen, y por eso absorbes la energía de todos. Necesitas limpiarte seguido para no cargar lo ajeno.',
     ally: 'Cuarzo rosado y baños de limpieza',
     color: 'Plateado',
-    category: 'banos',
+    category: 'riegos',
   },
   3: {
     title: 'El comunicador',
@@ -35,7 +35,7 @@ export const PROFILES: Record<number, NumberProfile> = {
       'Tu fuerza está en lo que dices y en lo que creas. Cuando estás bien, contagias a todo el mundo; cuando dispersas la energía, se te va en chismes y afanes.',
     ally: 'Velón amarillo para abrir caminos',
     color: 'Amarillo',
-    category: 'velones',
+    category: 'velas',
   },
   4: {
     title: 'El constructor',
@@ -44,7 +44,7 @@ export const PROFILES: Record<number, NumberProfile> = {
       'Lo tuyo es levantar cosas firmes, ladrillo por ladrillo. Eres confiable, pero te cuesta soltar el control. Protege lo que construyes de la envidia.',
     ally: 'Obsidiana o azabache de protección',
     color: 'Verde',
-    category: 'amuletos',
+    category: 'bisuteria',
   },
   5: {
     title: 'El aventurero',
@@ -53,7 +53,7 @@ export const PROFILES: Record<number, NumberProfile> = {
       'No aguantas la rutina. Tu vida trae viajes, cambios y giros inesperados. Necesitas un ancla para no perder el rumbo en medio de tanto movimiento.',
     ally: 'Tetragramatón para caminar protegido',
     color: 'Azul',
-    category: 'amuletos',
+    category: 'bisuteria',
   },
   6: {
     title: 'El protector del hogar',
@@ -62,7 +62,7 @@ export const PROFILES: Record<number, NumberProfile> = {
       'Cuidas a los tuyos primero. Tu energía sostiene la casa, pero te olvidas de ti. Mantén tu espacio limpio y armonioso para recargarte.',
     ally: 'Sahumerio de copal y palo santo',
     color: 'Rosado',
-    category: 'sahumerios',
+    category: 'inciensos',
   },
   7: {
     title: 'El buscador',
@@ -71,7 +71,7 @@ export const PROFILES: Record<number, NumberProfile> = {
       'Vas más profundo que los demás: te gusta el misterio, el tarot y entender el porqué de las cosas. Necesitas tiempo a solas para escuchar tu intuición.',
     ally: 'Péndulo de cuarzo y tarot',
     color: 'Morado',
-    category: 'tarot',
+    category: 'libreria',
   },
   8: {
     title: 'El de la abundancia',
@@ -89,7 +89,7 @@ export const PROFILES: Record<number, NumberProfile> = {
       'Vienes a cerrar ciclos y a servir. Sueltas con dificultad lo que ya cumplió su función. Un buen despojo te ayuda a empezar de cero.',
     ally: 'Baño de despojo y salvia blanca',
     color: 'Blanco',
-    category: 'banos',
+    category: 'riegos',
   },
   11: {
     title: 'El mensajero (número maestro)',
@@ -98,7 +98,7 @@ export const PROFILES: Record<number, NumberProfile> = {
       'Traes una sensibilidad especial: sientes y sabes cosas sin que nadie te las diga. Es un don, pero también te agota, así que cuida tu energía y rodéate de protección.',
     ally: 'Amatista o cuarzo y un buen resguardo',
     color: 'Plateado',
-    category: 'amuletos',
+    category: 'bisuteria',
   },
   22: {
     title: 'El gran constructor (número maestro)',
@@ -107,7 +107,7 @@ export const PROFILES: Record<number, NumberProfile> = {
       'Combinas visión y capacidad de ejecución: puedes levantar algo que trascienda. Lo difícil es no abrumarte con tanta responsabilidad.',
     ally: 'Ganesha para quitar obstáculos',
     color: 'Naranja',
-    category: 'oriental',
+    category: 'piedras',
   },
   33: {
     title: 'El maestro sanador (número maestro)',
@@ -116,7 +116,7 @@ export const PROFILES: Record<number, NumberProfile> = {
       'Naciste para acompañar y sanar a otros. Eres el más generoso, pero corres el riesgo de dar hasta agotarte. Recuerda recargarte tú también.',
     ally: 'Cuenco tibetano e inciensos',
     color: 'Blanco',
-    category: 'oriental',
+    category: 'piedras',
   },
 }
 

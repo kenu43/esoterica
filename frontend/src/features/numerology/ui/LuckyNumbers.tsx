@@ -16,7 +16,7 @@ const STRIP = 40
 const SPIN_S = 2.2
 const STAGGER_S = 0.9
 
-function RouletteReel({ final, index, spin, instant, onStop }: { final: number; index: number; spin: number; instant: boolean; onStop: () => void }) {
+function RouletteReel({ final, index, spin, instant }: { final: number; index: number; spin: number; instant: boolean }) {
   const end = `-${((30 + final) / STRIP) * 100}%`
   const running = spin > 0 || instant
   return (
@@ -26,7 +26,6 @@ function RouletteReel({ final, index, spin, instant, onStop }: { final: number; 
         initial={{ y: '0%' }}
         animate={{ y: running ? end : '0%' }}
         transition={instant && spin === 0 ? { duration: 0 } : { duration: SPIN_S + index * STAGGER_S, ease: [0.1, 0.75, 0.2, 1] }}
-        onAnimationComplete={() => running && spin > 0 && onStop()}
         className="flex flex-col"
         style={{ height: `${STRIP * 100}%` }}
       >
@@ -51,7 +50,7 @@ export function LuckyNumbers() {
   const known = Boolean(seeker.name && seeker.birth)
   const doneToday = known && seeker.doneOn.lucky === dayKey()
   const [spin, setSpin] = useState(0)
-  const [stopped, setStopped] = useState(0)
+  const [finished, setFinished] = useState(0)
   const countdown = useCountdownToMidnight()
 
   const numbers = useMemo(() => {
@@ -67,8 +66,17 @@ export function LuckyNumbers() {
   }, [known, seeker.birth])
   const profile = PROFILES[life]
   const category = useCategory(profile.category)
-  const justDone = spin > 0 && stopped >= DIGITS
+  const justDone = spin > 0 && finished === spin
   const revealed = justDone || (doneToday && spin === 0)
+
+  // El fin de la tirada lo marca un temporizador, no los eventos de la animación: así nunca queda "girando" si el
+  // teléfono pausa o recorta la animación (ahorro de batería, pestaña en segundo plano, movimiento reducido).
+  useEffect(() => {
+    if (spin === 0) return
+    const total = (SPIN_S + (DIGITS - 1) * STAGGER_S) * 1000 + 300
+    const t = setTimeout(() => setFinished(spin), total)
+    return () => clearTimeout(t)
+  }, [spin])
 
   useEffect(() => {
     if (justDone) seeker.markDone('lucky')
@@ -76,11 +84,10 @@ export function LuckyNumbers() {
   }, [justDone])
 
   const draw = () => {
-    setStopped(0)
     setSpin((s) => s + 1)
   }
 
-  const message = `Hola, en la página me salió el número de la suerte ${numbers.join('')} y quiero mi aliado: ${profile.ally}. ¿Me ayudan?`
+  const message = `Hola, en la página me salió los números de la suerte y del chance ${numbers.join('')} y quiero mi aliado: ${profile.ally}. ¿Me ayudan?`
 
   return (
     <div className="mx-auto w-full max-w-3xl">
@@ -94,7 +101,7 @@ export function LuckyNumbers() {
           <div className="space-y-6">
             <p className="text-muted">
               {revealed
-                ? `${seeker.name}, estos son tus números de la suerte de hoy.`
+                ? `${seeker.name}, estos son tus números de la suerte y del chance de hoy.`
                 : spin > 0
                   ? 'La ruleta está girando…'
                   : `${seeker.name}, gira la ruleta y descubre tus números.`}
@@ -102,13 +109,13 @@ export function LuckyNumbers() {
 
             <div className="relative flex justify-center gap-2.5 sm:gap-3" aria-live="polite">
               {numbers.map((n, i) => (
-                <RouletteReel key={i} final={n} index={i} spin={spin} instant={doneToday} onStop={() => setStopped((s) => s + 1)} />
+                <RouletteReel key={i} final={n} index={i} spin={spin} instant={doneToday} />
               ))}
               {justDone && <Confetti />}
             </div>
 
             {!revealed && (
-              <Button variant="primary" size="lg" onPress={draw} isDisabled={spin > 0} className="gap-2">
+              <Button variant="primary" size="lg" onPress={draw} isDisabled={spin > 0 && !justDone} className="gap-2">
                 <Sparkles className={cn('size-4', spin > 0 && 'animate-spin')} />
                 {spin > 0 ? 'Girando…' : 'Girar la ruleta'}
               </Button>
@@ -161,7 +168,7 @@ export function LuckyNumbers() {
                       onClick={() => {
                         seeker.setSeeker('', '')
                         setSpin(0)
-                        setStopped(0)
+                        setFinished(0)
                       }}
                       className="underline-offset-2 hover:underline"
                     >

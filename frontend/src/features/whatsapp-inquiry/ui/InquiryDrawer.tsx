@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
 import { ANY_BRANCH_ID, BRANCH_CHOICES, resolveBranch } from '@/entities/branch'
-import { useProducts } from '@/entities/product'
+import { ProductImage, useProducts } from '@/entities/product'
 import { ROUTES } from '@/shared/config'
 import { cn, formatPrice, openWhatsApp } from '@/shared/lib'
 import { LotusIcon } from '@/shared/ui'
@@ -13,7 +13,7 @@ import { useInquiryStore } from '../model/inquiry.store'
 
 export function InquiryDrawer() {
   const { items, branchId, isOpen, setOpen, setQuantity, remove, setBranch, clear } = useInquiryStore()
-  const { data: products = [] } = useProducts()
+  const { data: products = [] } = useProducts({ ids: items.map((i) => i.productId), limit: 100 })
   const [note, setNote] = useState('')
   const [shipping, setShipping] = useState<ShippingId>('domicilio')
 
@@ -107,7 +107,7 @@ export function InquiryDrawer() {
                           exit={{ opacity: 0, x: 40, height: 0, marginTop: 0 }}
                           className="flex gap-3 overflow-hidden rounded-2xl border border-border bg-surface-secondary p-3"
                         >
-                          <img src={product.image} alt="" className="size-16 shrink-0 rounded-xl object-cover" />
+                          <ProductImage product={product} className="size-16 shrink-0 rounded-xl object-cover" />
                           <div className="flex min-w-0 flex-1 flex-col">
                             <span className="truncate font-semibold">{product.name}</span>
                             <span className="text-xs text-muted">

@@ -1,5 +1,15 @@
 import {
+  Bath,
+  BookOpen,
   Church,
+  Crown,
+  FlaskConical,
+  Link,
+  Skull,
+  Sprout,
+  SprayCan,
+  TestTube,
+  WandSparkles,
   Clover,
   Droplets,
   Flame,
@@ -31,6 +41,16 @@ export const CATEGORY_ICONS: Record<string, LucideIcon> = {
   moon: Moon,
   sun: Sun,
   star: Star,
+  skull: Skull,
+  link: Link,
+  sprout: Sprout,
+  crown: Crown,
+  wand: WandSparkles,
+  'spray-can': SprayCan,
+  bath: Bath,
+  book: BookOpen,
+  flask: FlaskConical,
+  'test-tube': TestTube,
 }
 
 export const resolveCategoryIcon = (key?: string): LucideIcon => CATEGORY_ICONS[key ?? ''] ?? Sparkles
